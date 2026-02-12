@@ -27,7 +27,7 @@ export default function TopicPage({ params }: PageProps) {
   if (!topic) notFound()
 
   const otherTopics = TOPICS.filter((t) => t.slug !== topic.slug)
-  const subareaColor = SUBAREA_COLORS[topic.subareaNumber] || '#2563eb'
+  const subareaColor = SUBAREA_COLORS[topic.subareaNumber] || '#6b1e1e'
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 sm:py-16">
@@ -42,7 +42,7 @@ export default function TopicPage({ params }: PageProps) {
       </div>
 
       {/* Title */}
-      <h1 className="mt-4 text-3xl font-bold text-gray-900 sm:text-4xl">
+      <h1 className="mt-4 font-serif text-3xl font-bold text-gray-900 sm:text-4xl">
         {topic.title}
       </h1>
 
@@ -54,13 +54,13 @@ export default function TopicPage({ params }: PageProps) {
       {/* Key Concepts */}
       <section className="mt-10">
         <div className="flex items-center gap-2">
-          <BookOpen className="h-5 w-5 text-blue-600" />
-          <h2 className="text-xl font-bold text-gray-900">Key Concepts</h2>
+          <BookOpen className="h-5 w-5 text-maroon-800" />
+          <h2 className="font-serif text-xl font-bold text-gray-900">Key Concepts</h2>
         </div>
         <ul className="mt-4 space-y-3">
           {topic.keyConcepts.map((concept, i) => (
             <li key={i} className="flex items-start gap-3 text-sm text-gray-700">
-              <span className="mt-1 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-blue-600" />
+              <span className="mt-1 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-maroon-800" />
               <span>{concept}</span>
             </li>
           ))}
@@ -70,11 +70,11 @@ export default function TopicPage({ params }: PageProps) {
       {/* Key Terms */}
       {topic.keyTerms.length > 0 && (
         <section className="mt-10">
-          <h2 className="text-xl font-bold text-gray-900">Key Terms</h2>
+          <h2 className="font-serif text-xl font-bold text-gray-900">Key Terms</h2>
           <div className="mt-4 overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
-                <tr className="border-b-2 border-gray-200">
+                <tr className="border-b-2 border-ivory-200">
                   <th className="pb-3 pr-4 font-semibold text-gray-900">Term</th>
                   <th className="pb-3 font-semibold text-gray-900">Definition</th>
                 </tr>
@@ -97,8 +97,8 @@ export default function TopicPage({ params }: PageProps) {
       {/* Sample Question */}
       {topic.sampleQuestion && (
         <section className="mt-10">
-          <h2 className="text-xl font-bold text-gray-900">Sample Question</h2>
-          <div className="mt-4 rounded-xl border border-gray-200 bg-white p-6">
+          <h2 className="font-serif text-xl font-bold text-gray-900">Sample Question</h2>
+          <div className="mt-4 rounded-xl border border-ivory-200 bg-white p-6">
             <p className="font-medium text-gray-900">{topic.sampleQuestion.question}</p>
             <ul className="mt-4 space-y-2">
               {topic.sampleQuestion.options.map((option, i) => {
@@ -110,7 +110,7 @@ export default function TopicPage({ params }: PageProps) {
                     className={`flex items-start gap-3 rounded-lg border p-3 text-sm ${
                       isCorrect
                         ? 'border-green-200 bg-green-50'
-                        : 'border-gray-100 bg-gray-50'
+                        : 'border-gray-100 bg-ivory-100'
                     }`}
                   >
                     {isCorrect ? (
@@ -125,9 +125,9 @@ export default function TopicPage({ params }: PageProps) {
                 )
               })}
             </ul>
-            <div className="mt-4 rounded-lg bg-blue-50 p-4">
-              <p className="text-sm font-semibold text-blue-900">Explanation</p>
-              <p className="mt-1 text-sm text-blue-800">
+            <div className="mt-4 rounded-lg bg-maroon-50 p-4">
+              <p className="text-sm font-semibold text-maroon-900">Explanation</p>
+              <p className="mt-1 text-sm text-maroon-800">
                 {topic.sampleQuestion.explanation}
               </p>
             </div>
@@ -147,23 +147,23 @@ export default function TopicPage({ params }: PageProps) {
       </section>
 
       {/* CTA */}
-      <section className="mt-14 rounded-2xl bg-blue-600 px-6 py-12 text-center sm:px-12">
-        <h2 className="text-2xl font-bold text-white sm:text-3xl">
+      <section className="mt-14 rounded-2xl bg-maroon-900 px-6 py-12 text-center sm:px-12">
+        <h2 className="font-serif text-2xl font-bold text-white sm:text-3xl">
           Master This Topic and More
         </h2>
-        <p className="mx-auto mt-3 max-w-2xl text-blue-100">
+        <p className="mx-auto mt-3 max-w-2xl text-maroon-100">
           Our study guide covers all 11 objectives in depth, and our practice test lets you apply what you&apos;ve learned.
         </p>
         <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
           <Link
             href="/bundle"
-            className="rounded-lg bg-white px-6 py-3 text-sm font-semibold text-blue-600 transition-colors hover:bg-blue-50"
+            className="rounded-lg bg-white px-6 py-3 text-sm font-semibold text-maroon-900 transition-colors hover:bg-ivory-100"
           >
             Get the Prep Bundle
           </Link>
           <Link
             href="/study-guide"
-            className="rounded-lg border border-blue-400 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+            className="rounded-lg border border-maroon-400 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-maroon-800"
           >
             Study Guide
           </Link>
@@ -172,7 +172,7 @@ export default function TopicPage({ params }: PageProps) {
 
       {/* Other Topics */}
       <section className="mt-14">
-        <h2 className="text-xl font-bold text-gray-900">
+        <h2 className="font-serif text-xl font-bold text-gray-900">
           Explore Other Topics
         </h2>
         <div className="mt-4 grid gap-2 sm:grid-cols-2">
@@ -180,11 +180,11 @@ export default function TopicPage({ params }: PageProps) {
             <Link
               key={t.slug}
               href={`/topics/${t.slug}`}
-              className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm transition-all hover:border-blue-300 hover:shadow-sm"
+              className="flex items-center gap-3 rounded-lg border border-ivory-200 bg-white px-4 py-3 text-sm transition-all hover:border-maroon-300 hover:shadow-sm"
             >
               <span
                 className="block h-2 w-2 flex-shrink-0 rounded-full"
-                style={{ backgroundColor: SUBAREA_COLORS[t.subareaNumber] || '#2563eb' }}
+                style={{ backgroundColor: SUBAREA_COLORS[t.subareaNumber] || '#6b1e1e' }}
               />
               <span className="text-gray-700">{t.title}</span>
             </Link>

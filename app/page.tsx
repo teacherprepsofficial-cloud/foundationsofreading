@@ -30,10 +30,10 @@ export default function HomePage() {
     <>
       {/* ─── Hero Section ─── */}
       <section className="relative overflow-hidden bg-white">
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-50/60 to-white" />
+        <div className="absolute inset-0 bg-gradient-to-b from-ivory-100/60 to-white" />
         <div className="relative mx-auto max-w-6xl px-4 pb-16 pt-16 sm:px-6 sm:pb-24 sm:pt-24">
           <div className="mx-auto max-w-3xl text-center">
-            <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
+            <h1 className="font-serif text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
               Pass the Foundations of Reading Test
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-gray-600 sm:text-xl">
@@ -56,7 +56,7 @@ export default function HomePage() {
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Link
                 href="/bundle"
-                className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-8 py-4 text-base font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
+                className="inline-flex items-center gap-2 rounded-lg bg-maroon-800 px-8 py-4 text-base font-semibold text-white shadow-sm transition-colors hover:bg-maroon-900"
               >
                 Get the Bundle &mdash; {formatPrice(bundle.price)}
                 <ArrowRight className="h-5 w-5" />
@@ -83,7 +83,7 @@ export default function HomePage() {
       <section className="py-16 sm:py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+            <h2 className="font-serif text-2xl font-bold text-gray-900 sm:text-3xl">
               What&#39;s On the Test
             </h2>
             <p className="mt-3 text-gray-600">
@@ -95,7 +95,7 @@ export default function HomePage() {
             {EXAM_INFO.subareas.map((subarea) => (
               <div
                 key={subarea.number}
-                className="rounded-xl border border-gray-200 bg-white p-6"
+                className="rounded-xl border border-ivory-200 bg-white p-6"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
@@ -105,7 +105,7 @@ export default function HomePage() {
                     >
                       {subarea.number}
                     </span>
-                    <h3 className="text-lg font-semibold text-gray-900">
+                    <h3 className="font-serif text-lg font-semibold text-gray-900">
                       {subarea.name}
                     </h3>
                   </div>
@@ -116,7 +116,7 @@ export default function HomePage() {
                     <p className="text-2xl font-bold text-gray-900">{subarea.weight}%</p>
                     <p className="text-xs text-gray-500">of total score</p>
                   </div>
-                  <div className="h-8 w-px bg-gray-200" />
+                  <div className="h-8 w-px bg-ivory-200" />
                   <div>
                     <p className="text-2xl font-bold text-gray-900">
                       {subarea.objectives.length}
@@ -125,7 +125,7 @@ export default function HomePage() {
                       objective{subarea.objectives.length !== 1 ? 's' : ''}
                     </p>
                   </div>
-                  <div className="h-8 w-px bg-gray-200" />
+                  <div className="h-8 w-px bg-ivory-200" />
                   <div>
                     <p className="text-2xl font-bold text-gray-900">
                       {subarea.questionRange}
@@ -165,10 +165,10 @@ export default function HomePage() {
       </section>
 
       {/* ─── Products Section ─── */}
-      <section className="bg-gray-50 py-16 sm:py-20">
+      <section className="bg-ivory-100 py-16 sm:py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+            <h2 className="font-serif text-2xl font-bold text-gray-900 sm:text-3xl">
               Everything You Need to Pass
             </h2>
             <p className="mt-3 text-gray-600">
@@ -188,7 +188,7 @@ export default function HomePage() {
       <section className="py-16 sm:py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+            <h2 className="font-serif text-2xl font-bold text-gray-900 sm:text-3xl">
               Required in 13 States
             </h2>
             <p className="mt-3 text-gray-600">
@@ -205,10 +205,10 @@ export default function HomePage() {
       </section>
 
       {/* ─── Study Topics ─── */}
-      <section className="bg-gray-50 py-16 sm:py-20">
+      <section className="bg-ivory-100 py-16 sm:py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+            <h2 className="font-serif text-2xl font-bold text-gray-900 sm:text-3xl">
               What You&#39;ll Learn
             </h2>
             <p className="mt-3 text-gray-600">
@@ -221,7 +221,7 @@ export default function HomePage() {
               <Link
                 key={topic.slug}
                 href={`/topics/${topic.slug}`}
-                className="group flex items-start gap-4 rounded-xl border border-gray-200 bg-white p-5 transition-all hover:border-blue-300 hover:shadow-sm"
+                className="group flex items-start gap-4 rounded-xl border border-ivory-200 bg-white p-5 transition-all hover:border-maroon-300 hover:shadow-sm"
               >
                 <span
                   className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg text-sm font-bold text-white"
@@ -233,7 +233,7 @@ export default function HomePage() {
                   {topic.objectiveNumber}
                 </span>
                 <div className="min-w-0">
-                  <p className="font-semibold text-gray-900 group-hover:text-blue-600">
+                  <p className="font-semibold text-gray-900 group-hover:text-maroon-800">
                     {topic.title}
                   </p>
                   <p className="mt-1 text-xs text-gray-500">
@@ -245,13 +245,13 @@ export default function HomePage() {
             {/* Study Tips link */}
             <Link
               href="/topics/study-tips"
-              className="group flex items-start gap-4 rounded-xl border border-gray-200 bg-white p-5 transition-all hover:border-blue-300 hover:shadow-sm"
+              className="group flex items-start gap-4 rounded-xl border border-ivory-200 bg-white p-5 transition-all hover:border-maroon-300 hover:shadow-sm"
             >
               <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-gray-700 text-sm font-bold text-white">
                 <BookOpen className="h-5 w-5" />
               </span>
               <div className="min-w-0">
-                <p className="font-semibold text-gray-900 group-hover:text-blue-600">
+                <p className="font-semibold text-gray-900 group-hover:text-maroon-800">
                   How to Study for the FORT
                 </p>
                 <p className="mt-1 text-xs text-gray-500">

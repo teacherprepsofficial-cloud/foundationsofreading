@@ -49,10 +49,10 @@ export function FaqSection() {
   }
 
   return (
-    <section className="bg-gray-50 py-16 sm:py-20">
+    <section className="bg-ivory-100 py-16 sm:py-20">
       <div className="mx-auto max-w-3xl px-4 sm:px-6">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+          <h2 className="font-serif text-2xl font-bold text-gray-900 sm:text-3xl">
             Frequently Asked Questions
           </h2>
           <p className="mt-3 text-gray-600">
@@ -60,7 +60,7 @@ export function FaqSection() {
           </p>
         </div>
 
-        <div className="mt-12 divide-y divide-gray-200 border-t border-b border-gray-200">
+        <div className="mt-12 divide-y divide-ivory-200 border-t border-b border-ivory-200">
           {FAQ_ITEMS.map((item, index) => (
             <div key={index}>
               <button

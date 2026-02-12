@@ -17,10 +17,10 @@ export default function PracticeTestPage() {
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 sm:py-16">
       {/* Hero */}
       <section className="text-center">
-        <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">
+        <p className="text-sm font-semibold uppercase tracking-wide text-maroon-800">
           Practice Test
         </p>
-        <h1 className="mt-2 text-3xl font-bold text-gray-900 sm:text-4xl">
+        <h1 className="font-serif mt-2 text-3xl font-bold text-gray-900 sm:text-4xl">
           Full-Length FORT Practice Test
         </h1>
         <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
@@ -37,7 +37,7 @@ export default function PracticeTestPage() {
         </div>
         <Link
           href="/checkout?product=practice-test"
-          className="rounded-lg bg-blue-600 px-8 py-3 text-base font-semibold text-white transition-colors hover:bg-blue-700"
+          className="rounded-lg bg-maroon-800 px-8 py-3 text-base font-semibold text-white transition-colors hover:bg-maroon-900"
         >
           Buy Now
         </Link>
@@ -46,13 +46,13 @@ export default function PracticeTestPage() {
 
       {/* Features */}
       <section className="mt-14">
-        <h2 className="text-xl font-bold text-gray-900">
+        <h2 className="font-serif text-xl font-bold text-gray-900">
           What You Get
         </h2>
         <ul className="mt-6 space-y-3">
           {product.features.map((feature, i) => (
-            <li key={i} className="flex items-start gap-3 rounded-lg border border-gray-200 bg-white p-4">
-              <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600" />
+            <li key={i} className="flex items-start gap-3 rounded-lg border border-ivory-200 bg-white p-4">
+              <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-maroon-800" />
               <span className="text-sm text-gray-700">{feature}</span>
             </li>
           ))}
@@ -60,8 +60,8 @@ export default function PracticeTestPage() {
       </section>
 
       {/* Exam Match */}
-      <section className="mt-14 rounded-xl border border-gray-200 bg-gray-50 p-6">
-        <h2 className="text-xl font-bold text-gray-900">
+      <section className="mt-14 rounded-xl border border-ivory-200 bg-ivory-100 p-6">
+        <h2 className="font-serif text-xl font-bold text-gray-900">
           Matches the Real Exam
         </h2>
         <p className="mt-2 text-gray-600">

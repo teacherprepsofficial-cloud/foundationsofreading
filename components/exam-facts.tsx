@@ -37,10 +37,10 @@ const facts = [
 
 export function ExamFacts() {
   return (
-    <section className="bg-gray-50 py-16 sm:py-20">
+    <section className="bg-ivory-100 py-16 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+          <h2 className="font-serif text-2xl font-bold text-gray-900 sm:text-3xl">
             FORT Exam Quick Facts
           </h2>
           <p className="mt-3 text-gray-600">
@@ -52,10 +52,10 @@ export function ExamFacts() {
           {facts.map((fact) => (
             <div
               key={fact.label}
-              className="flex items-start gap-4 rounded-xl border border-gray-200 bg-white p-6"
+              className="flex items-start gap-4 rounded-xl border border-ivory-200 bg-white p-6"
             >
-              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-blue-50">
-                <fact.icon className="h-6 w-6 text-blue-600" />
+              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-maroon-50">
+                <fact.icon className="h-6 w-6 text-maroon-800" />
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-500">{fact.label}</p>

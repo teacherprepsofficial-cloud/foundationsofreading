@@ -44,7 +44,7 @@ export default function BlogPostPage({ params }: PageProps) {
           <Calendar className="h-4 w-4" />
           <time dateTime={post.publishedAt}>{post.publishedAt}</time>
         </div>
-        <h1 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl">
+        <h1 className="mt-3 font-serif text-3xl font-bold text-gray-900 sm:text-4xl">
           {post.title}
         </h1>
 
@@ -52,7 +52,7 @@ export default function BlogPostPage({ params }: PageProps) {
         <div className="mt-8 space-y-8">
           {post.sections.map((section, i) => (
             <section key={i}>
-              <h2 className="text-xl font-bold text-gray-900">{section.heading}</h2>
+              <h2 className="font-serif text-xl font-bold text-gray-900">{section.heading}</h2>
               <p className="mt-3 leading-relaxed text-gray-600">{section.content}</p>
             </section>
           ))}
@@ -60,21 +60,21 @@ export default function BlogPostPage({ params }: PageProps) {
       </article>
 
       {/* CTA */}
-      <section className="mt-14 rounded-2xl bg-blue-600 px-6 py-12 text-center sm:px-12">
-        <h2 className="text-2xl font-bold text-white">Ready to Start Studying?</h2>
-        <p className="mx-auto mt-3 max-w-xl text-blue-100">
+      <section className="mt-14 rounded-2xl bg-maroon-900 px-6 py-12 text-center sm:px-12">
+        <h2 className="font-serif text-2xl font-bold text-white">Ready to Start Studying?</h2>
+        <p className="mx-auto mt-3 max-w-xl text-maroon-100">
           Our study guide and practice test cover all 4 subareas and 11 objectives of the FORT.
         </p>
         <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
           <Link
             href="/bundle"
-            className="rounded-lg bg-white px-6 py-3 text-sm font-semibold text-blue-600 transition-colors hover:bg-blue-50"
+            className="rounded-lg bg-white px-6 py-3 text-sm font-semibold text-maroon-900 transition-colors hover:bg-ivory-100"
           >
             Get the Prep Bundle
           </Link>
           <Link
             href="/study-guide"
-            className="rounded-lg border border-blue-400 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+            className="rounded-lg border border-maroon-400 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-maroon-800"
           >
             Study Guide
           </Link>
@@ -83,18 +83,18 @@ export default function BlogPostPage({ params }: PageProps) {
 
       {/* Other Posts */}
       <section className="mt-14">
-        <h2 className="text-xl font-bold text-gray-900">More Articles</h2>
+        <h2 className="font-serif text-xl font-bold text-gray-900">More Articles</h2>
         <div className="mt-4 space-y-2">
           {otherPosts.map((p) => (
             <Link
               key={p.slug}
               href={`/blog/${p.slug}`}
-              className="group flex items-center justify-between rounded-lg border border-gray-200 bg-white px-4 py-3 transition-all hover:border-blue-300 hover:shadow-sm"
+              className="group flex items-center justify-between rounded-lg border border-ivory-200 bg-white px-4 py-3 transition-all hover:border-maroon-300 hover:shadow-sm"
             >
-              <span className="text-sm font-medium text-gray-700 group-hover:text-blue-600">
+              <span className="text-sm font-medium text-gray-700 group-hover:text-maroon-800">
                 {p.title}
               </span>
-              <ArrowRight className="h-4 w-4 flex-shrink-0 text-gray-400 group-hover:text-blue-600" />
+              <ArrowRight className="h-4 w-4 flex-shrink-0 text-gray-400 group-hover:text-maroon-800" />
             </Link>
           ))}
         </div>

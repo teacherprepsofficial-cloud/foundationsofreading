@@ -1,10 +1,20 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Source_Serif_4, Source_Sans_3 } from 'next/font/google'
 import './globals.css'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 
-const inter = Inter({ subsets: ['latin'] })
+const sourceSerif = Source_Serif_4({
+  subsets: ['latin'],
+  variable: '--font-source-serif',
+  display: 'swap',
+})
+
+const sourceSans = Source_Sans_3({
+  subsets: ['latin'],
+  variable: '--font-source-sans',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: {
@@ -28,7 +38,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} antialiased`}>
+      <body className={`${sourceSerif.variable} ${sourceSans.variable} font-sans antialiased`}>
         <SiteHeader />
         <main className="min-h-screen">{children}</main>
         <SiteFooter />

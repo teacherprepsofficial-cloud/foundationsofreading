@@ -14,9 +14,9 @@ export function SiteHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white">
+    <header className="sticky top-0 z-50 w-full border-b border-ivory-200 bg-ivory-50">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Link href="/" className="text-lg font-bold text-gray-900 sm:text-xl">
+        <Link href="/" className="font-serif text-lg font-bold text-gray-900 sm:text-xl">
           Foundations of Reading
         </Link>
 
@@ -33,7 +33,7 @@ export function SiteHeader() {
           ))}
           <Link
             href="/bundle"
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+            className="rounded-lg bg-maroon-800 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-maroon-900"
           >
             Get Started
           </Link>
@@ -42,7 +42,7 @@ export function SiteHeader() {
         {/* Mobile menu button */}
         <button
           type="button"
-          className="inline-flex items-center justify-center rounded-md p-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900 md:hidden"
+          className="inline-flex items-center justify-center rounded-md p-2 text-gray-600 hover:bg-ivory-100 hover:text-gray-900 md:hidden"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
         >
@@ -52,12 +52,12 @@ export function SiteHeader() {
 
       {/* Mobile navigation */}
       {mobileMenuOpen && (
-        <nav className="border-t border-gray-200 bg-white px-4 pb-4 pt-2 md:hidden">
+        <nav className="border-t border-ivory-200 bg-ivory-50 px-4 pb-4 pt-2 md:hidden">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900"
+              className="block rounded-md px-3 py-2 text-base font-medium text-gray-600 transition-colors hover:bg-ivory-100 hover:text-gray-900"
               onClick={() => setMobileMenuOpen(false)}
             >
               {link.label}
@@ -65,7 +65,7 @@ export function SiteHeader() {
           ))}
           <Link
             href="/bundle"
-            className="mt-2 block rounded-lg bg-blue-600 px-3 py-2 text-center text-base font-semibold text-white transition-colors hover:bg-blue-700"
+            className="mt-2 block rounded-lg bg-maroon-800 px-3 py-2 text-center text-base font-semibold text-white transition-colors hover:bg-maroon-900"
             onClick={() => setMobileMenuOpen(false)}
           >
             Get Started
