@@ -15,7 +15,7 @@ export function SiteHeader() {
   }, [])
 
   return (
-    <header className="border-b border-[#e8e0e2] bg-white">
+    <header className="sticky top-0 z-50 border-b border-[#e8e0e2] bg-white/95 backdrop-blur-sm">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
         <Link href="/" className="flex flex-col">
           <span className="text-xl font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>

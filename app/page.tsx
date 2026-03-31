@@ -3,6 +3,8 @@ import { CountdownBanner } from '@/components/countdown-banner'
 import { PricingSection } from '@/components/pricing-section'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
+import { SubareaGrid } from '@/components/subarea-modal'
+import { HeroImage } from '@/components/hero-image'
 
 export const metadata: Metadata = {
   title: 'Pass the NES Foundations of Reading Test | Interactive Online Prep',
@@ -10,12 +12,6 @@ export const metadata: Metadata = {
     'The most complete prep for the NES Foundations of Reading (190 & 890). Diagnostic test, full study guide, 4 practice tests, AI-graded written responses, flashcards, and more. 30-day access.',
 }
 
-const SUBAREAS = [
-  { roman: 'I', name: 'Foundations of Reading Development', weight: '35%', questions: '35–37 questions' },
-  { roman: 'II', name: 'Development of Reading Comprehension', weight: '27%', questions: '25–29 questions' },
-  { roman: 'III', name: 'Reading Assessment and Instruction', weight: '21%', questions: '19–23 questions' },
-  { roman: 'IV', name: 'Integration of Knowledge and Understanding', weight: '17%', questions: '2 written responses' },
-]
 
 const STARTER_INCLUDES = [
   'Module 1: Complete test overview & what to expect on exam day',
@@ -133,12 +129,12 @@ function IconChart() {
 }
 
 const FEATURES = [
-  { Icon: IconClipboard, title: 'Diagnostic Practice Test', desc: '25 MC + 1 written response across all 4 subareas. See exactly where you stand before you start studying.' },
-  { Icon: IconBook, title: 'Complete Study Guide', desc: 'All 4 subareas, all 11 objectives covered in depth. Written specifically for this exam.' },
-  { Icon: IconPencil, title: '2–4 Full-Length Practice Tests', desc: '100 MC per test, timed, scored on the real 100–300 NES scale. Results mirror your actual score report.' },
-  { Icon: IconSparkle, title: 'AI-Graded Written Responses', desc: 'Type your response. Get scored 0–2 with individualized feedback — same rubric as the real exam.' },
-  { Icon: IconCards, title: 'Flashcards + Vocab Matching', desc: '150+ terms across all objectives. Study with cards or the interactive matching game.' },
-  { Icon: IconChart, title: 'Real Exam Results Format', desc: 'Pass/Not Pass, scaled score, and subarea performance — identical to what you see on test day.' },
+  { Icon: IconClipboard, title: 'Diagnostic Practice Test', desc: '25 MC + 1 written response across all 4 subareas. See exactly where you stand before you start studying.', href: '/free/diagnostic', cta: 'Try free sample →' },
+  { Icon: IconBook, title: 'Complete Study Guide', desc: 'All 4 subareas, all 11 objectives covered in depth. Written specifically for this exam.', href: '/free/study-guide', cta: 'Read free preview →' },
+  { Icon: IconPencil, title: '2–4 Full-Length Practice Tests', desc: '100 MC per test, timed, scored on the real 100–300 NES scale. Results mirror your actual score report.', href: '/free/practice-test', cta: 'Try 10-question sample →' },
+  { Icon: IconSparkle, title: 'AI-Graded Written Responses', desc: 'Type your response. Get scored 0–2 with individualized feedback — same rubric as the real exam.', href: '/free/written-response', cta: 'Try one free →' },
+  { Icon: IconCards, title: 'Flashcards + Vocab Matching', desc: '150+ terms across all objectives. Study with cards or the interactive matching game.', href: '/free/flashcards', cta: 'Try 10 sample cards →' },
+  { Icon: IconChart, title: 'Real Exam Results Format', desc: 'Pass/Not Pass, scaled score, and subarea performance — identical to what you see on test day.', href: '/free/results-demo', cta: 'See example results →' },
 ]
 
 export default function HomePage() {
@@ -174,35 +170,7 @@ export default function HomePage() {
                 </p>
               </div>
 
-              {/* Score preview card */}
-              <div className="hidden lg:block">
-                <div className="rounded-xl bg-white/10 p-1 ring-1 ring-white/20 backdrop-blur-sm">
-                  <div className="rounded-lg bg-white p-6 text-[#1a1a1a]">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>Practice Test Results</p>
-                    <div className="mt-4 flex items-center justify-between border-b border-[#e8e0e2] pb-4">
-                      <div>
-                        <p className="text-3xl font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>247</p>
-                        <p className="text-xs text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>Scaled Score (100–300)</p>
-                      </div>
-                      <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-semibold text-green-700" style={{ fontFamily: 'var(--font-sans)' }}>Pass</span>
-                    </div>
-                    <div className="mt-4 space-y-2.5">
-                      {[
-                        { label: 'Foundations of Reading Development', level: 'Most' },
-                        { label: 'Development of Reading Comprehension', level: 'Many' },
-                        { label: 'Reading Assessment and Instruction', level: 'Most' },
-                        { label: 'Integration of Knowledge', level: 'Thorough' },
-                      ].map((row) => (
-                        <div key={row.label} className="flex items-center justify-between gap-3">
-                          <p className="text-xs text-[#6b6b6b] leading-tight" style={{ fontFamily: 'var(--font-sans)' }}>{row.label}</p>
-                          <span className="shrink-0 rounded bg-[#f3eef0] px-2 py-0.5 text-[10px] font-semibold text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>{row.level}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <p className="mt-4 text-[10px] text-[#6b6b6b] text-center" style={{ fontFamily: 'var(--font-sans)' }}>Mirrors your actual NES score report</p>
-                  </div>
-                </div>
-              </div>
+              <HeroImage />
             </div>
           </div>
         </section>
@@ -230,16 +198,17 @@ export default function HomePage() {
             <p className="text-xs font-semibold uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>What&apos;s Included</p>
             <h2 className="mt-3 text-3xl font-bold text-[#1a1a1a] sm:text-4xl" style={{ fontFamily: 'var(--font-serif)' }}>A complete study system — not just notes.</h2>
             <div className="mt-12 grid gap-6 md:grid-cols-2">
-              {FEATURES.map(({ Icon, title, desc }) => (
-                <div key={title} className="flex gap-5 rounded-lg border border-[#e8e0e2] bg-white p-6">
+              {FEATURES.map(({ Icon, title, desc, href, cta }) => (
+                <a key={title} href={href} className="group flex gap-5 rounded-lg border border-[#e8e0e2] bg-white p-6 transition-all hover:border-[#7c1c2e] hover:shadow-sm">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#f3eef0]">
                     <Icon />
                   </div>
                   <div>
                     <h3 className="font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>{title}</h3>
                     <p className="mt-1.5 text-sm leading-relaxed text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>{desc}</p>
+                    <p className="mt-2 text-xs font-semibold text-[#7c1c2e] group-hover:underline" style={{ fontFamily: 'var(--font-sans)' }}>{cta}</p>
                   </div>
-                </div>
+                </a>
               ))}
             </div>
           </div>
@@ -250,17 +219,8 @@ export default function HomePage() {
           <div className="mx-auto max-w-5xl px-6">
             <p className="text-xs font-semibold uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>Exam Structure</p>
             <h2 className="mt-3 text-3xl font-bold text-[#1a1a1a] sm:text-4xl" style={{ fontFamily: 'var(--font-serif)' }}>4 Subareas. 11 Objectives.</h2>
-            <div className="mt-10 grid gap-4 sm:grid-cols-2">
-              {SUBAREAS.map((s) => (
-                <div key={s.roman} className="flex items-start gap-4 rounded-lg border border-[#e8e0e2] bg-white p-6">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-[#7c1c2e] text-sm font-bold text-white" style={{ fontFamily: 'var(--font-sans)' }}>{s.roman}</span>
-                  <div>
-                    <p className="font-semibold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>{s.name}</p>
-                    <p className="mt-1 text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>{s.weight} &middot; {s.questions}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <p className="mt-2 text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>Click any subarea to explore the objectives it covers.</p>
+            <SubareaGrid />
           </div>
         </section>
 
@@ -303,14 +263,27 @@ export default function HomePage() {
           <div className="mx-auto max-w-5xl px-6">
             <p className="text-xs font-semibold uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>Who Needs This</p>
             <h2 className="mt-3 text-3xl font-bold text-[#1a1a1a] sm:text-4xl" style={{ fontFamily: 'var(--font-serif)' }}>Required in 13+ states.</h2>
-            <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+            {/* Legend */}
+            <div className="mt-6 flex gap-4">
+              <div className="flex items-center gap-2">
+                <span className="h-3 w-3 rounded-full bg-[#7c1c2e]" />
+                <span className="text-xs text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>NES 190</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="h-3 w-3 rounded-full bg-[#1e3a5f]" />
+                <span className="text-xs text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>NES 890</span>
+              </div>
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
               {STATES.map((s) => (
-                <div key={s.code} className="flex items-center justify-between rounded border border-[#e8e0e2] bg-white px-4 py-3">
+                <div key={s.code} className={`flex items-center justify-between rounded border px-4 py-3 ${s.exam === '890' ? 'border-[#1e3a5f]/30 bg-[#f0f4f9]' : 'border-[#e8e0e2] bg-white'}`}>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>{s.code}</span>
+                    <span className={`text-sm font-bold ${s.exam === '890' ? 'text-[#1e3a5f]' : 'text-[#7c1c2e]'}`} style={{ fontFamily: 'var(--font-sans)' }}>{s.code}</span>
                     <span className="text-sm text-[#1a1a1a]" style={{ fontFamily: 'var(--font-sans)' }}>{s.state}</span>
                   </div>
-                  <span className="text-xs text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>{s.exam}</span>
+                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${s.exam === '890' ? 'bg-[#1e3a5f] text-white' : 'bg-[#7c1c2e] text-white'}`} style={{ fontFamily: 'var(--font-sans)' }}>
+                    {s.exam}
+                  </span>
                 </div>
               ))}
             </div>
