@@ -50,11 +50,11 @@ function PriceCard({
       </p>
       <div className="mt-3 flex items-baseline gap-2">
         <span className="text-4xl font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>
-          ${price / 100}
+          ${Math.round(price / 100)}
         </span>
         {discountActive && (
           <span className="text-lg text-[#6b6b6b] line-through" style={{ fontFamily: 'var(--font-sans)' }}>
-            ${regularPrice / 100}
+            ${Math.round(regularPrice / 100)}
           </span>
         )}
       </div>

@@ -11,10 +11,10 @@ export const metadata: Metadata = {
 }
 
 const SUBAREAS = [
-  { roman: 'I', name: 'Foundations of Reading Development', weight: '35%', questions: '35–37 questions', color: '#7c1c2e' },
-  { roman: 'II', name: 'Development of Reading Comprehension', weight: '27%', questions: '25–29 questions', color: '#9b2439' },
-  { roman: 'III', name: 'Reading Assessment and Instruction', weight: '21%', questions: '19–23 questions', color: '#b52b44' },
-  { roman: 'IV', name: 'Integration of Knowledge and Understanding', weight: '17%', questions: '2 written responses', color: '#c73350' },
+  { roman: 'I', name: 'Foundations of Reading Development', weight: '35%', questions: '35–37 questions' },
+  { roman: 'II', name: 'Development of Reading Comprehension', weight: '27%', questions: '25–29 questions' },
+  { roman: 'III', name: 'Reading Assessment and Instruction', weight: '21%', questions: '19–23 questions' },
+  { roman: 'IV', name: 'Integration of Knowledge and Understanding', weight: '17%', questions: '2 written responses' },
 ]
 
 const STARTER_INCLUDES = [
@@ -72,6 +72,73 @@ const FAQS = [
     q: 'Is this a subscription?',
     a: 'No. One payment, 30-day access. No recurring charges ever.',
   },
+  {
+    q: 'When can I start after purchasing?',
+    a: 'Immediately. You get login credentials by email within seconds of checkout. Your 30-day timer starts from that moment.',
+  },
+]
+
+// Clean SVG icons
+function IconClipboard() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c1c2e" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" />
+      <rect x="9" y="3" width="6" height="4" rx="1" />
+      <path d="m9 12 2 2 4-4" />
+    </svg>
+  )
+}
+function IconBook() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c1c2e" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+      <line x1="9" y1="7" x2="15" y2="7" />
+      <line x1="9" y1="11" x2="15" y2="11" />
+    </svg>
+  )
+}
+function IconPencil() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c1c2e" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+    </svg>
+  )
+}
+function IconSparkle() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c1c2e" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />
+    </svg>
+  )
+}
+function IconCards() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c1c2e" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="7" width="16" height="13" rx="2" />
+      <path d="M6 7V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2h-2" />
+    </svg>
+  )
+}
+function IconChart() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c1c2e" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="18" y1="20" x2="18" y2="10" />
+      <line x1="12" y1="20" x2="12" y2="4" />
+      <line x1="6" y1="20" x2="6" y2="14" />
+      <line x1="2" y1="20" x2="22" y2="20" />
+    </svg>
+  )
+}
+
+const FEATURES = [
+  { Icon: IconClipboard, title: 'Diagnostic Practice Test', desc: '25 MC + 1 written response across all 4 subareas. See exactly where you stand before you start studying.' },
+  { Icon: IconBook, title: 'Complete Study Guide', desc: 'All 4 subareas, all 11 objectives covered in depth. Written specifically for this exam.' },
+  { Icon: IconPencil, title: '2–4 Full-Length Practice Tests', desc: '100 MC per test, timed, scored on the real 100–300 NES scale. Results mirror your actual score report.' },
+  { Icon: IconSparkle, title: 'AI-Graded Written Responses', desc: 'Type your response. Get scored 0–2 with individualized feedback — same rubric as the real exam.' },
+  { Icon: IconCards, title: 'Flashcards + Vocab Matching', desc: '150+ terms across all objectives. Study with cards or the interactive matching game.' },
+  { Icon: IconChart, title: 'Real Exam Results Format', desc: 'Pass/Not Pass, scaled score, and subarea performance — identical to what you see on test day.' },
 ]
 
 export default function HomePage() {
@@ -83,26 +150,60 @@ export default function HomePage() {
         {/* Hero */}
         <section className="bg-[#7c1c2e] text-white">
           <div className="mx-auto max-w-5xl px-6 py-20 sm:py-28">
-            <p className="text-sm font-medium uppercase tracking-widest text-[#e8b4bc]" style={{ fontFamily: 'var(--font-sans)' }}>
-              NES Foundations of Reading 190 &amp; 890
-            </p>
-            <h1 className="mt-4 max-w-3xl text-4xl font-bold leading-tight sm:text-5xl" style={{ fontFamily: 'var(--font-serif)' }}>
-              Pass the Foundations of Reading Test.
-            </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-[#f0d0d5]" style={{ fontFamily: 'var(--font-sans)' }}>
-              Diagnostic test, complete study guide, timed practice tests, AI-graded written responses, flashcards, and real-exam results pages. Everything in one place. 30-day access.
-            </p>
-            <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-              <a href="#pricing" className="inline-flex items-center justify-center rounded bg-white px-8 py-4 text-sm font-semibold text-[#7c1c2e] hover:bg-[#f9f0f2]" style={{ fontFamily: 'var(--font-sans)' }}>
-                Get Instant Access
-              </a>
-              <a href="#what-you-get" className="inline-flex items-center justify-center rounded border border-white/30 px-8 py-4 text-sm font-semibold text-white hover:bg-white/10" style={{ fontFamily: 'var(--font-sans)' }}>
-                See What&apos;s Included
-              </a>
+            <div className="grid items-center gap-12 lg:grid-cols-2">
+              <div>
+                <p className="text-sm font-medium uppercase tracking-widest text-[#e8b4bc]" style={{ fontFamily: 'var(--font-sans)' }}>
+                  NES Foundations of Reading 190 &amp; 890
+                </p>
+                <h1 className="mt-4 text-4xl font-bold leading-tight sm:text-5xl" style={{ fontFamily: 'var(--font-serif)' }}>
+                  Pass the Foundations of Reading Test.
+                </h1>
+                <p className="mt-6 text-lg leading-relaxed text-[#f0d0d5]" style={{ fontFamily: 'var(--font-sans)' }}>
+                  Diagnostic test, full study guide, timed practice tests, AI-graded written responses, and flashcards. Everything in one place. 30-day access.
+                </p>
+                <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+                  <a href="#pricing" className="inline-flex items-center justify-center rounded bg-white px-8 py-4 text-sm font-semibold text-[#7c1c2e] transition-colors hover:bg-[#f9f0f2]" style={{ fontFamily: 'var(--font-sans)' }}>
+                    Get Instant Access
+                  </a>
+                  <a href="#what-you-get" className="inline-flex items-center justify-center rounded border border-white/40 px-8 py-4 text-sm font-semibold text-white transition-colors hover:bg-white/10" style={{ fontFamily: 'var(--font-sans)' }}>
+                    See What&apos;s Included
+                  </a>
+                </div>
+                <p className="mt-5 text-sm text-[#e8b4bc]" style={{ fontFamily: 'var(--font-sans)' }}>
+                  One-time payment. Instant access. No subscription.
+                </p>
+              </div>
+
+              {/* Score preview card */}
+              <div className="hidden lg:block">
+                <div className="rounded-xl bg-white/10 p-1 ring-1 ring-white/20 backdrop-blur-sm">
+                  <div className="rounded-lg bg-white p-6 text-[#1a1a1a]">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>Practice Test Results</p>
+                    <div className="mt-4 flex items-center justify-between border-b border-[#e8e0e2] pb-4">
+                      <div>
+                        <p className="text-3xl font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>247</p>
+                        <p className="text-xs text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>Scaled Score (100–300)</p>
+                      </div>
+                      <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-semibold text-green-700" style={{ fontFamily: 'var(--font-sans)' }}>Pass</span>
+                    </div>
+                    <div className="mt-4 space-y-2.5">
+                      {[
+                        { label: 'Foundations of Reading Development', level: 'Most' },
+                        { label: 'Development of Reading Comprehension', level: 'Many' },
+                        { label: 'Reading Assessment and Instruction', level: 'Most' },
+                        { label: 'Integration of Knowledge', level: 'Thorough' },
+                      ].map((row) => (
+                        <div key={row.label} className="flex items-center justify-between gap-3">
+                          <p className="text-xs text-[#6b6b6b] leading-tight" style={{ fontFamily: 'var(--font-sans)' }}>{row.label}</p>
+                          <span className="shrink-0 rounded bg-[#f3eef0] px-2 py-0.5 text-[10px] font-semibold text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>{row.level}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="mt-4 text-[10px] text-[#6b6b6b] text-center" style={{ fontFamily: 'var(--font-sans)' }}>Mirrors your actual NES score report</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <p className="mt-5 text-sm text-[#e8b4bc]" style={{ fontFamily: 'var(--font-sans)' }}>
-              One-time payment. Instant access. No subscription.
-            </p>
           </div>
         </section>
 
@@ -128,19 +229,16 @@ export default function HomePage() {
           <div className="mx-auto max-w-5xl px-6">
             <p className="text-xs font-semibold uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>What&apos;s Included</p>
             <h2 className="mt-3 text-3xl font-bold text-[#1a1a1a] sm:text-4xl" style={{ fontFamily: 'var(--font-serif)' }}>A complete study system — not just notes.</h2>
-            <div className="mt-12 grid gap-8 md:grid-cols-2">
-              {[
-                { icon: '📋', title: 'Diagnostic Practice Test', desc: '25 MC + 1 written response, distributed across all 4 subareas. See exactly where you stand before you start studying.' },
-                { icon: '📖', title: 'Complete Study Guide', desc: 'All 4 subareas, all 11 objectives covered in depth. Written specifically for this exam.' },
-                { icon: '📝', title: '2–4 Full-Length Practice Tests', desc: '100 MC per test, timed, scored on the real 100–300 NES scale. Results mirror your actual score report.' },
-                { icon: '✍️', title: 'AI-Graded Written Responses', desc: "Type your response. Get scored 0–2 with individualized feedback — same rubric as the real exam." },
-                { icon: '🃏', title: 'Flashcards + Vocab Matching', desc: '150+ terms across all objectives. Study with cards or the interactive matching game.' },
-                { icon: '📊', title: 'Real Exam Results Format', desc: 'Pass/Not Pass, scaled score, and subarea performance — identical to what you see on test day.' },
-              ].map((f) => (
-                <div key={f.title} className="rounded-lg border border-[#e8e0e2] bg-white p-7">
-                  <p className="text-2xl">{f.icon}</p>
-                  <h3 className="mt-4 text-lg font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>{f.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>{f.desc}</p>
+            <div className="mt-12 grid gap-6 md:grid-cols-2">
+              {FEATURES.map(({ Icon, title, desc }) => (
+                <div key={title} className="flex gap-5 rounded-lg border border-[#e8e0e2] bg-white p-6">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#f3eef0]">
+                    <Icon />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>{title}</h3>
+                    <p className="mt-1.5 text-sm leading-relaxed text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>{desc}</p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -155,7 +253,7 @@ export default function HomePage() {
             <div className="mt-10 grid gap-4 sm:grid-cols-2">
               {SUBAREAS.map((s) => (
                 <div key={s.roman} className="flex items-start gap-4 rounded-lg border border-[#e8e0e2] bg-white p-6">
-                  <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded text-sm font-bold text-white" style={{ backgroundColor: s.color, fontFamily: 'var(--font-sans)' }}>{s.roman}</span>
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-[#7c1c2e] text-sm font-bold text-white" style={{ fontFamily: 'var(--font-sans)' }}>{s.roman}</span>
                   <div>
                     <p className="font-semibold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>{s.name}</p>
                     <p className="mt-1 text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>{s.weight} &middot; {s.questions}</p>
@@ -166,7 +264,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Includes */}
+        {/* Includes comparison */}
         <section className="border-y border-[#e8e0e2] bg-[#faf8f5] py-16 sm:py-24">
           <div className="mx-auto max-w-5xl px-6">
             <div className="grid gap-12 md:grid-cols-2">
@@ -176,7 +274,7 @@ export default function HomePage() {
                 <ul className="mt-6 space-y-3">
                   {STARTER_INCLUDES.map((item) => (
                     <li key={item} className="flex items-start gap-3 text-sm text-[#1a1a1a]" style={{ fontFamily: 'var(--font-sans)' }}>
-                      <span className="mt-0.5 text-[#7c1c2e]">✓</span>{item}
+                      <span className="mt-0.5 shrink-0 font-bold text-[#7c1c2e]">✓</span>{item}
                     </li>
                   ))}
                 </ul>
@@ -187,13 +285,13 @@ export default function HomePage() {
                 <ul className="mt-6 space-y-3">
                   {BUNDLE_ADDS.map((item) => (
                     <li key={item} className="flex items-start gap-3 text-sm text-[#1a1a1a]" style={{ fontFamily: 'var(--font-sans)' }}>
-                      <span className="mt-0.5 text-[#7c1c2e]">+</span>{item}
+                      <span className="mt-0.5 shrink-0 font-bold text-[#7c1c2e]">+</span>{item}
                     </li>
                   ))}
                 </ul>
                 <div className="mt-8 rounded-lg border-2 border-[#7c1c2e] bg-white p-6">
                   <p className="text-sm font-semibold text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>Only $10 more.</p>
-                  <p className="mt-1 text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>2 more full tests + 4 more AI-graded writing prompts for $59 total. Most people who want to feel fully prepared choose the bundle.</p>
+                  <p className="mt-1 text-sm leading-relaxed text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>2 more full tests + 4 more AI-graded writing prompts for $59 total. Most people who want to feel fully prepared choose the bundle.</p>
                 </div>
               </div>
             </div>
@@ -225,10 +323,11 @@ export default function HomePage() {
         {/* FAQ */}
         <section className="py-16 sm:py-24">
           <div className="mx-auto max-w-3xl px-6">
-            <h2 className="text-3xl font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>Questions</h2>
-            <div className="mt-8 space-y-6">
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>FAQ</p>
+            <h2 className="mt-3 text-3xl font-bold text-[#1a1a1a] sm:text-4xl" style={{ fontFamily: 'var(--font-serif)' }}>Common questions.</h2>
+            <div className="mt-10 space-y-0 divide-y divide-[#e8e0e2] border-y border-[#e8e0e2]">
               {FAQS.map((faq) => (
-                <div key={faq.q} className="border-b border-[#e8e0e2] pb-6">
+                <div key={faq.q} className="py-6">
                   <p className="font-semibold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>{faq.q}</p>
                   <p className="mt-2 text-sm leading-relaxed text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>{faq.a}</p>
                 </div>
@@ -238,13 +337,18 @@ export default function HomePage() {
         </section>
 
         {/* Bottom CTA */}
-        <section className="bg-[#7c1c2e] py-16 sm:py-24">
+        <section className="bg-[#7c1c2e] py-20 sm:py-28">
           <div className="mx-auto max-w-3xl px-6 text-center">
             <h2 className="text-3xl font-bold text-white sm:text-4xl" style={{ fontFamily: 'var(--font-serif)' }}>Start preparing today.</h2>
-            <p className="mx-auto mt-4 max-w-xl text-[#f0d0d5]" style={{ fontFamily: 'var(--font-sans)' }}>30-day access. Everything included. One payment.</p>
-            <a href="#pricing" className="mt-8 inline-flex items-center justify-center rounded bg-white px-10 py-4 text-sm font-semibold text-[#7c1c2e] hover:bg-[#f9f0f2]" style={{ fontFamily: 'var(--font-sans)' }}>
+            <p className="mx-auto mt-4 max-w-md text-lg text-[#f0d0d5]" style={{ fontFamily: 'var(--font-sans)' }}>30-day access. Everything included. One payment.</p>
+            <a
+              href="#pricing"
+              className="mt-10 inline-flex items-center justify-center rounded bg-white px-10 py-4 text-sm font-semibold text-[#7c1c2e] transition-colors hover:bg-[#f9f0f2]"
+              style={{ fontFamily: 'var(--font-sans)' }}
+            >
               Get Instant Access
             </a>
+            <p className="mt-4 text-sm text-[#e8b4bc]" style={{ fontFamily: 'var(--font-sans)' }}>One-time payment · No subscription · Instant access</p>
           </div>
         </section>
       </main>
