@@ -44,8 +44,8 @@ const config: Config = {
         },
       },
       fontFamily: {
-        serif: ['var(--font-source-serif)', 'Georgia', 'Times New Roman', 'serif'],
-        sans: ['var(--font-source-sans)', 'system-ui', 'sans-serif'],
+        serif: ['var(--font-serif)', 'Georgia', 'Times New Roman', 'serif'],
+        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
       },
     },
   },

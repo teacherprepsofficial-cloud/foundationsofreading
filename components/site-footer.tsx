@@ -1,103 +1,69 @@
 import Link from 'next/link'
 
-const RESOURCES = [
-  { href: '/study-guide', label: 'Study Guide' },
-  { href: '/practice-test', label: 'Practice Test' },
-  { href: '/bundle', label: 'Prep Bundle' },
-]
-
-const EXAM_LINKS = [
-  { href: '/blog/foundations-of-reading-test-format', label: 'Test Format' },
-  { href: '/blog/foundations-of-reading-passing-score', label: 'Passing Scores' },
-  { href: '/blog/foundations-of-reading-registration', label: 'Registration' },
-]
-
-const SITE_LINKS = [
-  { href: '/blog', label: 'Blog' },
-  { href: '/about', label: 'About' },
-  { href: '/privacy', label: 'Privacy Policy' },
-  { href: '/terms', label: 'Terms of Use' },
-]
-
 export function SiteFooter() {
   return (
-    <footer className="border-t border-ivory-200 bg-gray-900">
-      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+    <footer className="border-t border-[#e8e0e2] bg-[#1a1a1a]">
+      <div className="mx-auto max-w-5xl px-6 py-12">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Brand */}
           <div>
-            <p className="font-serif text-lg font-bold text-white">
+            <p className="text-lg font-bold text-white" style={{ fontFamily: 'var(--font-serif)' }}>
               Foundations of Reading
             </p>
-            <p className="mt-1 text-xs uppercase tracking-wider text-gray-400">
+            <p className="mt-1 text-[10px] font-medium uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>
               Test Preparation
             </p>
-            <p className="mt-4 text-sm leading-relaxed text-gray-400">
-              Comprehensive study materials for the FORT 190/890 teacher certification exam.
+            <p className="mt-4 text-sm leading-relaxed text-[#9b9b9b]" style={{ fontFamily: 'var(--font-sans)' }}>
+              Complete online prep for the NES Foundations of Reading test (190 &amp; 890).
             </p>
           </div>
 
-          {/* Resources */}
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-              Resources
-            </p>
+          <div style={{ fontFamily: 'var(--font-sans)' }}>
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#6b6b6b]">Prep</p>
             <ul className="mt-4 space-y-2.5">
-              {RESOURCES.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-gray-300 transition-colors hover:text-white"
-                  >
-                    {link.label}
-                  </Link>
+              {[
+                { href: '#pricing', label: 'NES 190 Prep' },
+                { href: '#pricing', label: 'NES 890 Prep' },
+                { href: '/login', label: 'Log in' },
+              ].map((l) => (
+                <li key={l.label}>
+                  <a href={l.href} className="text-sm text-[#9b9b9b] hover:text-white">{l.label}</a>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Exam Info */}
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-              Exam Information
-            </p>
+          <div style={{ fontFamily: 'var(--font-sans)' }}>
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#6b6b6b]">Learn</p>
             <ul className="mt-4 space-y-2.5">
-              {EXAM_LINKS.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-gray-300 transition-colors hover:text-white"
-                  >
-                    {link.label}
-                  </Link>
+              {[
+                { href: '/blog', label: 'Blog' },
+                { href: '#what-you-get', label: 'What\'s Included' },
+              ].map((l) => (
+                <li key={l.label}>
+                  <a href={l.href} className="text-sm text-[#9b9b9b] hover:text-white">{l.label}</a>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Site */}
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-              Site
-            </p>
+          <div style={{ fontFamily: 'var(--font-sans)' }}>
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#6b6b6b]">Company</p>
             <ul className="mt-4 space-y-2.5">
-              {SITE_LINKS.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-gray-300 transition-colors hover:text-white"
-                  >
-                    {link.label}
-                  </Link>
+              {[
+                { href: '/privacy', label: 'Privacy Policy' },
+                { href: '/terms', label: 'Terms of Use' },
+              ].map((l) => (
+                <li key={l.label}>
+                  <Link href={l.href} className="text-sm text-[#9b9b9b] hover:text-white">{l.label}</Link>
                 </li>
               ))}
             </ul>
           </div>
         </div>
 
-        <div className="mt-10 border-t border-gray-800 pt-6">
-          <p className="text-center text-xs text-gray-500">
-            All rights reserved. Not affiliated with Pearson Education or any state licensing board.
+        <div className="mt-10 border-t border-[#2a2a2a] pt-6">
+          <p className="text-center text-xs text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>
+            © Foundations of Reading Test Prep. All rights reserved. Not affiliated with Pearson Education or any state licensing board.
           </p>
         </div>
       </div>

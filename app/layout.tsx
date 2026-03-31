@@ -1,28 +1,26 @@
 import type { Metadata } from 'next'
-import { Source_Serif_4, Source_Sans_3 } from 'next/font/google'
+import { Source_Serif_4, Inter } from 'next/font/google'
 import './globals.css'
-import { SiteHeader } from '@/components/site-header'
-import { SiteFooter } from '@/components/site-footer'
 
 const sourceSerif = Source_Serif_4({
   subsets: ['latin'],
-  variable: '--font-source-serif',
+  variable: '--font-serif',
   display: 'swap',
 })
 
-const sourceSans = Source_Sans_3({
+const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-source-sans',
+  variable: '--font-sans',
   display: 'swap',
 })
 
 export const metadata: Metadata = {
   title: {
-    default: 'Foundations of Reading Test Prep | Study Guide & Practice Test',
+    default: 'Foundations of Reading Test Prep | Pass the NES 190 & 890',
     template: '%s | Foundations of Reading Test Prep',
   },
   description:
-    'Pass the Foundations of Reading Test (FORT 190/890) with our comprehensive study guide and full-length practice test. Required in 13 states. 61.5% of test-takers fail — be prepared.',
+    'The most complete online prep for the NES Foundations of Reading test (190 & 890). Diagnostic test, study guide, practice tests, flashcards, and AI-graded constructed responses. 30-day access.',
   metadataBase: new URL('https://foundationsofreading.com'),
   openGraph: {
     type: 'website',
@@ -31,18 +29,10 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className={`${sourceSerif.variable} ${sourceSans.variable} font-sans antialiased`}>
-        <SiteHeader />
-        <main className="min-h-screen">{children}</main>
-        <SiteFooter />
-      </body>
+    <html lang="en" className={`${sourceSerif.variable} ${inter.variable}`}>
+      <body className="antialiased">{children}</body>
     </html>
   )
 }

@@ -1,62 +1,100 @@
-import type { Metadata } from 'next'
-import Link from 'next/link'
-import { CheckCircle2, Mail, BookOpen, ArrowRight } from 'lucide-react'
+'use client'
 
-export const metadata: Metadata = {
-  title: 'Thank You for Your Purchase',
-  description: 'Your purchase was successful. Check your email for your download link.',
+import { useEffect, useState, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
+
+function SuccessContent() {
+  const params = useSearchParams()
+  const examCode = params.get('exam') as '190' | '890'
+  const tier = params.get('tier')
+  const [checking, setChecking] = useState(true)
+  const [hasAccess, setHasAccess] = useState(false)
+
+  useEffect(() => {
+    let attempts = 0
+    const interval = setInterval(async () => {
+      attempts++
+      try {
+        const res = await fetch('/api/auth/me')
+        const data = await res.json()
+        const access = data.accesses?.find((a: { examCode: string }) => a.examCode === examCode)
+        if (access) {
+          setHasAccess(true)
+          setChecking(false)
+          clearInterval(interval)
+        } else if (attempts >= 10) {
+          setChecking(false)
+          clearInterval(interval)
+        }
+      } catch {
+        if (attempts >= 10) {
+          setChecking(false)
+          clearInterval(interval)
+        }
+      }
+    }, 1500)
+    return () => clearInterval(interval)
+  }, [examCode])
+
+  if (checking) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-[#faf8f5] px-4 text-center">
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#e8e0e2] border-t-[#7c1c2e]" />
+        <p className="mt-6 text-lg font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>
+          Activating your access...
+        </p>
+        <p className="mt-2 text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>
+          This takes just a moment.
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center bg-[#faf8f5] px-4">
+      <div className="w-full max-w-md rounded-lg border border-[#e8e0e2] bg-white p-10 text-center">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#f9f0f2]">
+          <span className="text-3xl text-[#7c1c2e]">✓</span>
+        </div>
+        <h1 className="mt-6 text-3xl font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>
+          You&apos;re in.
+        </h1>
+        <p className="mt-3 text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>
+          Your {tier === 'bundle' ? 'Complete Bundle' : 'Starter'} access for NES {examCode} is active.
+          Check your email for your login details.
+        </p>
+        <p className="mt-2 text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>
+          30 days of full access — starting now.
+        </p>
+        <div className="mt-8">
+          {hasAccess ? (
+            <Link
+              href={`/dashboard/${examCode}`}
+              className="block w-full rounded bg-[#7c1c2e] py-3.5 text-sm font-semibold text-white hover:bg-[#5a1220]"
+              style={{ fontFamily: 'var(--font-sans)' }}
+            >
+              Start Studying Now
+            </Link>
+          ) : (
+            <Link
+              href="/login"
+              className="block w-full rounded bg-[#7c1c2e] py-3.5 text-sm font-semibold text-white hover:bg-[#5a1220]"
+              style={{ fontFamily: 'var(--font-sans)' }}
+            >
+              Log in to Start
+            </Link>
+          )}
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default function CheckoutSuccessPage() {
   return (
-    <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24">
-      <div className="text-center">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-          <CheckCircle2 className="h-8 w-8 text-green-600" />
-        </div>
-        <h1 className="mt-6 font-serif text-3xl font-bold text-gray-900 sm:text-4xl">
-          Thank You for Your Purchase!
-        </h1>
-        <p className="mt-4 text-lg text-gray-600">
-          Your order has been confirmed and your materials are on the way.
-        </p>
-      </div>
-
-      <div className="mt-10 space-y-6">
-        <div className="flex items-start gap-4 rounded-xl border border-ivory-200 bg-white p-5">
-          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-ivory-100">
-            <Mail className="h-5 w-5 text-maroon-800" />
-          </div>
-          <div>
-            <h2 className="font-serif font-semibold text-gray-900">Check Your Email</h2>
-            <p className="mt-1 text-sm text-gray-600">
-              We have sent your download link to the email address you provided at checkout. The email may take a few minutes to arrive. Be sure to check your spam or promotions folder if you do not see it.
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-start gap-4 rounded-xl border border-ivory-200 bg-white p-5">
-          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-ivory-100">
-            <BookOpen className="h-5 w-5 text-maroon-800" />
-          </div>
-          <div>
-            <h2 className="font-serif font-semibold text-gray-900">Start Studying</h2>
-            <p className="mt-1 text-sm text-gray-600">
-              Once you download your materials, we recommend starting with Subarea I (Foundations of Reading Development), which accounts for 35% of the exam. Create a study schedule and aim for 45-60 minute focused sessions.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-10 text-center">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 rounded-lg bg-maroon-800 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-maroon-900"
-        >
-          Back to Homepage
-          <ArrowRight className="h-4 w-4" />
-        </Link>
-      </div>
-    </div>
+    <Suspense>
+      <SuccessContent />
+    </Suspense>
   )
 }

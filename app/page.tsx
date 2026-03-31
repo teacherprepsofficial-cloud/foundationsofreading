@@ -1,414 +1,254 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
-import Image from 'next/image'
-import { ArrowRight, BookOpen, FileText, Download, MapPin } from 'lucide-react'
-import { EXAM_INFO, SUBAREA_COLORS } from '@/data/exam'
-import { PRODUCTS, formatPrice } from '@/data/products'
-import { STATES } from '@/data/states'
-import { TOPICS } from '@/data/topics'
-import { FaqSection } from '@/components/faq-section'
+import { CountdownBanner } from '@/components/countdown-banner'
+import { PricingSection } from '@/components/pricing-section'
+import { SiteHeader } from '@/components/site-header'
+import { SiteFooter } from '@/components/site-footer'
 
 export const metadata: Metadata = {
-  title: 'Pass the Foundations of Reading Test | FORT 190/890 Study Guide & Practice Test',
+  title: 'Pass the NES Foundations of Reading Test | Interactive Online Prep',
   description:
-    'Comprehensive study guide and full-length practice test for the Foundations of Reading Test (FORT 190/890). Required in 13 states for teacher certification. 61.5% of test-takers fail — be prepared.',
-  openGraph: {
-    title: 'Pass the Foundations of Reading Test | FORT 190/890 Prep',
-    description:
-      'Study guide, practice test, and everything you need to pass the FORT. Required in 13 states. 61.5% fail rate — be prepared.',
-    url: 'https://foundationsofreading.com',
-  },
+    'The most complete prep for the NES Foundations of Reading (190 & 890). Diagnostic test, full study guide, 4 practice tests, AI-graded written responses, flashcards, and more. 30-day access.',
 }
 
-export default function HomePage() {
-  const bundle = PRODUCTS.bundle
+const SUBAREAS = [
+  { roman: 'I', name: 'Foundations of Reading Development', weight: '35%', questions: '35–37 questions', color: '#7c1c2e' },
+  { roman: 'II', name: 'Development of Reading Comprehension', weight: '27%', questions: '25–29 questions', color: '#9b2439' },
+  { roman: 'III', name: 'Reading Assessment and Instruction', weight: '21%', questions: '19–23 questions', color: '#b52b44' },
+  { roman: 'IV', name: 'Integration of Knowledge and Understanding', weight: '17%', questions: '2 written responses', color: '#c73350' },
+]
 
+const STARTER_INCLUDES = [
+  'Module 1: Complete test overview & what to expect on exam day',
+  'Diagnostic Practice Test (25 MC + 1 written response)',
+  'Full Study Guide — all 4 subareas, all 11 objectives',
+  '2 Full-Length Timed Practice Tests (100 MC each)',
+  'Scores on real NES 100–300 scale with Pass/Not Pass',
+  'Subarea performance breakdown — identical to your real score report',
+  '4 AI-Graded Written Response prompts with rubric feedback',
+  'Flashcard deck (150+ terms)',
+  'Interactive Vocabulary Matching activity',
+  '30-day full access',
+]
+
+const BUNDLE_ADDS = [
+  '2 additional full-length Practice Tests (Tests 3 & 4)',
+  '4 additional AI-Graded Written Response prompts',
+]
+
+const STATES = [
+  { code: 'AZ', state: 'Arizona', exam: '890' },
+  { code: 'ID', state: 'Idaho', exam: '190' },
+  { code: 'IN', state: 'Indiana', exam: '190' },
+  { code: 'KY', state: 'Kentucky', exam: '190' },
+  { code: 'MA', state: 'Massachusetts', exam: '190' },
+  { code: 'NM', state: 'New Mexico', exam: '190' },
+  { code: 'OH', state: 'Ohio', exam: '190' },
+  { code: 'OK', state: 'Oklahoma', exam: '190' },
+  { code: 'OR', state: 'Oregon', exam: '190' },
+  { code: 'UT', state: 'Utah', exam: '190' },
+  { code: 'VA', state: 'Virginia', exam: '190' },
+  { code: 'WA', state: 'Washington', exam: '190' },
+  { code: 'WI', state: 'Wisconsin', exam: '190' },
+]
+
+const FAQS = [
+  {
+    q: "What's the difference between the 190 and the 890?",
+    a: "Different test editions used in different states. The content and format are essentially the same — both assess knowledge of evidence-based reading instruction. Your state determines which number you take.",
+  },
+  {
+    q: 'How long does my access last?',
+    a: '30 days from the date of purchase. That gives you plenty of time to complete the diagnostic, work through the study guide, and take all your practice tests.',
+  },
+  {
+    q: "What's the AI-graded written response?",
+    a: 'The real exam has 2 open-ended written assignments. You type your response, and our system scores it 0–2 using the same rubric framework as the NES — with specific feedback on what to improve.',
+  },
+  {
+    q: 'How are practice test scores reported?',
+    a: 'On the 100–300 NES scaled score. Passing is 220 in most states. Your results page shows your score, pass/not pass status, and performance in each subarea — exactly like the real score report.',
+  },
+  {
+    q: 'Is this a subscription?',
+    a: 'No. One payment, 30-day access. No recurring charges ever.',
+  },
+]
+
+export default function HomePage() {
   return (
     <>
-      {/* ─── Hero — Full-bleed photo with overlay ─── */}
-      <section className="relative min-h-[520px] bg-gray-900">
-        <Image
-          src="/images/hero.jpg"
-          alt="Students in a classroom"
-          fill
-          className="object-cover opacity-40"
-          priority
-        />
-        <div className="relative mx-auto flex max-w-6xl flex-col items-start justify-center px-6 py-20 sm:py-28">
-          <p className="text-sm font-semibold uppercase tracking-widest text-gold-400">
-            FORT 190/890 Exam Preparation
-          </p>
-          <h1 className="mt-4 max-w-2xl font-serif text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
-            Foundations of Reading Test Prep
-          </h1>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-gray-300">
-            Comprehensive study guide and full-length practice test covering all 4
-            subareas and 11 objectives. Required for teacher certification in 13 states.
-          </p>
-          <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-            <Link
-              href="/bundle"
-              className="inline-flex items-center gap-2 rounded bg-gold-500 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-gold-600"
-            >
-              <Download className="h-4 w-4" />
-              Download Prep Bundle — {formatPrice(bundle.price)}
-            </Link>
-            <Link
-              href="/study-guide"
-              className="inline-flex items-center gap-2 rounded border border-white/30 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
-            >
-              View Study Guide
-            </Link>
-          </div>
-          <p className="mt-4 text-xs text-gray-400">
-            Instant PDF download. One-time purchase. No subscription.
-          </p>
-        </div>
-      </section>
-
-      {/* ─── Key Stats Bar ─── */}
-      <section className="border-b border-ivory-200 bg-white">
-        <div className="mx-auto grid max-w-6xl grid-cols-2 divide-x divide-ivory-200 sm:grid-cols-4">
-          {[
-            { value: '100+2', label: 'MCQ + CR Questions' },
-            { value: '4 hrs', label: 'Testing Time' },
-            { value: '13', label: 'States Require It' },
-            { value: '61.5%', label: 'Fail Rate' },
-          ].map((stat) => (
-            <div key={stat.label} className="px-6 py-6 text-center">
-              <p className="font-serif text-2xl font-bold text-maroon-800">{stat.value}</p>
-              <p className="mt-1 text-xs text-gray-500">{stat.label}</p>
+      <CountdownBanner />
+      <SiteHeader />
+      <main>
+        {/* Hero */}
+        <section className="bg-[#7c1c2e] text-white">
+          <div className="mx-auto max-w-5xl px-6 py-20 sm:py-28">
+            <p className="text-sm font-medium uppercase tracking-widest text-[#e8b4bc]" style={{ fontFamily: 'var(--font-sans)' }}>
+              NES Foundations of Reading 190 &amp; 890
+            </p>
+            <h1 className="mt-4 max-w-3xl text-4xl font-bold leading-tight sm:text-5xl" style={{ fontFamily: 'var(--font-serif)' }}>
+              Pass the Foundations of Reading Test.
+            </h1>
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-[#f0d0d5]" style={{ fontFamily: 'var(--font-sans)' }}>
+              Diagnostic test, complete study guide, timed practice tests, AI-graded written responses, flashcards, and real-exam results pages. Everything in one place. 30-day access.
+            </p>
+            <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+              <a href="#pricing" className="inline-flex items-center justify-center rounded bg-white px-8 py-4 text-sm font-semibold text-[#7c1c2e] hover:bg-[#f9f0f2]" style={{ fontFamily: 'var(--font-sans)' }}>
+                Get Instant Access
+              </a>
+              <a href="#what-you-get" className="inline-flex items-center justify-center rounded border border-white/30 px-8 py-4 text-sm font-semibold text-white hover:bg-white/10" style={{ fontFamily: 'var(--font-sans)' }}>
+                See What&apos;s Included
+              </a>
             </div>
-          ))}
-        </div>
-      </section>
+            <p className="mt-5 text-sm text-[#e8b4bc]" style={{ fontFamily: 'var(--font-sans)' }}>
+              One-time payment. Instant access. No subscription.
+            </p>
+          </div>
+        </section>
 
-      {/* ─── About the Exam — Two-column with image ─── */}
-      <section className="py-16 sm:py-20">
-        <div className="mx-auto grid max-w-6xl gap-12 px-6 lg:grid-cols-2 lg:items-center">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-gold-600">
-              About the Exam
-            </p>
-            <h2 className="mt-3 font-serif text-3xl font-bold text-gray-900 sm:text-4xl">
-              What is the Foundations of Reading Test?
-            </h2>
-            <p className="mt-4 leading-relaxed text-gray-600">
-              The Foundations of Reading Test (FORT), administered by Pearson as test
-              code {EXAM_INFO.codes.join('/')}, assesses your knowledge of evidence-based
-              reading instruction. It is required for teacher licensure in 13 states,
-              primarily for elementary education and special education endorsements.
-            </p>
-            <p className="mt-4 leading-relaxed text-gray-600">
-              The exam consists of {EXAM_INFO.totalQuestions} multiple-choice questions
-              and {EXAM_INFO.constructedResponses} constructed response assignments.
-              With a fail rate of {EXAM_INFO.passRate}%, thorough preparation is essential.
-            </p>
-            <hr className="my-6 border-ivory-200" />
-            <div className="grid grid-cols-2 gap-6">
-              {EXAM_INFO.subareas.map((sub) => (
-                <div key={sub.number}>
-                  <p className="font-serif text-lg font-bold text-gray-900">{sub.weight}%</p>
-                  <p className="text-sm text-gray-600">{sub.name}</p>
+        {/* Stats */}
+        <section className="border-b border-[#e8e0e2] bg-white">
+          <div className="mx-auto grid max-w-5xl grid-cols-2 divide-x divide-[#e8e0e2] sm:grid-cols-4">
+            {[
+              { value: '100 MC', label: 'Multiple-Choice Questions' },
+              { value: '2', label: 'Written Response Items' },
+              { value: '4 hrs', label: 'Time Limit' },
+              { value: '61.5%', label: 'Fail Rate' },
+            ].map((s) => (
+              <div key={s.label} className="px-6 py-7 text-center">
+                <p className="text-2xl font-bold text-[#7c1c2e]" style={{ fontFamily: 'var(--font-serif)' }}>{s.value}</p>
+                <p className="mt-1 text-xs text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>{s.label}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Features */}
+        <section id="what-you-get" className="bg-[#faf8f5] py-16 sm:py-24">
+          <div className="mx-auto max-w-5xl px-6">
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>What&apos;s Included</p>
+            <h2 className="mt-3 text-3xl font-bold text-[#1a1a1a] sm:text-4xl" style={{ fontFamily: 'var(--font-serif)' }}>A complete study system — not just notes.</h2>
+            <div className="mt-12 grid gap-8 md:grid-cols-2">
+              {[
+                { icon: '📋', title: 'Diagnostic Practice Test', desc: '25 MC + 1 written response, distributed across all 4 subareas. See exactly where you stand before you start studying.' },
+                { icon: '📖', title: 'Complete Study Guide', desc: 'All 4 subareas, all 11 objectives covered in depth. Written specifically for this exam.' },
+                { icon: '📝', title: '2–4 Full-Length Practice Tests', desc: '100 MC per test, timed, scored on the real 100–300 NES scale. Results mirror your actual score report.' },
+                { icon: '✍️', title: 'AI-Graded Written Responses', desc: "Type your response. Get scored 0–2 with individualized feedback — same rubric as the real exam." },
+                { icon: '🃏', title: 'Flashcards + Vocab Matching', desc: '150+ terms across all objectives. Study with cards or the interactive matching game.' },
+                { icon: '📊', title: 'Real Exam Results Format', desc: 'Pass/Not Pass, scaled score, and subarea performance — identical to what you see on test day.' },
+              ].map((f) => (
+                <div key={f.title} className="rounded-lg border border-[#e8e0e2] bg-white p-7">
+                  <p className="text-2xl">{f.icon}</p>
+                  <h3 className="mt-4 text-lg font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>{f.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>{f.desc}</p>
                 </div>
               ))}
             </div>
           </div>
-          <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
-            <Image
-              src="/images/classroom.jpg"
-              alt="Elementary classroom"
-              fill
-              className="object-cover"
-            />
-          </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ─── Study Materials — resource cards, not SaaS pricing ─── */}
-      <section className="border-y border-ivory-200 bg-ivory-100 py-16 sm:py-20">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="text-center">
-            <p className="text-xs font-semibold uppercase tracking-widest text-gold-600">
-              Preparation Materials
-            </p>
-            <h2 className="mt-3 font-serif text-3xl font-bold text-gray-900 sm:text-4xl">
-              Study Resources
-            </h2>
-            <p className="mx-auto mt-3 max-w-2xl text-gray-600">
-              Digital downloads delivered instantly to your inbox. Study at your own pace.
-            </p>
-          </div>
-
-          <div className="mt-12 grid gap-8 lg:grid-cols-3">
-            {/* Study Guide */}
-            <div className="flex flex-col rounded-lg border border-ivory-200 bg-white p-8">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-ivory-100">
-                <BookOpen className="h-6 w-6 text-maroon-800" />
-              </div>
-              <h3 className="mt-5 font-serif text-xl font-bold text-gray-900">
-                {PRODUCTS.studyGuide.name}
-              </h3>
-              <p className="mt-2 flex-1 text-sm leading-relaxed text-gray-600">
-                {PRODUCTS.studyGuide.description}
-              </p>
-              <div className="mt-6 flex items-baseline justify-between border-t border-ivory-200 pt-6">
-                <span className="font-serif text-2xl font-bold text-gray-900">
-                  {formatPrice(PRODUCTS.studyGuide.price)}
-                </span>
-                <Link
-                  href="/study-guide"
-                  className="text-sm font-semibold text-maroon-800 hover:text-maroon-900"
-                >
-                  Learn more &rarr;
-                </Link>
-              </div>
-            </div>
-
-            {/* Practice Test */}
-            <div className="flex flex-col rounded-lg border border-ivory-200 bg-white p-8">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-ivory-100">
-                <FileText className="h-6 w-6 text-maroon-800" />
-              </div>
-              <h3 className="mt-5 font-serif text-xl font-bold text-gray-900">
-                {PRODUCTS.practiceTest.name}
-              </h3>
-              <p className="mt-2 flex-1 text-sm leading-relaxed text-gray-600">
-                {PRODUCTS.practiceTest.description}
-              </p>
-              <div className="mt-6 flex items-baseline justify-between border-t border-ivory-200 pt-6">
-                <span className="font-serif text-2xl font-bold text-gray-900">
-                  {formatPrice(PRODUCTS.practiceTest.price)}
-                </span>
-                <Link
-                  href="/practice-test"
-                  className="text-sm font-semibold text-maroon-800 hover:text-maroon-900"
-                >
-                  Learn more &rarr;
-                </Link>
-              </div>
-            </div>
-
-            {/* Bundle */}
-            <div className="relative flex flex-col rounded-lg border-2 border-gold-500 bg-white p-8">
-              <span className="absolute -top-3 right-6 rounded bg-gold-500 px-3 py-1 text-xs font-bold text-white">
-                SAVE $10
-              </span>
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gold-50">
-                <Download className="h-6 w-6 text-gold-700" />
-              </div>
-              <h3 className="mt-5 font-serif text-xl font-bold text-gray-900">
-                {PRODUCTS.bundle.name}
-              </h3>
-              <p className="mt-2 flex-1 text-sm leading-relaxed text-gray-600">
-                {PRODUCTS.bundle.description}
-              </p>
-              <div className="mt-6 flex items-baseline justify-between border-t border-ivory-200 pt-6">
-                <div className="flex items-baseline gap-2">
-                  <span className="font-serif text-2xl font-bold text-gray-900">
-                    {formatPrice(PRODUCTS.bundle.price)}
-                  </span>
-                  {PRODUCTS.bundle.comparePrice && (
-                    <span className="text-sm text-gray-400 line-through">
-                      {formatPrice(PRODUCTS.bundle.comparePrice)}
-                    </span>
-                  )}
+        {/* Subareas */}
+        <section className="py-16 sm:py-24">
+          <div className="mx-auto max-w-5xl px-6">
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>Exam Structure</p>
+            <h2 className="mt-3 text-3xl font-bold text-[#1a1a1a] sm:text-4xl" style={{ fontFamily: 'var(--font-serif)' }}>4 Subareas. 11 Objectives.</h2>
+            <div className="mt-10 grid gap-4 sm:grid-cols-2">
+              {SUBAREAS.map((s) => (
+                <div key={s.roman} className="flex items-start gap-4 rounded-lg border border-[#e8e0e2] bg-white p-6">
+                  <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded text-sm font-bold text-white" style={{ backgroundColor: s.color, fontFamily: 'var(--font-sans)' }}>{s.roman}</span>
+                  <div>
+                    <p className="font-semibold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>{s.name}</p>
+                    <p className="mt-1 text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>{s.weight} &middot; {s.questions}</p>
+                  </div>
                 </div>
-                <Link
-                  href="/bundle"
-                  className="text-sm font-semibold text-gold-700 hover:text-gold-800"
-                >
-                  Get bundle &rarr;
-                </Link>
-              </div>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ─── Exam Content Breakdown ─── */}
-      <section className="py-16 sm:py-20">
-        <div className="mx-auto max-w-6xl px-6">
-          <p className="text-xs font-semibold uppercase tracking-widest text-gold-600">
-            Exam Content
-          </p>
-          <h2 className="mt-3 font-serif text-3xl font-bold text-gray-900 sm:text-4xl">
-            What&rsquo;s on the Test
-          </h2>
-          <p className="mt-3 max-w-2xl text-gray-600">
-            The FORT covers 4 subareas with 11 objectives.
-          </p>
-
-          <div className="mt-10 grid gap-6 sm:grid-cols-2">
-            {EXAM_INFO.subareas.map((subarea) => (
-              <div
-                key={subarea.number}
-                className="rounded-lg border border-ivory-200 bg-white p-6"
-              >
-                <div className="flex items-center gap-3">
-                  <span
-                    className="flex h-9 w-9 items-center justify-center rounded text-sm font-bold text-white"
-                    style={{ backgroundColor: SUBAREA_COLORS[subarea.number] }}
-                  >
-                    {subarea.number}
-                  </span>
-                  <h3 className="font-serif text-lg font-semibold text-gray-900">
-                    {subarea.name}
-                  </h3>
-                </div>
-                <div className="mt-4 flex items-center gap-6 text-sm">
-                  <span className="font-serif text-xl font-bold text-gray-900">{subarea.weight}%</span>
-                  <span className="text-gray-500">{subarea.objectives.length} objectives</span>
-                  <span className="text-gray-500">{subarea.questionRange} questions</span>
-                </div>
-                <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-ivory-100">
-                  <div
-                    className="h-full rounded-full"
-                    style={{
-                      width: `${subarea.weight}%`,
-                      backgroundColor: SUBAREA_COLORS[subarea.number],
-                    }}
-                  />
-                </div>
-                <ul className="mt-4 space-y-1.5">
-                  {subarea.objectives.map((obj) => (
-                    <li key={obj.number} className="flex items-start gap-2 text-sm text-gray-600">
-                      <span className="mt-1 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-gray-400" />
-                      {obj.title}
+        {/* Includes */}
+        <section className="border-y border-[#e8e0e2] bg-[#faf8f5] py-16 sm:py-24">
+          <div className="mx-auto max-w-5xl px-6">
+            <div className="grid gap-12 md:grid-cols-2">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>Starter — $49</p>
+                <h3 className="mt-3 text-2xl font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>Everything you need to pass.</h3>
+                <ul className="mt-6 space-y-3">
+                  {STARTER_INCLUDES.map((item) => (
+                    <li key={item} className="flex items-start gap-3 text-sm text-[#1a1a1a]" style={{ fontFamily: 'var(--font-sans)' }}>
+                      <span className="mt-0.5 text-[#7c1c2e]">✓</span>{item}
                     </li>
                   ))}
                 </ul>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── State Requirements ─── */}
-      <section className="border-y border-ivory-200 bg-ivory-100 py-16 sm:py-20">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="flex items-start gap-3">
-            <MapPin className="mt-1 h-5 w-5 flex-shrink-0 text-maroon-800" />
-            <div>
-              <h2 className="font-serif text-3xl font-bold text-gray-900 sm:text-4xl">
-                Required in 13 States
-              </h2>
-              <p className="mt-2 text-gray-600">
-                Select your state for specific requirements and passing score.
-              </p>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>Bundle adds</p>
+                <h3 className="mt-3 text-2xl font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>More practice. More confidence.</h3>
+                <ul className="mt-6 space-y-3">
+                  {BUNDLE_ADDS.map((item) => (
+                    <li key={item} className="flex items-start gap-3 text-sm text-[#1a1a1a]" style={{ fontFamily: 'var(--font-sans)' }}>
+                      <span className="mt-0.5 text-[#7c1c2e]">+</span>{item}
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-8 rounded-lg border-2 border-[#7c1c2e] bg-white p-6">
+                  <p className="text-sm font-semibold text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>Only $10 more.</p>
+                  <p className="mt-1 text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>2 more full tests + 4 more AI-graded writing prompts for $59 total. Most people who want to feel fully prepared choose the bundle.</p>
+                </div>
+              </div>
             </div>
           </div>
+        </section>
 
-          <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {STATES.map((state) => (
-              <Link
-                key={state.slug}
-                href={`/states/${state.slug}`}
-                className="group flex items-center justify-between rounded border border-ivory-200 bg-white px-5 py-3.5 transition-all hover:border-maroon-300 hover:shadow-sm"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="font-serif text-sm font-bold text-maroon-800">
-                    {state.abbreviation}
-                  </span>
-                  <span className="text-sm text-gray-700">{state.name}</span>
+        {/* States */}
+        <section className="py-16 sm:py-24">
+          <div className="mx-auto max-w-5xl px-6">
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>Who Needs This</p>
+            <h2 className="mt-3 text-3xl font-bold text-[#1a1a1a] sm:text-4xl" style={{ fontFamily: 'var(--font-serif)' }}>Required in 13+ states.</h2>
+            <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+              {STATES.map((s) => (
+                <div key={s.code} className="flex items-center justify-between rounded border border-[#e8e0e2] bg-white px-4 py-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-bold text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>{s.code}</span>
+                    <span className="text-sm text-[#1a1a1a]" style={{ fontFamily: 'var(--font-sans)' }}>{s.state}</span>
+                  </div>
+                  <span className="text-xs text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>{s.exam}</span>
                 </div>
-                <span className="rounded bg-ivory-100 px-2 py-0.5 text-xs font-semibold text-gray-600">
-                  {state.passingScore}/300
-                </span>
-              </Link>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ─── Study Topics ─── */}
-      <section className="py-16 sm:py-20">
-        <div className="mx-auto max-w-6xl px-6">
-          <p className="text-xs font-semibold uppercase tracking-widest text-gold-600">
-            Study Topics
-          </p>
-          <h2 className="mt-3 font-serif text-3xl font-bold text-gray-900 sm:text-4xl">
-            What You&rsquo;ll Learn
-          </h2>
+        {/* Pricing */}
+        <PricingSection />
 
-          <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {TOPICS.filter((t) => t.objectiveNumber > 0).map((topic) => (
-              <Link
-                key={topic.slug}
-                href={`/topics/${topic.slug}`}
-                className="group flex items-start gap-3 rounded border border-ivory-200 bg-white p-5 transition-all hover:border-maroon-300 hover:shadow-sm"
-              >
-                <span
-                  className="mt-0.5 block h-2.5 w-2.5 flex-shrink-0 rounded-full"
-                  style={{
-                    backgroundColor: SUBAREA_COLORS[topic.subareaNumber] || '#6b1e1e',
-                  }}
-                />
-                <div>
-                  <p className="font-semibold text-gray-900 group-hover:text-maroon-800">
-                    {topic.title}
-                  </p>
-                  <p className="mt-1 text-xs text-gray-500">
-                    Subarea {topic.subareaNumber} &middot; {topic.subareaName}
-                  </p>
+        {/* FAQ */}
+        <section className="py-16 sm:py-24">
+          <div className="mx-auto max-w-3xl px-6">
+            <h2 className="text-3xl font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>Questions</h2>
+            <div className="mt-8 space-y-6">
+              {FAQS.map((faq) => (
+                <div key={faq.q} className="border-b border-[#e8e0e2] pb-6">
+                  <p className="font-semibold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>{faq.q}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>{faq.a}</p>
                 </div>
-              </Link>
-            ))}
-            <Link
-              href="/topics/study-tips"
-              className="group flex items-start gap-3 rounded border border-ivory-200 bg-white p-5 transition-all hover:border-maroon-300 hover:shadow-sm"
-            >
-              <BookOpen className="mt-0.5 h-4 w-4 flex-shrink-0 text-gray-500" />
-              <div>
-                <p className="font-semibold text-gray-900 group-hover:text-maroon-800">
-                  How to Study for the FORT
-                </p>
-                <p className="mt-1 text-xs text-gray-500">
-                  Study strategies and exam day tips
-                </p>
-              </div>
-            </Link>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ─── FAQ ─── */}
-      <FaqSection />
-
-      {/* ─── Bottom CTA — photo background ─── */}
-      <section className="relative bg-gray-900 py-16 sm:py-20">
-        <Image
-          src="/images/studying.jpg"
-          alt="Person studying"
-          fill
-          className="object-cover opacity-20"
-        />
-        <div className="relative mx-auto max-w-3xl px-6 text-center">
-          <h2 className="font-serif text-3xl font-bold text-white sm:text-4xl">
-            Start Preparing Today
-          </h2>
-          <p className="mx-auto mt-4 max-w-xl text-gray-300">
-            Get the study guide and practice test together and save. Everything
-            you need to pass the Foundations of Reading Test.
-          </p>
-          <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <Link
-              href="/bundle"
-              className="inline-flex items-center gap-2 rounded bg-gold-500 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-gold-600"
-            >
-              <Download className="h-4 w-4" />
-              Download Prep Bundle
-            </Link>
-            <Link
-              href="/study-guide"
-              className="inline-flex items-center gap-2 rounded border border-white/30 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
-            >
-              View Study Guide
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+        {/* Bottom CTA */}
+        <section className="bg-[#7c1c2e] py-16 sm:py-24">
+          <div className="mx-auto max-w-3xl px-6 text-center">
+            <h2 className="text-3xl font-bold text-white sm:text-4xl" style={{ fontFamily: 'var(--font-serif)' }}>Start preparing today.</h2>
+            <p className="mx-auto mt-4 max-w-xl text-[#f0d0d5]" style={{ fontFamily: 'var(--font-sans)' }}>30-day access. Everything included. One payment.</p>
+            <a href="#pricing" className="mt-8 inline-flex items-center justify-center rounded bg-white px-10 py-4 text-sm font-semibold text-[#7c1c2e] hover:bg-[#f9f0f2]" style={{ fontFamily: 'var(--font-sans)' }}>
+              Get Instant Access
+            </a>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
+      <SiteFooter />
     </>
   )
 }
