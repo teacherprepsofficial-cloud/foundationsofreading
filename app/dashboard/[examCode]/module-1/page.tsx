@@ -31,16 +31,16 @@ Score Reporting: Approximately 5 weeks after testing`,
     title: 'The 4 Subareas',
     content: `Your score is broken down into 4 subareas:
 
-SUBAREA I — Foundations of Reading Development (35% / 35–37 questions)
+SUBAREA I — Foundations of Reading Development (35% / 43–45 questions)
 Covers phonological awareness, phonemic awareness, phonics, word recognition, word analysis skills, and reading fluency. This is the largest section.
 
-SUBAREA II — Development of Reading Comprehension (27% / 25–29 questions)
+SUBAREA II — Development of Reading Comprehension (27% / 33–35 questions)
 Covers vocabulary development, academic language, background knowledge, comprehension of literary texts, comprehension of informational texts, and reading engagement.
 
-SUBAREA III — Reading Assessment and Instruction (21% / 19–23 questions)
+SUBAREA III — Reading Assessment and Instruction (18% / 21–23 questions)
 Covers formal and informal assessment, data-based instruction, intervention strategies, and supporting diverse learners.
 
-SUBAREA IV — Integration of Knowledge and Understanding (17% / 2 written responses)
+SUBAREA IV — Integration of Knowledge and Understanding (20% / 2 written responses)
 This is the open-response section. You will respond in writing to two prompts — one focused on Foundational Reading Skills and one on Reading Comprehension. Responses are scored 0–2 based on a rubric.`,
   },
   {
@@ -52,8 +52,8 @@ This is the open-response section. You will respond in writing to two prompts �
 • Your actual score is NOT reported if you pass — only "Met the Requirement" appears on your official score report for passing candidates
 
 Score Breakdown:
-• Multiple-choice questions are worth 83% of your total score
-• Open-response items are worth 17% of your total score
+• Multiple-choice questions are worth 80% of your total score
+• Open-response items are worth 20% of your total score
 
 Subarea Performance Report:
 You receive a diagnostic breakdown showing your performance in each subarea:
@@ -75,7 +75,7 @@ The most common reasons candidates fail:
 
 How to pass:
 1. Work through the entire study guide, not just the areas you feel confident about
-2. Practice the constructed-response writing multiple times — it accounts for 17% of your score
+2. Practice the constructed-response writing multiple times — it accounts for 20% of your score
 3. Take all practice tests under timed conditions
 4. Pay special attention to Subarea I (Foundations of Reading Development) — it's 35% of the exam`,
   },
@@ -99,7 +99,7 @@ Submit written responses to practice prompts. Get scored 0–2 with specific fee
 Step 5 — Flashcards & Vocabulary
 Reinforce key terms and concepts. The vocab matching activity is a great way to self-test quickly.
 
-You have 30 days of access. Most candidates who work through all the material spend 2–4 weeks preparing. Start your diagnostic now.`,
+You have full access to all prep materials. Work through each step at your own pace and return as many times as you need. Begin with your diagnostic when you're ready.`,
   },
 ]
 

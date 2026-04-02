@@ -14,6 +14,7 @@ interface Question {
   options: Option[]
   subarea: string
   subareaName: string
+  stimulus?: string
 }
 
 interface TestData {
@@ -336,6 +337,13 @@ export default function PracticeTestPage() {
 
         {/* Question card */}
         <div className="rounded-lg border border-[#e8e0e2] bg-white p-6 shadow-sm">
+          {currentQuestion.stimulus && (
+            <div
+              className="mb-5 rounded border border-[#c8c0c4] bg-[#fdfcfb] p-4 text-sm text-[#1a1a1a]"
+              style={{ fontFamily: 'var(--font-sans)' }}
+              dangerouslySetInnerHTML={{ __html: currentQuestion.stimulus }}
+            />
+          )}
           <p
             className="text-base leading-relaxed text-[#1a1a1a]"
             style={{ fontFamily: 'var(--font-sans)', fontSize: '15px' }}

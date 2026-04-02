@@ -183,7 +183,7 @@ export default async function ExamDashboardPage({
               }`}
             >
               {mod.completed && (
-                <div className="absolute right-4 top-4 flex h-6 w-6 items-center justify-center rounded-full bg-[#7c1c2e]">
+                <div className="absolute right-4 top-4 flex h-6 w-6 items-center justify-center rounded-full bg-green-500">
                   <span className="text-xs text-white">✓</span>
                 </div>
               )}

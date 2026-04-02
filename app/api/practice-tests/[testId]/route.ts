@@ -47,7 +47,7 @@ export async function GET(
     // Fetch questions (shuffle on new attempt, preserve order on resume)
     const questions = await Question.find({
       _id: { $in: test.questionIds },
-    }).select('questionText options subarea subareaName objectiveNumber difficulty')
+    }).select('questionText options subarea subareaName objectiveNumber difficulty stimulus')
 
     if (inProgress) {
       return NextResponse.json({

@@ -22,7 +22,7 @@ const SUBAREAS: Subarea[] = [
     roman: 'I',
     name: 'Foundations of Reading Development',
     weight: '35%',
-    questions: '35–37 MC questions',
+    questions: '43–45 MC questions',
     color: '#7c1c2e',
     objectives: [
       {
@@ -51,7 +51,7 @@ const SUBAREAS: Subarea[] = [
     roman: 'II',
     name: 'Development of Reading Comprehension',
     weight: '27%',
-    questions: '25–29 MC questions',
+    questions: '33–35 MC questions',
     color: '#7c1c2e',
     objectives: [
       {
@@ -74,8 +74,8 @@ const SUBAREAS: Subarea[] = [
   {
     roman: 'III',
     name: 'Reading Assessment and Instruction',
-    weight: '21%',
-    questions: '19–23 MC questions',
+    weight: '18%',
+    questions: '21–23 MC questions',
     color: '#7c1c2e',
     objectives: [
       {
@@ -93,7 +93,7 @@ const SUBAREAS: Subarea[] = [
   {
     roman: 'IV',
     name: 'Integration of Knowledge and Understanding',
-    weight: '17%',
+    weight: '20%',
     questions: '2 written responses',
     color: '#7c1c2e',
     objectives: [

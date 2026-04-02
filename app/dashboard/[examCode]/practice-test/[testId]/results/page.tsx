@@ -55,9 +55,9 @@ interface Results {
 }
 
 const SUBAREA_RANGES: Record<string, string> = {
-  I: '35–37',
-  II: '25–29',
-  III: '19–23',
+  I: '43–45',
+  II: '33–35',
+  III: '21–23',
 }
 
 const PERFORMANCE_LABELS: Record<string, string> = {

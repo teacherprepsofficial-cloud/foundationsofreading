@@ -10,6 +10,7 @@ interface Question {
   options: { label: string; text: string }[]
   subarea: string
   subareaName: string
+  stimulus?: string
 }
 
 export default function DiagnosticPage() {
@@ -95,7 +96,13 @@ export default function DiagnosticPage() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
 
-      localStorage.setItem('for_test_results', JSON.stringify(data))
+      localStorage.setItem('for_test_results', JSON.stringify({
+        ...data.results,
+        questionsWithAnswers: data.questionsWithAnswers,
+        responses: data.responses,
+        testName: 'Diagnostic Practice Test',
+        submittedAt: new Date().toISOString(),
+      }))
       router.push(`/dashboard/${examCode}/practice-test/${testId}/results?attemptId=${attemptId}&diagnostic=true`)
     } catch {
       setError('Failed to submit. Please try again.')
@@ -215,6 +222,13 @@ export default function DiagnosticPage() {
             <p className="text-xs font-semibold uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>
               Subarea {q.subarea} — {q.subareaName}
             </p>
+            {q.stimulus && (
+              <div
+                className="mb-4 rounded border border-[#c8c0c4] bg-[#fdfcfb] p-4 text-sm text-[#1a1a1a]"
+                style={{ fontFamily: 'var(--font-sans)' }}
+                dangerouslySetInnerHTML={{ __html: q.stimulus }}
+              />
+            )}
             <p className="mt-3 text-lg font-semibold text-[#1a1a1a] leading-relaxed" style={{ fontFamily: 'var(--font-serif)' }}>
               {q.questionText}
             </p>

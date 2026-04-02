@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
 
     const questions = await Question.find({
       _id: { $in: test.questionIds },
-    }).select('questionText options subarea subareaName objectiveNumber')
+    }).select('questionText options subarea subareaName objectiveNumber stimulus')
 
     if (inProgress) {
       return NextResponse.json({

@@ -21,6 +21,7 @@ export interface IQuestion extends Document {
   difficulty: 'easy' | 'medium' | 'hard'
   isPublished: boolean
   isDiagnostic: boolean // can appear in diagnostic test
+  stimulus?: string // optional HTML string rendered above the question
   createdAt: Date
   updatedAt: Date
 }
@@ -43,6 +44,7 @@ const QuestionSchema = new Schema<IQuestion>(
     difficulty: { type: String, enum: ['easy', 'medium', 'hard'], default: 'medium' },
     isPublished: { type: Boolean, default: false },
     isDiagnostic: { type: Boolean, default: false },
+    stimulus: { type: String, required: false },
   },
   { timestamps: true }
 )
