@@ -50,26 +50,22 @@ interface Results {
   timeSpentSeconds: number
   attemptId: string
   isDiagnostic: boolean
+  crScore?: number
+  crPerformanceLevel?: string
+  crFeedback?: string
   questionsWithAnswers: QuestionWithAnswer[]
   responses: GradedResponse[]
   testName: string
   submittedAt: string
 }
 
-const SUBAREA_RANGES: Record<string, string> = {
-  I: '43–45',
-  II: '33–35',
-  III: '21–23',
+const CR_LEVEL_COLORS: Record<string, string> = {
+  Thorough: 'text-green-700',
+  Adequate: 'text-blue-700',
+  Limited: 'text-yellow-700',
+  Weak: 'text-orange-700',
+  'No Response': 'text-[#6b6b6b]',
 }
-
-const PERFORMANCE_LABELS: Record<string, string> = {
-  most: 'Most or all items',
-  many: 'Many of the items',
-  some: 'Some of the items',
-  few: 'Few or no items',
-}
-
-const PERFORMANCE_COLUMNS = ['most', 'many', 'some', 'few'] as const
 
 export default function ResultsPage() {
   const params = useParams()
@@ -258,124 +254,64 @@ export default function ResultsPage() {
             </p>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[640px] text-sm">
-              <thead>
-                {/* Column headers */}
-                <tr style={{ backgroundColor: '#f0e8ea' }}>
-                  <th
-                    className="px-4 py-3 text-left font-semibold text-[#1a1a1a] border-b border-r border-[#e8e0e2] w-1/3"
-                    style={{ fontFamily: 'var(--font-sans)' }}
-                  >
-                    Subarea / Section Name
-                  </th>
-                  <th
-                    className="px-4 py-3 text-center font-semibold text-[#1a1a1a] border-b border-r border-[#e8e0e2] w-1/6"
-                    style={{ fontFamily: 'var(--font-sans)' }}
-                  >
-                    Range of Number of Items in Subarea
-                  </th>
-                  <th
-                    colSpan={4}
-                    className="px-4 py-3 text-center font-semibold text-[#1a1a1a] border-b border-[#e8e0e2]"
-                    style={{ fontFamily: 'var(--font-sans)' }}
-                  >
-                    Description of Your Subarea Performance
-                  </th>
-                </tr>
-                {/* Sub-header row — MC */}
-                <tr style={{ backgroundColor: '#faf8f5' }}>
-                  <td
-                    className="px-4 py-2 text-xs font-semibold text-[#6b6b6b] border-b border-r border-[#e8e0e2]"
-                    style={{ fontFamily: 'var(--font-sans)' }}
-                  >
-                    For Multiple-Choice Items You Answered Correctly:
+          <table className="w-full text-sm">
+            <thead>
+              <tr style={{ backgroundColor: '#faf8f5' }}>
+                <th
+                  className="px-5 py-3 text-left font-semibold text-[#6b6b6b] border-b border-r border-[#e8e0e2]"
+                  style={{ fontFamily: 'var(--font-sans)', width: '65%' }}
+                >
+                  Subarea / Section
+                </th>
+                <th
+                  className="px-5 py-3 text-center font-semibold text-[#6b6b6b] border-b border-[#e8e0e2]"
+                  style={{ fontFamily: 'var(--font-sans)' }}
+                >
+                  Score
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* Multiple-choice subarea rows */}
+              {sortedSubareas.map((sa) => (
+                <tr key={sa.subarea} className="border-b border-[#e8e0e2] hover:bg-[#faf8f5]">
+                  <td className="px-5 py-3 border-r border-[#e8e0e2]" style={{ fontFamily: 'var(--font-sans)' }}>
+                    <span className="font-semibold text-[#1a1a1a]">Subarea {sa.subarea}</span>
+                    <span className="ml-2 text-[#6b6b6b]">— {sa.subareaName}</span>
                   </td>
-                  <td className="border-b border-r border-[#e8e0e2]" />
-                  {PERFORMANCE_COLUMNS.map((col) => (
-                    <td
-                      key={col}
-                      className="px-3 py-2 text-center text-xs font-semibold text-[#6b6b6b] border-b border-r border-[#e8e0e2] last:border-r-0"
-                      style={{ fontFamily: 'var(--font-sans)', width: '12%' }}
-                    >
-                      {PERFORMANCE_LABELS[col]}
-                    </td>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {/* Subarea rows */}
-                {sortedSubareas.map((sa) => (
-                  <tr key={sa.subarea} className="border-b border-[#e8e0e2] hover:bg-[#faf8f5]">
-                    <td className="px-4 py-3 border-r border-[#e8e0e2]" style={{ fontFamily: 'var(--font-sans)' }}>
-                      <span className="font-semibold text-[#1a1a1a]">
-                        Subarea {sa.subarea}
-                      </span>
-                      <br />
-                      <span className="text-xs text-[#6b6b6b]">{sa.subareaName}</span>
-                    </td>
-                    <td
-                      className="px-4 py-3 text-center text-[#6b6b6b] border-r border-[#e8e0e2]"
-                      style={{ fontFamily: 'var(--font-sans)' }}
-                    >
-                      {SUBAREA_RANGES[sa.subarea] || '—'}
-                    </td>
-                    {PERFORMANCE_COLUMNS.map((col) => (
-                      <td
-                        key={col}
-                        className="px-3 py-3 text-center border-r border-[#e8e0e2] last:border-r-0"
-                        style={{ fontFamily: 'var(--font-sans)' }}
-                      >
-                        {sa.performanceLevel === col ? (
-                          <span className="text-lg font-bold text-[#7c1c2e]">✓</span>
-                        ) : null}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-
-                {/* Separator row — Open Response */}
-                <tr style={{ backgroundColor: '#faf8f5' }}>
-                  <td
-                    className="px-4 py-2 text-xs font-semibold text-[#6b6b6b] border-b border-t border-r border-[#e8e0e2]"
-                    style={{ fontFamily: 'var(--font-sans)' }}
-                  >
-                    For Open-Response Items Your Responses Were:
+                  <td className="px-5 py-3 text-center" style={{ fontFamily: 'var(--font-sans)' }}>
+                    <span className="font-bold text-[#1a1a1a]">{sa.correctAnswers} / {sa.totalQuestions}</span>
+                    <span className="ml-2 text-xs text-[#6b6b6b]">correct</span>
                   </td>
-                  <td className="border-b border-t border-r border-[#e8e0e2]" />
-                  {['Thorough', 'Adequate', 'Limited', 'Weak'].map((label) => (
-                    <td
-                      key={label}
-                      className="px-3 py-2 text-center text-xs font-semibold text-[#6b6b6b] border-b border-t border-r border-[#e8e0e2] last:border-r-0"
-                      style={{ fontFamily: 'var(--font-sans)' }}
-                    >
-                      {label}
-                    </td>
-                  ))}
                 </tr>
+              ))}
 
-                {/* Written response placeholder rows */}
-                {['Written Assignment 1', 'Written Assignment 2'].map((label) => (
-                  <tr key={label} className="border-b border-[#e8e0e2]">
-                    <td className="px-4 py-3 border-r border-[#e8e0e2]" style={{ fontFamily: 'var(--font-sans)' }}>
-                      <span className="font-semibold text-[#1a1a1a]">Subarea IV</span>
-                      <br />
-                      <span className="text-xs text-[#6b6b6b]">{label}</span>
-                    </td>
-                    <td
-                      className="px-4 py-3 text-center text-[#6b6b6b] border-r border-[#e8e0e2]"
-                      style={{ fontFamily: 'var(--font-sans)' }}
-                    >
-                      —
-                    </td>
-                    <td colSpan={4} className="px-4 py-3 text-center text-xs text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>
-                      Not included in this multiple-choice practice test
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              {/* Written Response row — Subarea IV */}
+              <tr className="border-b border-[#e8e0e2]">
+                <td className="px-5 py-3 border-r border-[#e8e0e2]" style={{ fontFamily: 'var(--font-sans)' }}>
+                  <span className="font-semibold text-[#1a1a1a]">Subarea IV</span>
+                  <span className="ml-2 text-[#6b6b6b]">— Written Response</span>
+                </td>
+                <td className="px-5 py-3" style={{ fontFamily: 'var(--font-sans)' }}>
+                  {results.crScore !== undefined && results.crPerformanceLevel ? (
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-[#1a1a1a]">{results.crScore} / 4</span>
+                        <span className={`text-sm font-semibold ${CR_LEVEL_COLORS[results.crPerformanceLevel] ?? 'text-[#6b6b6b]'}`}>
+                          — {results.crPerformanceLevel}
+                        </span>
+                      </div>
+                      {results.crFeedback && (
+                        <p className="mt-1 text-xs text-[#6b6b6b] leading-relaxed">{results.crFeedback}</p>
+                      )}
+                    </div>
+                  ) : (
+                    <span className="text-xs text-[#6b6b6b]">Not scored</span>
+                  )}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
         {/* ── BOTTOM SECTION: Buttons ── */}

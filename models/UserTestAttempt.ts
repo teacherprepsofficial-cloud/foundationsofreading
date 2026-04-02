@@ -36,6 +36,11 @@ export interface IUserTestAttempt extends Document {
   timeLimitSeconds: number
   subareaScores: ISubareaScore[]
   passed: boolean
+  // Constructed response (diagnostic only)
+  crResponse?: string
+  crScore?: number // 0-4
+  crPerformanceLevel?: 'Thorough' | 'Adequate' | 'Limited' | 'Weak' | 'No Response'
+  crFeedback?: string
   startedAt: Date
   completedAt?: Date
   status: 'in_progress' | 'completed' | 'abandoned'
@@ -84,6 +89,10 @@ const UserTestAttemptSchema = new Schema<IUserTestAttempt>(
     timeLimitSeconds: { type: Number, required: true },
     subareaScores: [SubareaScoreSchema],
     passed: { type: Boolean, default: false },
+    crResponse: { type: String },
+    crScore: { type: Number },
+    crPerformanceLevel: { type: String, enum: ['Thorough', 'Adequate', 'Limited', 'Weak', 'No Response'] },
+    crFeedback: { type: String },
     startedAt: { type: Date, required: true },
     completedAt: { type: Date },
     status: { type: String, enum: ['in_progress', 'completed', 'abandoned'], default: 'in_progress' },
