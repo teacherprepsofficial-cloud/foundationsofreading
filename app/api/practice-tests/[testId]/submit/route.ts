@@ -66,12 +66,20 @@ ${responseText}`,
   }
 
   const data = await res.json()
-  const text = data.content?.[0]?.text ?? ''
+  const raw = data.content?.[0]?.text ?? ''
+  // Strip markdown code fences if Claude wrapped the JSON
+  const text = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
   try {
     const parsed = JSON.parse(text)
     return { score: Math.min(4, Math.max(0, parseInt(parsed.score))), feedback: parsed.feedback || '' }
   } catch {
-    return { score: 2, feedback: 'Your response demonstrates some understanding of phonics and phonemic awareness instruction.' }
+    // Last resort: extract score with regex
+    const scoreMatch = text.match(/"score"\s*:\s*([0-4])/)
+    const feedbackMatch = text.match(/"feedback"\s*:\s*"([^"]+)"/)
+    if (scoreMatch) {
+      return { score: parseInt(scoreMatch[1]), feedback: feedbackMatch?.[1] ?? '' }
+    }
+    return { score: 2, feedback: `Parse error — raw: ${text.slice(0, 200)}` }
   }
 }
 
