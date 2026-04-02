@@ -1,7 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Anthropic from '@anthropic-ai/sdk'
-
-export const maxDuration = 60
 import connectDB from '@/lib/mongodb'
 import PracticeTest from '@/models/PracticeTest'
 import Question from '@/models/Question'
@@ -9,7 +6,7 @@ import UserTestAttempt from '@/models/UserTestAttempt'
 import UserProgress from '@/models/UserProgress'
 import { getCurrentUserFromRequest } from '@/lib/auth'
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
+export const maxDuration = 60
 
 // NES scaled score: raw % maps to 100-300 scale, passing is 220
 function rawToScaled(percentage: number): number {
@@ -28,10 +25,17 @@ async function gradeCR(responseText: string): Promise<{ score: number; feedback:
   const wordCount = responseText.trim().split(/\s+/).filter(Boolean).length
   if (wordCount < 50) return { score: 0, feedback: `Response is only ${wordCount} words. A thorough response requires 150+ words addressing all parts of the prompt.` }
 
-  const message = await anthropic.messages.create({
-    model: 'claude-haiku-4-5-20251001',
-    max_tokens: 600,
-    system: `You are a scorer for the NES Foundations of Reading exam (190/890) written assignment. Use the official 4-point rubric exactly:
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': process.env.ANTHROPIC_API_KEY!,
+      'anthropic-version': '2023-06-01',
+    },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 600,
+      system: `You are a scorer for the NES Foundations of Reading exam (190/890) written assignment. Use the official 4-point rubric exactly:
 
 4 – THOROUGH KNOWLEDGE: The purpose of the assignment is fully achieved. The response demonstrates a thorough understanding of the relevant subject matter and applies this knowledge to the assignment with substantial accuracy. The response provides strong, relevant supporting evidence and demonstrates well-reasoned understanding of the subject.
 
@@ -46,16 +50,23 @@ async function gradeCR(responseText: string): Promise<{ score: number; feedback:
 Evaluate on four dimensions: (1) Purpose — assignment goals achieved, (2) Subject Matter Knowledge — accuracy and depth, (3) Support — quality of evidence and examples, (4) Rationale — soundness of reasoning.
 
 Respond ONLY with valid JSON: {"score": 0|1|2|3|4, "feedback": "3-4 sentence analysis referencing the four dimensions — be specific about what was strong and what was missing"}`,
-    messages: [{
-      role: 'user',
-      content: `WRITTEN ASSIGNMENT PROMPT: A first-grade teacher notices that several students struggle to blend phonemes when reading unfamiliar words. Describe two evidence-based instructional strategies the teacher could use to develop phonemic awareness and phonics skills in these students. For each strategy, explain how it would be implemented and why it is effective for early readers.
+      messages: [{
+        role: 'user',
+        content: `WRITTEN ASSIGNMENT PROMPT: A first-grade teacher notices that several students struggle to blend phonemes when reading unfamiliar words. Describe two evidence-based instructional strategies the teacher could use to develop phonemic awareness and phonics skills in these students. For each strategy, explain how it would be implemented and why it is effective for early readers.
 
 CANDIDATE RESPONSE (${wordCount} words):
-${responseText}`
-    }],
+${responseText}`,
+      }],
+    }),
   })
 
-  const text = message.content[0].type === 'text' ? message.content[0].text : ''
+  if (!res.ok) {
+    const errBody = await res.text()
+    throw new Error(`Anthropic API ${res.status}: ${errBody}`)
+  }
+
+  const data = await res.json()
+  const text = data.content?.[0]?.text ?? ''
   try {
     const parsed = JSON.parse(text)
     return { score: Math.min(4, Math.max(0, parseInt(parsed.score))), feedback: parsed.feedback || '' }
