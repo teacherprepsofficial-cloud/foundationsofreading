@@ -13,6 +13,7 @@ interface Option {
 interface QuestionWithAnswer {
   _id: string
   questionText: string
+  stimulus?: string
   options: Option[]
   correctAnswer: string
   explanation: string
@@ -434,6 +435,14 @@ export default function ResultsPage() {
                   </div>
 
                   <div className="p-5">
+                    {/* Stimulus */}
+                    {q.stimulus && (
+                      <div
+                        className="mb-4 rounded border border-[#c8c0c4] bg-[#fdfcfb] p-4 text-sm text-[#1a1a1a]"
+                        style={{ fontFamily: 'var(--font-sans)' }}
+                        dangerouslySetInnerHTML={{ __html: q.stimulus }}
+                      />
+                    )}
                     {/* Question */}
                     <p
                       className="text-sm leading-relaxed text-[#1a1a1a] mb-4"

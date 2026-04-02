@@ -125,6 +125,7 @@ export async function POST(
     const questionsWithAnswers = questions.map((q) => ({
       _id: q._id,
       questionText: q.questionText,
+      stimulus: q.stimulus,
       options: q.options,
       correctAnswer: q.correctAnswer,
       explanation: q.explanation,
