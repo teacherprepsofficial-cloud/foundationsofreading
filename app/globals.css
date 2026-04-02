@@ -20,136 +20,194 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ── Study Guide Visual Components ── */
+/* ── Study Guide Visual Components — Google Doc Style ── */
 
-/* Intro paragraph — what this objective tests */
 .sg-intro {
-  background: #f9f0f2;
-  border-left: 4px solid #7c1c2e;
+  background: #eff6ff;
+  border-left: 3px solid #3b82f6;
   padding: 14px 18px;
   border-radius: 0 6px 6px 0;
   margin-bottom: 24px;
   font-size: 14px;
-  line-height: 1.7;
-  color: #1a1a1a;
+  line-height: 1.75;
+  color: #1e3a5f;
 }
 
-/* Section block — key concepts, strategies, etc. */
 .sg-block {
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
-/* Section label — "KEY CONCEPTS", "STRATEGIES", etc. */
 .sg-label {
   font-family: var(--font-sans), system-ui, sans-serif;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  color: #7c1c2e;
-  border-bottom: 2px solid #e8e0e2;
+  color: #6b7280;
+  border-bottom: 1px solid #e5e7eb;
   padding-bottom: 6px;
   margin-bottom: 12px;
 }
 
-/* Definition list */
 .sg-def-list {
   list-style: none;
   padding: 0;
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 .sg-def-list li {
   padding: 10px 14px;
-  background: #faf8f5;
+  background: #f9fafb;
   border-radius: 6px;
-  font-size: 14px;
-  line-height: 1.6;
-  color: #1a1a1a;
-  border: 1px solid #e8e0e2;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: #111827;
+  border: 1px solid #e5e7eb;
 }
 .sg-def-list li strong {
-  color: #7c1c2e;
+  color: #1d4ed8;
 }
 
-/* Strategy cards */
 .sg-strategy {
-  border-left: 3px solid #7c1c2e;
+  border-left: 3px solid #16a34a;
   padding: 10px 16px;
-  margin-bottom: 12px;
-  background: #fff;
+  margin-bottom: 10px;
+  background: #f0fdf4;
   border-radius: 0 6px 6px 0;
-  border-top: 1px solid #e8e0e2;
-  border-right: 1px solid #e8e0e2;
-  border-bottom: 1px solid #e8e0e2;
-  font-size: 14px;
+  font-size: 13.5px;
   line-height: 1.65;
 }
 .sg-strategy-name {
   font-weight: 700;
-  color: #1a1a1a;
+  color: #14532d;
   margin-bottom: 4px;
   font-family: var(--font-sans), system-ui, sans-serif;
   font-size: 13px;
 }
 
-/* Comparison table */
 .sg-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
   margin-bottom: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  overflow: hidden;
 }
 .sg-table th {
-  background: #7c1c2e;
-  color: white;
-  padding: 8px 12px;
+  background: #f3f4f6;
+  color: #111827;
+  padding: 9px 12px;
   text-align: left;
   font-family: var(--font-sans), system-ui, sans-serif;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 11.5px;
+  font-weight: 700;
   letter-spacing: 0.04em;
+  border-bottom: 2px solid #d1d5db;
 }
 .sg-table td {
-  padding: 8px 12px;
-  border-bottom: 1px solid #e8e0e2;
+  padding: 9px 12px;
+  border-bottom: 1px solid #e5e7eb;
   vertical-align: top;
-  color: #1a1a1a;
+  color: #111827;
   line-height: 1.6;
 }
+.sg-table tr:last-child td {
+  border-bottom: none;
+}
 .sg-table tr:nth-child(even) td {
-  background: #faf8f5;
+  background: #f9fafb;
 }
 
-/* Exam tip box */
 .sg-exam-tip {
   background: #fffbeb;
-  border: 1px solid #fcd34d;
-  border-left: 4px solid #d97706;
+  border: 1px solid #fde68a;
+  border-left: 3px solid #d97706;
   border-radius: 0 6px 6px 0;
   padding: 14px 18px;
   margin-top: 24px;
-  font-size: 14px;
-  line-height: 1.7;
+  font-size: 13.5px;
+  line-height: 1.75;
 }
 .sg-exam-tip-label {
   font-family: var(--font-sans), system-ui, sans-serif;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   color: #92400e;
   margin-bottom: 6px;
 }
 
-/* Body text within sg blocks */
 .sg-text {
-  font-size: 14px;
-  line-height: 1.7;
-  color: #1a1a1a;
+  font-size: 13.5px;
+  line-height: 1.75;
+  color: #111827;
   margin-bottom: 10px;
+}
+
+/* Sample CR prompt/response blocks */
+.sg-prompt-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px 20px;
+  font-size: 13.5px;
+  line-height: 1.75;
+  color: #1e293b;
+  margin-bottom: 16px;
+  white-space: pre-wrap;
+}
+.sg-response-box {
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  padding: 16px 20px;
+  font-size: 13.5px;
+  line-height: 1.75;
+  color: #0c4a6e;
+  margin-bottom: 16px;
+}
+.sg-score-badge {
+  display: inline-block;
+  background: #dcfce7;
+  color: #14532d;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+.sg-rubric-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+.sg-rubric-cell {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+.sg-rubric-cell-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+.sg-rubric-cell-text {
+  font-size: 12.5px;
+  color: #374151;
+  line-height: 1.6;
 }
 
 @keyframes pulse-slow {
