@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
+
+export const maxDuration = 60
 import connectDB from '@/lib/mongodb'
 import PracticeTest from '@/models/PracticeTest'
 import Question from '@/models/Question'
