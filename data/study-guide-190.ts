@@ -111,6 +111,10 @@ export const studyGuide190: StudyGuideSubarea[] = [
     <p class="sg-strategy-name">Phonetic Spelling (Invented Spelling)</p>
     <p class="sg-text">Encouraging students to write words using what they know about sounds and letters (e.g., "kat" for "cat") simultaneously reinforces phonemic awareness, the alphabetic principle, and letter-sound correspondences. Analyzing invented spellings reveals a student's current phonics and phonemic awareness development.</p>
   </div>
+  <div class="sg-strategy">
+    <p class="sg-strategy-name">Interactive Writing</p>
+    <p class="sg-text">Teacher and students compose a text together — negotiating words and sharing the pen to record them. The teacher guides letter formation, spacing, punctuation, and sound-spelling decisions in real time. Interactive writing is especially powerful in K–1 because it makes the reading-writing connection concrete, reinforces concepts of print, and builds phonemic awareness and letter-sound knowledge through authentic writing experience.</p>
+  </div>
 </div>
 
 <div class="sg-block">
@@ -227,6 +231,10 @@ export const studyGuide190: StudyGuideSubarea[] = [
   <div class="sg-strategy">
     <p class="sg-strategy-name">Using Semantic and Syntactic Context to Confirm Decoding</p>
     <p class="sg-text">After decoding a word phonetically, students learn to ask: "Does this word make sense in the sentence?" (semantics) and "Does it sound like how we talk?" (syntax). This is critical for homographs — a student who decodes "tear" must use context to determine if it means /tɪər/ (drop of water) or /tɛr/ (to rip). Teaching students to cross-check decoding with meaning is a key comprehension monitoring strategy.</p>
+  </div>
+  <div class="sg-strategy">
+    <p class="sg-strategy-name">Oral and Whisper Reading with Teacher Monitoring</p>
+    <p class="sg-text">Students read aloud (or quietly to themselves at a whisper) while the teacher listens and provides immediate corrective feedback on decoding errors. Oral and whisper reading keeps students actively processing every word and allows the teacher to detect errors at the moment they occur — preventing the reinforcement of incorrect decoding patterns. This is distinct from silent reading, where error patterns go undetected. Most appropriate for students whose decoding is still developing and who need monitoring to build accurate phonics application.</p>
   </div>
 </div>
 
@@ -684,6 +692,10 @@ export const studyGuide190: StudyGuideSubarea[] = [
     <p class="sg-strategy-name">Student-Generated Questioning</p>
     <p class="sg-text">Students formulate their own questions before, during, and after reading. Generating a question requires the student to identify what is important or unclear — a higher-order comprehension process. Teaching question types (literal, inferential, evaluative) helps students generate questions at all levels and prepares them for test-style questions on content.</p>
   </div>
+  <div class="sg-strategy">
+    <p class="sg-strategy-name">Activating Schema (Prior Knowledge)</p>
+    <p class="sg-text">Before reading, the teacher prompts students to connect what they already know about the topic to the text they are about to read — building a mental framework that aids comprehension. Strategies: KWL charts (Know / Want to Know / Learned), anticipation guides, brief class discussions, or a preview walk through headings and images. Activating schema is not the same as background knowledge building: it draws on knowledge students already have, whereas background knowledge building provides new information. Both support comprehension; both are named in the NES framework.</p>
+  </div>
 </div>
 
 <div class="sg-exam-tip">
@@ -806,6 +818,22 @@ export const studyGuide190: StudyGuideSubarea[] = [
 </div>
 
 <div class="sg-block">
+  <p class="sg-label">Ehri's Phases of Word Reading Development</p>
+  <p class="sg-text">Linnea Ehri's phase model describes how word reading develops in predictable, overlapping phases. Understanding a student's current phase tells you exactly what to teach next.</p>
+  <table class="sg-table">
+    <thead>
+      <tr><th>Phase</th><th>How Words Are Recognized</th><th>What It Looks Like</th><th>Instructional Implication</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Pre-Alphabetic</strong></td><td>Visual/contextual cues — not letter-sound at all</td><td>Reads "stop" from the red octagon shape; reads own name by visual memorization; substitutes visually similar words</td><td>Teach letter names, letter-sound correspondences, concepts of print; introduce alphabetic principle</td></tr>
+      <tr><td><strong>Partial Alphabetic</strong></td><td>Some letter-sound cues — typically first and last letters only</td><td>Reads "big" for "bag" (notices b _ g); guesses heavily from context and initial letter</td><td>Teach full phoneme segmentation; complete CVC decoding; discourage over-reliance on context cues</td></tr>
+      <tr><td><strong>Full Alphabetic</strong></td><td>Complete letter-sound mappings for every phoneme</td><td>Decodes CVC, CVCC, CVCe words accurately but slowly; sounds out every word; minimal sight word bank</td><td>Build phonics patterns (digraphs, blends, vowel teams); build sight word automaticity through repetition</td></tr>
+      <tr><td><strong>Consolidated Alphabetic</strong></td><td>Letter patterns, syllables, and morphemes recognized as units — automatic</td><td>Reads multisyllabic words fluently; large sight word bank; decoding is fast and effortless</td><td>Teach syllabication, morpheme analysis, complex vocabulary; shift focus to fluency and comprehension</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="sg-block">
   <p class="sg-label">The Five Components of Reading (National Reading Panel)</p>
   <table class="sg-table">
     <thead>
@@ -873,6 +901,10 @@ export const studyGuide190: StudyGuideSubarea[] = [
   <div class="sg-strategy">
     <p class="sg-strategy-name">Reading Environment and Motivation</p>
     <p class="sg-text">Students who read more become better readers — but reading volume requires motivation. Evidence-based motivation strategies include: student choice in reading materials, access to a diverse classroom library, structured independent reading time with accountability, read-alouds that build book excitement, and teacher modeling of reading as a valued activity. Self-efficacy (believing you can read) is as important as skill — instruction that produces success at the right level builds both.</p>
+  </div>
+  <div class="sg-strategy">
+    <p class="sg-strategy-name">Instructional Technologies for Reading Development</p>
+    <p class="sg-text">Technology tools support reading instruction and engagement at all levels: text-to-speech software allows students with decoding difficulties to access grade-level content; digital decodable readers provide phonics practice with immediate feedback; e-books with highlighted text build fluency through repeated reading with a fluent model; vocabulary apps (e.g., Quizlet) support repeated, spaced exposure to new words; reading engagement platforms provide access to leveled texts with accountability structures. Instructional technology should support — not replace — explicit, systematic reading instruction.</p>
   </div>
 </div>
 
