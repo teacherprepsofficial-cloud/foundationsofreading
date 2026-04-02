@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
+import DashboardHeader from '@/components/dashboard-header'
 
 interface Option {
   label: 'A' | 'B' | 'C' | 'D'
@@ -155,6 +156,7 @@ export default function ResultsPage() {
 
   return (
     <div className="min-h-screen bg-[#faf8f5]">
+      <DashboardHeader />
       {/* Header */}
       <div className="bg-[#7c1c2e] px-6 py-8 print:hidden">
         <div className="mx-auto max-w-4xl">

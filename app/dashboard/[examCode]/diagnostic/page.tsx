@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
+import DashboardHeader from '@/components/dashboard-header'
 
 interface Question {
   _id: string
@@ -13,12 +14,20 @@ interface Question {
   stimulus?: string
 }
 
+interface CompletedData {
+  testId: string
+  attemptId: string
+  scaledScore: number
+  passed: boolean
+}
+
 export default function DiagnosticPage() {
   const params = useParams()
   const router = useRouter()
   const examCode = params.examCode as string
 
-  const [phase, setPhase] = useState<'intro' | 'test' | 'cr' | 'submitting'>('intro')
+  const [phase, setPhase] = useState<'checking' | 'intro' | 'test' | 'cr' | 'submitting'>('checking')
+  const [completed, setCompleted] = useState<CompletedData | null>(null)
   const [questions, setQuestions] = useState<Question[]>([])
   const [attemptId, setAttemptId] = useState<string | null>(null)
   const [testId, setTestId] = useState<string | null>(null)
@@ -28,6 +37,39 @@ export default function DiagnosticPage() {
   const [crResponse, setCrResponse] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+
+  // On mount: check if diagnostic was already completed
+  useEffect(() => {
+    async function checkStatus() {
+      try {
+        const res = await fetch(`/api/practice-tests/diagnostic?examCode=${examCode}&check=true`)
+        const data = await res.json()
+        if (data.status === 'completed') {
+          // Store results in localStorage so results page can read them
+          localStorage.setItem('for_test_results', JSON.stringify({
+            ...data.attempt,
+            questionsWithAnswers: data.questionsWithAnswers,
+            responses: data.attempt.responses,
+            testName: 'Diagnostic Practice Test',
+            submittedAt: data.attempt.submittedAt,
+          }))
+          setCompleted({
+            testId: data.test._id,
+            attemptId: data.attempt._id,
+            scaledScore: data.attempt.scaledScore,
+            passed: data.attempt.passed,
+          })
+          setPhase('intro') // show intro with completed state
+        } else {
+          setPhase('intro')
+        }
+      } catch {
+        setPhase('intro')
+      }
+    }
+    checkStatus()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     if (phase !== 'test') return
@@ -113,10 +155,23 @@ export default function DiagnosticPage() {
   const fmt = (s: number) => `${Math.floor(s / 60).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`
   const q = questions[currentQ]
 
+  // Loading/checking state
+  if (phase === 'checking') {
+    return (
+      <div className="min-h-screen bg-[#faf8f5]">
+        <DashboardHeader />
+        <div className="flex items-center justify-center py-32">
+          <p className="text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>Loading…</p>
+        </div>
+      </div>
+    )
+  }
+
   // Intro screen
   if (phase === 'intro') {
     return (
       <div className="min-h-screen bg-[#faf8f5]">
+        <DashboardHeader />
         <div className="bg-[#7c1c2e] px-6 py-6">
           <div className="mx-auto max-w-3xl">
             <Link href={`/dashboard/${examCode}`} className="text-sm text-[#e8b4bc] hover:text-white" style={{ fontFamily: 'var(--font-sans)' }}>← Back to Dashboard</Link>
@@ -124,24 +179,67 @@ export default function DiagnosticPage() {
           </div>
         </div>
         <div className="mx-auto max-w-3xl px-6 py-10">
-          <div className="rounded-lg border border-[#e8e0e2] bg-white p-8">
-            <h2 className="text-xl font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>Before you start</h2>
-            <div className="mt-4 space-y-3 text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>
-              <p>This diagnostic test has <strong className="text-[#1a1a1a]">25 multiple-choice questions + 1 written response</strong>, distributed across all 4 subareas.</p>
-              <p>Time allowed: <strong className="text-[#1a1a1a]">45 minutes</strong></p>
-              <p>After completing the diagnostic, your full study program will unlock and you&apos;ll see a breakdown of your performance by subarea — so you know exactly where to focus your studying.</p>
-              <p>Take this seriously. The more honestly you perform, the more useful your diagnostic results will be.</p>
+          {completed ? (
+            /* Already completed — show score + options */
+            <div className="rounded-lg border border-[#e8e0e2] bg-white p-8">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
+                  <span className="text-green-700 font-bold text-lg">✓</span>
+                </div>
+                <div>
+                  <p className="font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)', fontSize: '18px' }}>Diagnostic Complete</p>
+                  <p className="text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>You have already taken the diagnostic.</p>
+                </div>
+              </div>
+              <div className="mt-6 flex items-center gap-4 rounded-lg bg-[#f9f0f2] px-5 py-4">
+                <p className="text-3xl font-bold text-[#7c1c2e]" style={{ fontFamily: 'var(--font-serif)' }}>{completed.scaledScore}</p>
+                <span
+                  className={`rounded px-3 py-1 text-xs font-bold ${completed.passed ? 'bg-green-600 text-white' : 'bg-[#7c1c2e] text-white'}`}
+                  style={{ fontFamily: 'var(--font-sans)' }}
+                >
+                  {completed.passed ? 'PASSED' : 'NOT YET'}
+                </span>
+              </div>
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                <button
+                  onClick={() => router.push(`/dashboard/${examCode}/practice-test/${completed.testId}/results?attemptId=${completed.attemptId}&diagnostic=true`)}
+                  className="flex-1 rounded bg-[#7c1c2e] py-3 text-sm font-semibold text-white hover:bg-[#5a1220]"
+                  style={{ fontFamily: 'var(--font-sans)' }}
+                >
+                  View Full Results
+                </button>
+                <button
+                  onClick={() => { setCompleted(null); startTest() }}
+                  disabled={loading}
+                  className="flex-1 rounded border border-[#e8e0e2] bg-white py-3 text-sm font-semibold text-[#6b6b6b] hover:border-[#7c1c2e] disabled:opacity-60"
+                  style={{ fontFamily: 'var(--font-sans)' }}
+                >
+                  {loading ? 'Loading…' : 'Retake Diagnostic'}
+                </button>
+              </div>
+              {error && <p className="mt-4 rounded bg-red-50 px-4 py-2.5 text-sm text-red-700">{error}</p>}
             </div>
-            {error && <p className="mt-4 rounded bg-red-50 px-4 py-2.5 text-sm text-red-700">{error}</p>}
-            <button
-              onClick={startTest}
-              disabled={loading}
-              className="mt-6 w-full rounded bg-[#7c1c2e] py-3.5 text-sm font-semibold text-white hover:bg-[#5a1220] disabled:opacity-60"
-              style={{ fontFamily: 'var(--font-sans)' }}
-            >
-              {loading ? 'Loading...' : 'Start Diagnostic Test'}
-            </button>
-          </div>
+          ) : (
+            /* Not yet taken */
+            <div className="rounded-lg border border-[#e8e0e2] bg-white p-8">
+              <h2 className="text-xl font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>Before you start</h2>
+              <div className="mt-4 space-y-3 text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>
+                <p>This diagnostic test has <strong className="text-[#1a1a1a]">25 multiple-choice questions + 1 written response</strong>, distributed across all 4 subareas.</p>
+                <p>Time allowed: <strong className="text-[#1a1a1a]">45 minutes</strong></p>
+                <p>After completing the diagnostic, your full study program will unlock and you&apos;ll see a breakdown of your performance by subarea — so you know exactly where to focus your studying.</p>
+                <p>Take this seriously. The more honestly you perform, the more useful your diagnostic results will be.</p>
+              </div>
+              {error && <p className="mt-4 rounded bg-red-50 px-4 py-2.5 text-sm text-red-700">{error}</p>}
+              <button
+                onClick={startTest}
+                disabled={loading}
+                className="mt-6 w-full rounded bg-[#7c1c2e] py-3.5 text-sm font-semibold text-white hover:bg-[#5a1220] disabled:opacity-60"
+                style={{ fontFamily: 'var(--font-sans)' }}
+              >
+                {loading ? 'Loading...' : 'Start Diagnostic Test'}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     )
@@ -151,6 +249,7 @@ export default function DiagnosticPage() {
   if (phase === 'cr') {
     return (
       <div className="min-h-screen bg-[#faf8f5]">
+        <DashboardHeader />
         <div className="bg-[#7c1c2e] px-6 py-4">
           <div className="mx-auto max-w-3xl flex items-center justify-between">
             <p className="font-bold text-white" style={{ fontFamily: 'var(--font-serif)' }}>Written Response</p>

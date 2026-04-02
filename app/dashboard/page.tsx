@@ -3,6 +3,7 @@ import { getCurrentUser } from '@/lib/auth'
 import connectDB from '@/lib/mongodb'
 import UserAccess from '@/models/UserAccess'
 import Link from 'next/link'
+import DashboardHeader from '@/components/dashboard-header'
 
 export default async function DashboardPage() {
   const auth = await getCurrentUser()
@@ -41,7 +42,9 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-[#faf8f5] px-4">
+    <div className="min-h-screen bg-[#faf8f5]">
+      <DashboardHeader />
+      <div className="flex flex-col items-center justify-center px-4 py-24">
       <p className="text-3xl font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>
         Choose your exam
       </p>
@@ -60,6 +63,7 @@ export default async function DashboardPage() {
             </p>
           </Link>
         ))}
+      </div>
       </div>
     </div>
   )

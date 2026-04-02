@@ -5,6 +5,7 @@ import connectDB from '@/lib/mongodb'
 import UserAccess from '@/models/UserAccess'
 import UserProgress from '@/models/UserProgress'
 import UserTestAttempt from '@/models/UserTestAttempt'
+import DashboardHeader from '@/components/dashboard-header'
 
 function DaysLeft({ expiresAt }: { expiresAt: Date }) {
   const days = Math.max(0, Math.ceil((new Date(expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
@@ -123,6 +124,7 @@ export default async function ExamDashboardPage({
 
   return (
     <div className="min-h-screen bg-[#faf8f5]">
+      <DashboardHeader />
       {/* Dashboard Header */}
       <div className="bg-[#7c1c2e] px-6 py-8">
         <div className="mx-auto max-w-4xl">

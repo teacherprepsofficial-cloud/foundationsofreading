@@ -33,6 +33,49 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Diagnostic test not available yet' }, { status: 404 })
     }
 
+    // ?check=true — return status only, no attempt creation
+    if (request.nextUrl.searchParams.get('check') === 'true') {
+      const completed = await UserTestAttempt.findOne({
+        userId: auth.userId,
+        testId: test._id,
+        status: 'completed',
+      }).sort({ completedAt: -1 })
+
+      if (completed) {
+        const questionsWithAnswers = await Question.find({ _id: { $in: test.questionIds } })
+          .select('questionText options correctAnswer explanation subarea subareaName')
+        return NextResponse.json({
+          status: 'completed',
+          test: { _id: test._id, name: test.name },
+          attempt: {
+            _id: completed._id,
+            scaledScore: completed.scaledScore,
+            passed: completed.passed,
+            score: completed.score,
+            totalCorrect: completed.totalCorrect,
+            totalIncorrect: completed.totalIncorrect,
+            totalSkipped: completed.totalSkipped,
+            totalQuestions: completed.totalQuestions,
+            timeSpentSeconds: completed.timeSpentSeconds,
+            subareaScores: completed.subareaScores,
+            responses: completed.responses,
+            submittedAt: completed.completedAt,
+          },
+          questionsWithAnswers,
+        })
+      }
+
+      const inProgressCheck = await UserTestAttempt.findOne({
+        userId: auth.userId,
+        testId: test._id,
+        status: 'in_progress',
+      })
+      return NextResponse.json({
+        status: inProgressCheck ? 'in_progress' : 'not_started',
+        test: { _id: test._id },
+      })
+    }
+
     // Check for existing in-progress attempt
     const inProgress = await UserTestAttempt.findOne({
       userId: auth.userId,
