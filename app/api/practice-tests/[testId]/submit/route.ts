@@ -119,9 +119,10 @@ export async function POST(
         crFeedback = graded.feedback
         crPerformanceLevel = crScoreToLevel(crScore)
       } catch (crErr) {
-        console.error('CR grading failed, using fallback:', crErr)
+        const errMsg = crErr instanceof Error ? `${crErr.name}: ${crErr.message}` : String(crErr)
+        console.error('CR grading failed:', errMsg)
         crScore = 2
-        crFeedback = 'Your response was received. AI grading is temporarily unavailable — a score of 2 (Limited) has been applied as a placeholder.'
+        crFeedback = `[DEBUG] CR grading error: ${errMsg}`
         crPerformanceLevel = 'Limited'
       }
     }
