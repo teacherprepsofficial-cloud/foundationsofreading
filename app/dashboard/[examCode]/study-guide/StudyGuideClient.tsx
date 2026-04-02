@@ -200,7 +200,7 @@ export default function StudyGuideClient({
       >
         {/* Section header — clean white */}
         <div className="bg-white border-b border-[#e5e7eb] px-8 py-6">
-          <div className="max-w-3xl">
+          <div className="max-w-none">
             <div className="flex items-center gap-2 mb-1">
               <span className="text-[10px] font-bold uppercase tracking-widest text-[#9ca3af]" style={{ fontFamily: 'var(--font-sans)' }}>
                 Subarea {activeSection}
@@ -220,7 +220,7 @@ export default function StudyGuideClient({
           </div>
         </div>
 
-        <div className="px-8 py-8 max-w-3xl">
+        <div className="px-8 py-8 max-w-none">
 
           {/* Learning Outcomes */}
           <div className="rounded-lg border border-[#e5e7eb] bg-white p-5 mb-8">
