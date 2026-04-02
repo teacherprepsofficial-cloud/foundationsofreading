@@ -3,9 +3,7 @@ import Link from 'next/link'
 import { getCurrentUser } from '@/lib/auth'
 import connectDB from '@/lib/mongodb'
 import UserAccess from '@/models/UserAccess'
-
-// Study guide content is seeded per exam — this page is the reader shell
-// Content is rendered from data/study-guide-content.ts once content is loaded
+import { studyGuide190 } from '@/data/study-guide-190'
 
 export default async function StudyGuidePage({
   params,
@@ -28,8 +26,16 @@ export default async function StudyGuidePage({
 
   if (!access) redirect('/dashboard')
 
-  // Track that study guide was opened
-  // (progress update handled client-side)
+  const guide = studyGuide190 // same content for 190 and 890
+
+  // Build flat nav items
+  const navItems: { id: string; label: string; indent: boolean }[] = []
+  for (const subarea of guide) {
+    navItems.push({ id: `subarea-${subarea.id}`, label: `Subarea ${subarea.id}: ${subarea.name}`, indent: false })
+    for (const sec of subarea.sections) {
+      navItems.push({ id: sec.id, label: `${sec.objectiveNum}. ${sec.title}`, indent: true })
+    }
+  }
 
   return (
     <div className="min-h-screen bg-[#faf8f5]">
@@ -49,61 +55,70 @@ export default async function StudyGuidePage({
 
       <div className="mx-auto max-w-5xl px-6 py-8">
         <div className="grid gap-8 lg:grid-cols-4">
-          {/* Sidebar navigation */}
+
+          {/* Sidebar */}
           <aside className="lg:col-span-1">
             <p className="text-xs font-semibold uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>
               Contents
             </p>
-            <nav className="mt-3 space-y-1">
-              {[
-                { id: 'subarea-I', label: 'Subarea I: Foundations of Reading Development' },
-                { id: 'obj-1', label: '  1. Phonological & Phonemic Awareness', indent: true },
-                { id: 'obj-2', label: '  2. Phonics & Word Recognition', indent: true },
-                { id: 'obj-3', label: '  3. Word Analysis Skills', indent: true },
-                { id: 'obj-4', label: '  4. Reading Fluency', indent: true },
-                { id: 'subarea-II', label: 'Subarea II: Reading Comprehension' },
-                { id: 'obj-5', label: '  5. Vocabulary Development', indent: true },
-                { id: 'obj-6', label: '  6. Background Knowledge', indent: true },
-                { id: 'obj-7', label: '  7. Literary Text Comprehension', indent: true },
-                { id: 'obj-8', label: '  8. Informational Text', indent: true },
-                { id: 'subarea-III', label: 'Subarea III: Assessment & Instruction' },
-                { id: 'obj-9', label: '  9. Formal & Informal Assessment', indent: true },
-                { id: 'obj-10', label: '  10. Data-Based Instruction', indent: true },
-                { id: 'obj-11', label: '  11. Supporting Diverse Learners', indent: true },
-                { id: 'subarea-IV', label: 'Subarea IV: Written Response Tips' },
-              ].map((item) => (
+            <nav className="mt-3 space-y-0.5">
+              {navItems.map((item) => (
                 <a
                   key={item.id}
                   href={`#${item.id}`}
-                  className={`block rounded px-3 py-1.5 text-xs text-[#6b6b6b] hover:bg-[#f9f0f2] hover:text-[#7c1c2e] ${item.indent ? 'pl-5' : 'font-semibold text-[#1a1a1a]'}`}
+                  className={`block rounded px-3 py-1.5 text-xs hover:bg-[#f9f0f2] hover:text-[#7c1c2e] transition-colors ${
+                    item.indent
+                      ? 'pl-5 text-[#6b6b6b]'
+                      : 'font-semibold text-[#1a1a1a]'
+                  }`}
                   style={{ fontFamily: 'var(--font-sans)' }}
                 >
-                  {item.label.trim()}
+                  {item.label}
                 </a>
               ))}
             </nav>
           </aside>
 
-          {/* Content area */}
-          <main className="lg:col-span-3">
-            <div className="rounded-lg border border-[#e8e0e2] bg-white p-8">
-              {/* Content will be injected here once source material is provided */}
-              <div className="flex flex-col items-center justify-center py-20 text-center">
-                <div className="h-16 w-16 rounded-full bg-[#f9f0f2] flex items-center justify-center">
-                  <span className="text-2xl">📖</span>
+          {/* Content */}
+          <main className="lg:col-span-3 space-y-10">
+            {guide.map((subarea) => (
+              <div key={subarea.id}>
+                {/* Subarea header */}
+                <div
+                  id={`subarea-${subarea.id}`}
+                  className="rounded-t-lg px-6 py-4 scroll-mt-6"
+                  style={{ backgroundColor: '#7c1c2e' }}
+                >
+                  <p className="text-xs font-semibold uppercase tracking-widest text-[#e8b4bc]" style={{ fontFamily: 'var(--font-sans)' }}>
+                    Subarea {subarea.id}
+                  </p>
+                  <h2 className="mt-0.5 text-lg font-bold text-white" style={{ fontFamily: 'var(--font-serif)' }}>
+                    {subarea.name}
+                  </h2>
                 </div>
-                <h2 className="mt-6 text-xl font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>
-                  Study Guide Content Loading
-                </h2>
-                <p className="mt-3 max-w-md text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>
-                  The study guide content is being prepared. Once you provide the source material, this page will be populated with complete content for all 4 subareas and 11 objectives.
-                </p>
-                <p className="mt-4 text-sm font-semibold text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>
-                  Platform is ready — content coming next.
-                </p>
+
+                {/* Objective sections */}
+                <div className="divide-y divide-[#e8e0e2] rounded-b-lg border border-t-0 border-[#e8e0e2] bg-white">
+                  {subarea.sections.map((sec) => (
+                    <div key={sec.id} id={sec.id} className="px-6 py-8 scroll-mt-6">
+                      <h3
+                        className="text-base font-bold text-[#7c1c2e] mb-4"
+                        style={{ fontFamily: 'var(--font-serif)' }}
+                      >
+                        {sec.subareaId !== 'IV' ? `Objective ${sec.objectiveNum}: ` : ''}{sec.title}
+                      </h3>
+                      <div
+                        className="prose-sm text-[#1a1a1a] leading-relaxed"
+                        style={{ fontFamily: 'var(--font-sans)' }}
+                        dangerouslySetInnerHTML={{ __html: sec.content }}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            ))}
           </main>
+
         </div>
       </div>
     </div>
