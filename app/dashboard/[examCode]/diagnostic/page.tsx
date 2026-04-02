@@ -136,7 +136,7 @@ export default function DiagnosticPage() {
         }),
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error)
+      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`)
 
       localStorage.setItem('for_test_results', JSON.stringify({
         ...data.results,
@@ -146,8 +146,8 @@ export default function DiagnosticPage() {
         submittedAt: new Date().toISOString(),
       }))
       router.push(`/dashboard/${examCode}/practice-test/${testId}/results?attemptId=${attemptId}&diagnostic=true`)
-    } catch {
-      setError('Failed to submit. Please try again.')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to submit. Please try again.')
     }
     setLoading(false)
   }

@@ -30,19 +30,27 @@ async function gradeCR(responseText: string): Promise<{ score: number; feedback:
 
   const message = await anthropic.messages.create({
     model: 'claude-haiku-4-5-20251001',
-    max_tokens: 512,
-    system: `You are an NES Foundations of Reading (190/890) constructed-response scorer using the official 0–4 rubric:
-4 – Thorough: Comprehensive understanding; addresses ALL parts with specific, accurate, evidence-based strategies; appropriate terminology.
-3 – Adequate: Relevant and generally accurate; addresses most parts; some lack of specificity or minor gaps.
-2 – Limited: Partial understanding; addresses some parts; noticeable gaps or inaccuracies.
-1 – Weak: Minimal relevant content; major gaps or significant inaccuracies; barely addresses the prompt.
-0 – No Response: Blank, off-topic, or incomprehensible.
-Respond ONLY with valid JSON: {"score": 0|1|2|3|4, "feedback": "2-3 sentence assessment"}`,
+    max_tokens: 600,
+    system: `You are a scorer for the NES Foundations of Reading exam (190/890) written assignment. Use the official 4-point rubric exactly:
+
+4 – THOROUGH KNOWLEDGE: The purpose of the assignment is fully achieved. The response demonstrates a thorough understanding of the relevant subject matter and applies this knowledge to the assignment with substantial accuracy. The response provides strong, relevant supporting evidence and demonstrates well-reasoned understanding of the subject.
+
+3 – ADEQUATE KNOWLEDGE: The purpose of the assignment is largely achieved. The response demonstrates an adequate understanding of the relevant subject matter and applies this knowledge to the assignment with general accuracy. The response provides relevant supporting evidence and demonstrates adequately reasoned understanding of the subject.
+
+2 – LIMITED KNOWLEDGE: The purpose of the assignment is partially achieved. The response demonstrates a limited or potentially inaccurate understanding of the relevant subject matter and applies this knowledge to the assignment with limited accuracy. The response provides few relevant examples and demonstrates poorly reasoned understanding of the subject.
+
+1 – WEAK KNOWLEDGE: The purpose of the assignment is not achieved. The response demonstrates little appropriate knowledge of the relevant subject matter and applies this knowledge to the assignment with poor accuracy. The response provides weak or absent supporting evidence and demonstrates minimal reasoning about the subject.
+
+0 – UNSCOREABLE/BLANK: Response is blank, off-topic, illegible, or does not address the prompt.
+
+Evaluate on four dimensions: (1) Purpose — assignment goals achieved, (2) Subject Matter Knowledge — accuracy and depth, (3) Support — quality of evidence and examples, (4) Rationale — soundness of reasoning.
+
+Respond ONLY with valid JSON: {"score": 0|1|2|3|4, "feedback": "3-4 sentence analysis referencing the four dimensions — be specific about what was strong and what was missing"}`,
     messages: [{
       role: 'user',
-      content: `PROMPT: A first-grade teacher notices that several students struggle to blend phonemes when reading unfamiliar words. Describe two evidence-based instructional strategies the teacher could use to develop phonemic awareness and phonics skills in these students. For each strategy, explain how it would be implemented and why it is effective for early readers.
+      content: `WRITTEN ASSIGNMENT PROMPT: A first-grade teacher notices that several students struggle to blend phonemes when reading unfamiliar words. Describe two evidence-based instructional strategies the teacher could use to develop phonemic awareness and phonics skills in these students. For each strategy, explain how it would be implemented and why it is effective for early readers.
 
-RESPONSE (${wordCount} words):
+CANDIDATE RESPONSE (${wordCount} words):
 ${responseText}`
     }],
   })
@@ -100,15 +108,22 @@ export async function POST(
 
     const mcPercentage = (totalCorrect / questions.length) * 100
 
-    // Grade CR if present (diagnostic only)
+    // Grade CR if present (diagnostic only) — never let grading failure block submission
     let crScore = 0
     let crPerformanceLevel: 'Thorough' | 'Adequate' | 'Limited' | 'Weak' | 'No Response' = 'No Response'
     let crFeedback = ''
     if (crResponse?.trim()) {
-      const graded = await gradeCR(crResponse)
-      crScore = graded.score
-      crFeedback = graded.feedback
-      crPerformanceLevel = crScoreToLevel(crScore)
+      try {
+        const graded = await gradeCR(crResponse)
+        crScore = graded.score
+        crFeedback = graded.feedback
+        crPerformanceLevel = crScoreToLevel(crScore)
+      } catch (crErr) {
+        console.error('CR grading failed, using fallback:', crErr)
+        crScore = 2
+        crFeedback = 'Your response was received. AI grading is temporarily unavailable — a score of 2 (Limited) has been applied as a placeholder.'
+        crPerformanceLevel = 'Limited'
+      }
     }
 
     // Combined score: 80% MC + 20% CR (CR scored 0–4, normalized to 0–100)
@@ -216,7 +231,8 @@ export async function POST(
       responses: gradedResponses,
     })
   } catch (err) {
-    console.error(err)
-    return NextResponse.json({ error: 'Server error' }, { status: 500 })
+    console.error('Submit route error:', err)
+    const msg = err instanceof Error ? err.message : 'Server error'
+    return NextResponse.json({ error: msg }, { status: 500 })
   }
 }
