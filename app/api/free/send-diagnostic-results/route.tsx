@@ -109,7 +109,7 @@ const LIGHT_BG = '#faf8f5'
 const BORDER = '#e8e0e2'
 
 const styles = StyleSheet.create({
-  page: { fontFamily: 'Helvetica', backgroundColor: '#ffffff', paddingBottom: 40 },
+  page: { fontFamily: 'Helvetica', backgroundColor: '#ffffff', paddingBottom: 60 },
   header: { backgroundColor: BURGUNDY, paddingHorizontal: 40, paddingTop: 28, paddingBottom: 22 },
   headerLabel: { fontSize: 8, color: '#e8b4bc', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4 },
   headerTitle: { fontSize: 18, color: '#ffffff', fontFamily: 'Helvetica-Bold', marginBottom: 2 },
