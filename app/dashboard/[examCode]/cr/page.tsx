@@ -340,7 +340,7 @@ export default function CRPage() {
   const studentInfo = scenario ? parseStudentLine(scenario.header) : null
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-[#faf8f5]">
+    <div className="flex h-screen flex-col overflow-hidden bg-[#faf8f5] select-none">
 
       {/* ── Top bar ─────────────────────────────────────────────────────────── */}
       <div className="flex-shrink-0 bg-[#7c1c2e] px-6 py-3.5 flex items-center gap-5">
@@ -480,7 +480,7 @@ export default function CRPage() {
                       value={responseText}
                       onChange={(e) => setResponseText(e.target.value)}
                       disabled={grading}
-                      className="w-full rounded-lg border border-[#e8e0e2] bg-[#faf8f5] p-4 text-sm text-[#1a1a1a] leading-relaxed outline-none focus:border-[#7c1c2e] focus:ring-1 focus:ring-[#7c1c2e] disabled:opacity-60 resize-y"
+                      className="w-full rounded-lg border border-[#e8e0e2] bg-[#faf8f5] p-4 text-sm text-[#1a1a1a] leading-relaxed outline-none focus:border-[#7c1c2e] focus:ring-1 focus:ring-[#7c1c2e] disabled:opacity-60 resize-y select-text"
                       style={{ ...SF, minHeight: '280px' }}
                       placeholder="Write your response here…"
                     />
