@@ -306,7 +306,7 @@ const flashcards = [
     objectiveNumber: 3,
     term: 'Latin and Greek roots',
     definition: 'Core morphemes from Latin or Greek that carry primary meaning and appear in hundreds of English academic words. Knowledge of 20 common roots (port, dict, bio, graph, phon, geo) unlocks vocabulary across subjects.',
-    example: 'The root "port" (carry) appears in transport, import, export, portable, and portable.',
+    example: 'The root "port" (carry) appears in transport, import, export, portable, and porter.',
     isPublished: true,
   },
   {
