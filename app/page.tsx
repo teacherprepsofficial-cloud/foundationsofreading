@@ -13,40 +13,6 @@ export const metadata: Metadata = {
 }
 
 
-const STARTER_INCLUDES = [
-  'Module 1: Complete test overview & what to expect on exam day',
-  'Diagnostic Practice Test (25 MC + 1 written response)',
-  'Full Study Guide — all 4 subareas, all 11 objectives',
-  '2 Full-Length Timed Practice Tests (100 MC each)',
-  'Scores on real NES 100–300 scale with Pass/Not Pass',
-  'Subarea performance breakdown — identical to your real score report',
-  '4 AI-Graded Written Response prompts with rubric feedback',
-  'Flashcard deck (150+ terms)',
-  'Interactive Vocabulary Matching activity',
-  '30-day full access',
-]
-
-const BUNDLE_ADDS = [
-  '2 additional full-length Practice Tests (Tests 3 & 4)',
-  '4 additional AI-Graded Written Response prompts',
-]
-
-const STATES = [
-  { code: 'AZ', state: 'Arizona', exam: '890' },
-  { code: 'ID', state: 'Idaho', exam: '190' },
-  { code: 'IN', state: 'Indiana', exam: '190' },
-  { code: 'KY', state: 'Kentucky', exam: '190' },
-  { code: 'MA', state: 'Massachusetts', exam: '190' },
-  { code: 'NM', state: 'New Mexico', exam: '190' },
-  { code: 'OH', state: 'Ohio', exam: '190' },
-  { code: 'OK', state: 'Oklahoma', exam: '190' },
-  { code: 'OR', state: 'Oregon', exam: '190' },
-  { code: 'UT', state: 'Utah', exam: '190' },
-  { code: 'VA', state: 'Virginia', exam: '190' },
-  { code: 'WA', state: 'Washington', exam: '190' },
-  { code: 'WI', state: 'Wisconsin', exam: '190' },
-]
-
 const FAQS = [
   {
     q: "What's the difference between the 190 and the 890?",
@@ -221,72 +187,6 @@ export default function HomePage() {
             <h2 className="mt-3 text-3xl font-bold text-[#1a1a1a] sm:text-4xl" style={{ fontFamily: 'var(--font-serif)' }}>4 Subareas. 11 Objectives.</h2>
             <p className="mt-2 text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>Click any subarea to explore the objectives it covers.</p>
             <SubareaGrid />
-          </div>
-        </section>
-
-        {/* Includes comparison */}
-        <section className="border-y border-[#e8e0e2] bg-[#faf8f5] py-16 sm:py-24">
-          <div className="mx-auto max-w-5xl px-6">
-            <div className="grid gap-12 md:grid-cols-2">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>Starter — $49</p>
-                <h3 className="mt-3 text-2xl font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>Everything you need to pass.</h3>
-                <ul className="mt-6 space-y-3">
-                  {STARTER_INCLUDES.map((item) => (
-                    <li key={item} className="flex items-start gap-3 text-sm text-[#1a1a1a]" style={{ fontFamily: 'var(--font-sans)' }}>
-                      <span className="mt-0.5 shrink-0 font-bold text-[#7c1c2e]">✓</span>{item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>Bundle adds</p>
-                <h3 className="mt-3 text-2xl font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>More practice. More confidence.</h3>
-                <ul className="mt-6 space-y-3">
-                  {BUNDLE_ADDS.map((item) => (
-                    <li key={item} className="flex items-start gap-3 text-sm text-[#1a1a1a]" style={{ fontFamily: 'var(--font-sans)' }}>
-                      <span className="mt-0.5 shrink-0 font-bold text-[#7c1c2e]">+</span>{item}
-                    </li>
-                  ))}
-                </ul>
-                <div className="mt-8 rounded-lg border-2 border-[#7c1c2e] bg-white p-6">
-                  <p className="text-sm font-semibold text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>Only $10 more.</p>
-                  <p className="mt-1 text-sm leading-relaxed text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>2 more full tests + 4 more AI-graded writing prompts for $59 total. Most people who want to feel fully prepared choose the bundle.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* States */}
-        <section className="py-16 sm:py-24">
-          <div className="mx-auto max-w-5xl px-6">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>Who Needs This</p>
-            <h2 className="mt-3 text-3xl font-bold text-[#1a1a1a] sm:text-4xl" style={{ fontFamily: 'var(--font-serif)' }}>Required in 13+ states.</h2>
-            {/* Legend */}
-            <div className="mt-6 flex gap-4">
-              <div className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded-full bg-[#7c1c2e]" />
-                <span className="text-xs text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>NES 190</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded-full bg-[#1e3a5f]" />
-                <span className="text-xs text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>NES 890</span>
-              </div>
-            </div>
-            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-              {STATES.map((s) => (
-                <div key={s.code} className={`flex items-center justify-between rounded border px-4 py-3 ${s.exam === '890' ? 'border-[#1e3a5f]/30 bg-[#f0f4f9]' : 'border-[#e8e0e2] bg-white'}`}>
-                  <div className="flex items-center gap-2">
-                    <span className={`text-sm font-bold ${s.exam === '890' ? 'text-[#1e3a5f]' : 'text-[#7c1c2e]'}`} style={{ fontFamily: 'var(--font-sans)' }}>{s.code}</span>
-                    <span className="text-sm text-[#1a1a1a]" style={{ fontFamily: 'var(--font-sans)' }}>{s.state}</span>
-                  </div>
-                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${s.exam === '890' ? 'bg-[#1e3a5f] text-white' : 'bg-[#7c1c2e] text-white'}`} style={{ fontFamily: 'var(--font-sans)' }}>
-                    {s.exam}
-                  </span>
-                </div>
-              ))}
-            </div>
           </div>
         </section>
 
