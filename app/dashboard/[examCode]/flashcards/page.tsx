@@ -36,10 +36,18 @@ function shuffle<T>(arr: T[]): T[] {
   return a
 }
 
+const ROUND_SIZE = 15
+
 function buildMatchQuestions(items: VocabItem[]): MatchQuestion[] {
   if (items.length < 4) return []
-  return shuffle(items).map((item) => {
-    const distractors = shuffle(items.filter((v) => v._id !== item._id)).slice(0, 3)
+  // Pick up to ROUND_SIZE items for this round
+  const pool = shuffle(items).slice(0, ROUND_SIZE)
+  return pool.map((item) => {
+    // Prefer distractors from the same objective; fall back to same subarea
+    const sameObj = items.filter((v) => v._id !== item._id && v.objectiveNumber === item.objectiveNumber)
+    const fallback = items.filter((v) => v._id !== item._id && v.objectiveNumber !== item.objectiveNumber)
+    const distractorPool = sameObj.length >= 3 ? sameObj : [...sameObj, ...fallback]
+    const distractors = shuffle(distractorPool).slice(0, 3)
     return { item, options: shuffle([item, ...distractors]) }
   })
 }
