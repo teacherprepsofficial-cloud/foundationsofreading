@@ -404,55 +404,38 @@ export default function CRPage() {
         </div>
       </div>
 
+      {/* ── Prompt selector row ─────────────────────────────────────────────── */}
+      <div className="flex-shrink-0 border-b border-[#e8e0e2] bg-white px-6 py-3 flex items-center gap-2 overflow-x-auto">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-[#9b9b9b] flex-shrink-0 mr-1" style={SF}>
+          {crs.length} Prompts
+        </p>
+        {crs.map((cr) => {
+          const active = selected?._id === cr._id
+          const done = attemptedIds.has(cr._id)
+          return (
+            <button
+              key={cr._id}
+              onClick={() => selectCR(cr)}
+              className="flex-shrink-0 flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors"
+              style={{
+                ...SF,
+                background: active ? '#7c1c2e' : done ? '#f0fdf4' : 'white',
+                borderColor: active ? '#7c1c2e' : done ? '#86efac' : '#e8e0e2',
+                color: active ? 'white' : done ? '#16a34a' : '#1a1a1a',
+              }}
+            >
+              {done && !active && <span>✓</span>}
+              <span>Response {cr.crNumber}</span>
+              {cr.bundleOnly && !active && (
+                <span className="text-[9px] opacity-60">🔒</span>
+              )}
+            </button>
+          )
+        })}
+      </div>
+
       {/* ── Body ────────────────────────────────────────────────────────────── */}
       <div className="flex flex-1 overflow-hidden">
-
-        {/* Sidebar */}
-        <aside className="w-[220px] flex-shrink-0 overflow-y-auto border-r border-[#e8e0e2] bg-white">
-          <div className="px-4 pt-4 pb-3 border-b border-[#e8e0e2]">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[#9b9b9b]" style={SF}>
-              {crs.length} Prompts
-            </p>
-          </div>
-          <nav className="py-1">
-            {crs.map((cr) => {
-              const active = selected?._id === cr._id
-              return (
-                <button
-                  key={cr._id}
-                  onClick={() => selectCR(cr)}
-                  className="w-full text-left px-4 py-3 transition-colors"
-                  style={{
-                    background: active ? '#f9f0f2' : 'transparent',
-                    borderLeft: active ? '3px solid #7c1c2e' : '3px solid transparent',
-                  }}
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="text-[13px] font-semibold text-[#1a1a1a] leading-snug" style={SF}>
-                      Response {cr.crNumber}
-                    </p>
-                    {attemptedIds.has(cr._id) && (
-                      <span className="flex-shrink-0 h-4 w-4 rounded-full bg-green-500 flex items-center justify-center">
-                        <span className="text-[8px] text-white font-bold">✓</span>
-                      </span>
-                    )}
-                  </div>
-                  <p className="mt-0.5 text-[10px] text-[#7c1c2e] leading-snug" style={SF}>
-                    {TYPE_LABEL[cr.crType]}
-                  </p>
-                  {cr.bundleOnly && (
-                    <span
-                      className="mt-1.5 inline-block rounded px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wide text-white"
-                      style={{ background: '#7c1c2e' }}
-                    >
-                      Bundle
-                    </span>
-                  )}
-                </button>
-              )
-            })}
-          </nav>
-        </aside>
 
         {/* Main content */}
         <main className="flex-1 overflow-y-auto relative">
