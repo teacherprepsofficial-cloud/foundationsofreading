@@ -6,7 +6,6 @@ import UserAccess from '@/models/UserAccess'
 import UserProgress from '@/models/UserProgress'
 import UserTestAttempt from '@/models/UserTestAttempt'
 import User from '@/models/User'
-import DashboardSidebar from '@/components/dashboard-sidebar'
 
 export default async function ExamDashboardPage({
   params,
@@ -60,26 +59,10 @@ export default async function ExamDashboardPage({
 
   const daysLeft = Math.max(0, Math.ceil((new Date(access.expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
 
-  const NAV = [
-    { label: 'Overview', href: `/dashboard/${examCode}`, icon: '⊞' },
-    { label: 'About This Test', href: `/dashboard/${examCode}/module-1`, icon: '1', done: module1Done },
-    { label: 'Diagnostic', href: `/dashboard/${examCode}/diagnostic`, icon: '2', done: diagnosticDone, locked: !module1Done },
-    { label: 'Study Guide', href: `/dashboard/${examCode}/study-guide`, icon: '3', locked: !diagnosticDone },
-    { label: 'Practice Tests', href: `/dashboard/${examCode}/practice-tests`, icon: '4', locked: !diagnosticDone, badge: practiceTestsCount > 0 ? `${practiceTestsCount}` : undefined },
-    { label: 'Flashcards', href: `/dashboard/${examCode}/flashcards`, icon: '5', locked: !diagnosticDone },
-    { label: 'Written Response', href: `/dashboard/${examCode}/cr`, icon: '6', locked: !diagnosticDone, badge: crCount > 0 ? `${crCount}` : undefined },
-  ]
-
   const firstName = user?.name?.split(' ')[0] || 'there'
 
   return (
-    <div className="flex min-h-screen bg-[#faf8f5]">
-
-      {/* ── Left Sidebar ── */}
-      <DashboardSidebar nav={NAV} />
-
-      {/* ── Main Content ── */}
-      <div className="flex-1 overflow-auto">
+    <div className="flex-1 overflow-auto">
 
         {/* Top bar */}
         <div className="flex items-center justify-between border-b border-[#e8e0e2] bg-white px-8 py-4">
@@ -230,7 +213,6 @@ export default async function ExamDashboardPage({
           </div>
 
         </div>
-      </div>
     </div>
   )
 }

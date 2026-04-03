@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import DashboardHeader from '@/components/dashboard-header'
 
 interface Question {
   _id: string
@@ -159,7 +158,6 @@ export default function DiagnosticPage() {
   if (phase === 'checking') {
     return (
       <div className="min-h-screen bg-[#faf8f5]">
-        <DashboardHeader />
         <div className="flex items-center justify-center py-32">
           <p className="text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>Loading…</p>
         </div>
@@ -171,7 +169,6 @@ export default function DiagnosticPage() {
   if (phase === 'intro') {
     return (
       <div className="min-h-screen bg-[#faf8f5]">
-        <DashboardHeader />
         <div className="bg-[#7c1c2e] px-6 py-6">
           <div className="mx-auto max-w-3xl">
             <Link href={`/dashboard/${examCode}`} className="text-sm text-[#e8b4bc] hover:text-white" style={{ fontFamily: 'var(--font-sans)' }}>← Back to Dashboard</Link>
@@ -249,7 +246,6 @@ export default function DiagnosticPage() {
   if (phase === 'cr') {
     return (
       <div className="min-h-screen bg-[#faf8f5]">
-        <DashboardHeader />
         <div className="bg-[#7c1c2e] px-6 py-4">
           <div className="mx-auto max-w-3xl flex items-center justify-between">
             <p className="font-bold text-white" style={{ fontFamily: 'var(--font-serif)' }}>Written Response</p>
