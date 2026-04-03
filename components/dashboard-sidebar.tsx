@@ -13,11 +13,10 @@ interface NavItem {
 }
 
 interface DashboardSidebarProps {
-  examCode: string
   nav: NavItem[]
 }
 
-export default function DashboardSidebar({ examCode, nav }: DashboardSidebarProps) {
+export default function DashboardSidebar({ nav }: DashboardSidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
 

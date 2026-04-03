@@ -76,7 +76,7 @@ export default async function ExamDashboardPage({
     <div className="flex min-h-screen bg-[#faf8f5]">
 
       {/* ── Left Sidebar ── */}
-      <DashboardSidebar examCode={examCode} nav={NAV} />
+      <DashboardSidebar nav={NAV} />
 
       {/* ── Main Content ── */}
       <div className="flex-1 overflow-auto">
