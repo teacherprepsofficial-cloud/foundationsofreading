@@ -21,7 +21,60 @@ function crScoreToLevel(score: number): 'Thorough' | 'Adequate' | 'Limited' | 'W
   return 'No Response'
 }
 
-async function gradeCR(responseText: string): Promise<{ score: number; feedback: string }> {
+// Build a text summary of exhibit data to include in grading context
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function buildExhibitContext(cr: any): string {
+  if (!cr) return ''
+  const lines: string[] = []
+  lines.push(`Objective: ${cr.objective}`)
+  lines.push(`Assignment: ${cr.assignmentIntro}`)
+  lines.push(`Parts the candidate must address: ${(cr.assignmentParts || []).join(' | ')}`)
+  for (const exhibit of (cr.exhibits || [])) {
+    lines.push(`\n--- ${exhibit.title} ---`)
+    if (exhibit.exhibitType === 'teacher_record') {
+      lines.push(exhibit.context)
+      const errors: string[] = []
+      for (const line of (exhibit.lines || [])) {
+        for (const word of line) {
+          if (word.mark === 'sub') errors.push(`"${word.text}" → student read "${word.student}" (substitution, no correction)`)
+          if (word.mark === 'sc') errors.push(`"${word.text}" → student attempted "${word.student}" then self-corrected`)
+          if (word.mark === 'omit') errors.push(`"${word.text}" — omitted`)
+          if (word.mark === 'insert') errors.push(`"${word.text}" — student inserted "${word.student}"`)
+          if (word.mark === 'rep') errors.push(`"${word.text}" — repetition (went back and re-read)`)
+          if (word.mark === 'lp') errors.push(`"${word.text}" — long pause before reading`)
+        }
+      }
+      if (errors.length) lines.push(`Reading errors: ${errors.join('; ')}`)
+    } else if (exhibit.exhibitType === 'fluency_rubric') {
+      lines.push(exhibit.context)
+      lines.push(`Scores — ${(exhibit.rows || []).filter((r: any) => r.score).map((r: any) => `${r.label}: ${r.score}`).join(', ')}`)
+      lines.push(`Benchmark: ${exhibit.benchmark}`)
+    } else if (exhibit.exhibitType === 'anecdotal') {
+      lines.push(exhibit.context)
+      for (const note of (exhibit.notes || [])) lines.push(`- ${note.label}: ${note.text}`)
+    } else if (exhibit.exhibitType === 'word_list') {
+      lines.push(exhibit.context)
+      for (const group of (exhibit.groups || [])) {
+        const correct = group.rows.filter((r: any) => r.correct).length
+        lines.push(`${group.groupLabel}: ${correct}/${group.rows.length} correct`)
+        const errs = group.rows.filter((r: any) => !r.correct).map((r: any) => `"${r.word}" → "${r.response}"`)
+        if (errs.length) lines.push(`  Errors: ${errs.join(', ')}`)
+      }
+    } else if (exhibit.exhibitType === 'passage') {
+      lines.push(`Title: "${exhibit.passageTitle}"`)
+      lines.push(exhibit.text)
+    } else if (exhibit.exhibitType === 'written_response') {
+      lines.push(exhibit.context)
+      for (const item of (exhibit.items || [])) {
+        lines.push(`Q: ${item.question}`)
+        lines.push(`Student response: ${item.response}`)
+      }
+    }
+  }
+  return lines.join('\n')
+}
+
+async function gradeCR(responseText: string, assignmentContext: string): Promise<{ score: number; feedback: string }> {
   const wordCount = responseText.trim().split(/\s+/).filter(Boolean).length
   if (wordCount < 50) return { score: 0, feedback: `Response is only ${wordCount} words. A thorough response requires 150+ words addressing all parts of the prompt.` }
 
@@ -47,15 +100,12 @@ async function gradeCR(responseText: string): Promise<{ score: number; feedback:
 
 0 – UNSCOREABLE/BLANK: Response is blank, off-topic, illegible, or does not address the prompt.
 
-Evaluate on four dimensions: (1) Purpose — assignment goals achieved, (2) Subject Matter Knowledge — accuracy and depth, (3) Support — quality of evidence and examples, (4) Rationale — soundness of reasoning.
+Evaluate on four dimensions: (1) Purpose — assignment goals achieved, (2) Subject Matter Knowledge — accuracy and depth, (3) Support — quality and specificity of evidence cited from the exhibits, (4) Rationale — soundness of reasoning.
 
-Respond ONLY with valid JSON: {"score": 0|1|2|3|4, "feedback": "3-4 sentence analysis referencing the four dimensions — be specific about what was strong and what was missing"}`,
+Respond ONLY with valid JSON: {"score": 0|1|2|3|4, "feedback": "3-4 sentence analysis referencing the four dimensions — be specific about what was strong and what was missing, and whether the candidate cited the exhibit data"}`,
       messages: [{
         role: 'user',
-        content: `WRITTEN ASSIGNMENT PROMPT: A first-grade teacher notices that several students struggle to blend phonemes when reading unfamiliar words. Describe two evidence-based instructional strategies the teacher could use to develop phonemic awareness and phonics skills in these students. For each strategy, explain how it would be implemented and why it is effective for early readers.
-
-CANDIDATE RESPONSE (${wordCount} words):
-${responseText}`,
+        content: `ASSIGNMENT CONTEXT AND STUDENT EXHIBIT DATA:\n${assignmentContext}\n\nCANDIDATE RESPONSE (${wordCount} words):\n${responseText}`,
       }],
     }),
   })
@@ -137,12 +187,20 @@ export async function POST(
     let cr2PerformanceLevel: 'Thorough' | 'Adequate' | 'Limited' | 'Weak' | 'No Response' = 'No Response'
     let cr1Feedback = '', cr2Feedback = ''
 
+    // Build exhibit contexts from the test's crPrompts
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const cr1Prompt = (test.crPrompts || []).find((p: any) => p.promptNumber === 1)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const cr2Prompt = (test.crPrompts || []).find((p: any) => p.promptNumber === 2)
+    const cr1Context = buildExhibitContext(cr1Prompt)
+    const cr2Context = buildExhibitContext(cr2Prompt)
+
     // Practice test: 2 CR responses (each 10% weight)
     const hasTwoCRs = cr1Response?.trim() || cr2Response?.trim()
     if (hasTwoCRs) {
       const [g1, g2] = await Promise.all([
-        cr1Response?.trim() ? gradeCR(cr1Response).catch(() => ({ score: 2, feedback: '' })) : Promise.resolve({ score: 0, feedback: '' }),
-        cr2Response?.trim() ? gradeCR(cr2Response).catch(() => ({ score: 2, feedback: '' })) : Promise.resolve({ score: 0, feedback: '' }),
+        cr1Response?.trim() ? gradeCR(cr1Response, cr1Context).catch(() => ({ score: 2, feedback: '' })) : Promise.resolve({ score: 0, feedback: '' }),
+        cr2Response?.trim() ? gradeCR(cr2Response, cr2Context).catch(() => ({ score: 2, feedback: '' })) : Promise.resolve({ score: 0, feedback: '' }),
       ])
       cr1Score = g1.score; cr1Feedback = g1.feedback; cr1PerformanceLevel = crScoreToLevel(cr1Score)
       cr2Score = g2.score; cr2Feedback = g2.feedback; cr2PerformanceLevel = crScoreToLevel(cr2Score)
@@ -153,7 +211,7 @@ export async function POST(
     } else if (crResponse?.trim()) {
       // Diagnostic: single CR
       try {
-        const graded = await gradeCR(crResponse)
+        const graded = await gradeCR(crResponse, '')
         crScore = graded.score
         crFeedback = graded.feedback
         crPerformanceLevel = crScoreToLevel(crScore)
