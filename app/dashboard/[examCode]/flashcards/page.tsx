@@ -65,7 +65,6 @@ export default function FlashcardsPage() {
   const [matchQuestions, setMatchQuestions] = useState<MatchQuestion[]>([])
   const [matchIndex, setMatchIndex] = useState(0)
   const [matchSelectedId, setMatchSelectedId] = useState<string | null>(null)
-  const [matchCorrect, setMatchCorrect] = useState<boolean | null>(null)
   const [matchResults, setMatchResults] = useState<MatchResult[]>([])
   const [matchPhase, setMatchPhase] = useState<'playing' | 'results'>('playing')
   const matchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -108,7 +107,6 @@ export default function FlashcardsPage() {
     setMatchQuestions(questions)
     setMatchIndex(0)
     setMatchSelectedId(null)
-    setMatchCorrect(null)
     setMatchResults([])
     setMatchPhase('playing')
   }, [vocab, subareaFilter])
@@ -168,7 +166,6 @@ export default function FlashcardsPage() {
     if (!current) return
     const isCorrect = selectedItem._id === current.item._id
     setMatchSelectedId(selectedItem._id)
-    setMatchCorrect(isCorrect)
 
     const result: MatchResult = {
       item: current.item,
@@ -186,7 +183,6 @@ export default function FlashcardsPage() {
         setMatchResults(newResults)
         setMatchIndex((i) => i + 1)
         setMatchSelectedId(null)
-        setMatchCorrect(null)
       }
     }, 750)
   }
@@ -198,7 +194,6 @@ export default function FlashcardsPage() {
     setMatchQuestions(buildMatchQuestions(filtered))
     setMatchIndex(0)
     setMatchSelectedId(null)
-    setMatchCorrect(null)
     setMatchResults([])
     setMatchPhase('playing')
   }
