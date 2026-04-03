@@ -466,7 +466,7 @@ export default function PracticeTestPage() {
             {isTimeLow && <span className="text-xs font-semibold text-red-600" style={SF}>TIME LOW</span>}
           </div>
           <div className="text-center">
-            <p className="text-xs font-semibold text-[#6b6b6b]" style={SF}>{test.name}</p>
+            <p className="text-xs font-semibold text-[#6b6b6b]" style={SF}>{test?.name}</p>
             <p className="text-xs text-[#6b6b6b]" style={SF}>{centerText}</p>
           </div>
           <div className="flex items-center gap-2">{children}</div>
