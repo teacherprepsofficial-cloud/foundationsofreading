@@ -405,10 +405,43 @@ export default function CRPage() {
         {/* Main content */}
         <main className="flex-1 overflow-y-auto">
           {!selected ? (
-            <div className="flex h-full items-center justify-center">
-              <div className="text-center">
-                <p className="text-3xl mb-3 text-[#c8b8bb]">←</p>
-                <p className="text-sm text-[#9b9b9b]" style={SF}>Select a prompt to begin</p>
+            <div className="flex h-full items-center justify-center px-8">
+              <div className="max-w-lg w-full">
+                {/* Header */}
+                <p className="text-[10px] font-bold uppercase tracking-widest text-[#7c1c2e] mb-3" style={SF}>Written Response Practice</p>
+                <h2 className="text-2xl font-bold text-[#1a1a1a] leading-snug mb-3" style={SE}>
+                  Practice writing like the real exam.
+                </h2>
+                <p className="text-sm text-[#5a5a5a] leading-relaxed mb-8" style={SF}>
+                  Each prompt gives you a real student scenario — a running record, phonics assessment, or comprehension observation — then asks you to analyze it in writing. Your response is scored 0–2 by AI using the same rubric as the NES exam.
+                </p>
+
+                {/* How it works */}
+                <div className="space-y-3 mb-8">
+                  {[
+                    { n: '1', label: 'Read the student scenario', desc: 'Review the exhibits — running records, fluency data, or comprehension notes.' },
+                    { n: '2', label: 'Write your response', desc: 'Aim for 150–300 words. Identify a strength, a need, a strategy, and explain why it works.' },
+                    { n: '3', label: 'Get scored instantly', desc: 'AI grades your response 0–2 with specific feedback, strengths, and improvements.' },
+                  ].map((step) => (
+                    <div key={step.n} className="flex items-start gap-4 rounded-xl border border-[#e8e0e2] bg-white px-5 py-4">
+                      <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#f9f0f2] text-xs font-bold text-[#7c1c2e]" style={SF}>{step.n}</span>
+                      <div>
+                        <p className="text-sm font-semibold text-[#1a1a1a]" style={SF}>{step.label}</p>
+                        <p className="mt-0.5 text-xs text-[#6b6b6b] leading-relaxed" style={SF}>{step.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* CTA */}
+                <button
+                  onClick={() => crs[0] && selectCR(crs[0])}
+                  disabled={crs.length === 0}
+                  className="w-full rounded-lg bg-[#7c1c2e] py-3 text-sm font-semibold text-white hover:bg-[#5a1220] transition-colors disabled:opacity-40"
+                  style={SF}
+                >
+                  Start with Response 1 →
+                </button>
               </div>
             </div>
           ) : (
