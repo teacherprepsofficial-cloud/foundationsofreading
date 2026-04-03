@@ -161,11 +161,11 @@ export default function CRPage() {
                     Written Response {selected.crNumber} — {CR_TYPE_LABELS[selected.crType]}
                   </p>
                   {selected.scenarioContext && (
-                    <div className="mt-4 rounded border-l-4 border-[#7c1c2e] bg-[#faf8f5] p-4">
-                      <p className="text-sm font-semibold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-sans)' }}>Scenario</p>
-                      <p className="mt-1 text-sm leading-relaxed text-[#1a1a1a]" style={{ fontFamily: 'var(--font-sans)' }}>
+                    <div className="mt-4 rounded border border-[#e8e0e2] bg-[#faf8f5] p-5">
+                      <p className="text-xs font-bold uppercase tracking-widest text-[#7c1c2e] mb-3" style={{ fontFamily: 'var(--font-sans)' }}>Student Scenario &amp; Exhibits</p>
+                      <pre className="text-sm leading-relaxed text-[#1a1a1a] whitespace-pre-wrap break-words" style={{ fontFamily: 'var(--font-sans)' }}>
                         {selected.scenarioContext}
-                      </p>
+                      </pre>
                     </div>
                   )}
                   <p className="mt-4 font-semibold leading-relaxed text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)', fontSize: '16px' }}>
