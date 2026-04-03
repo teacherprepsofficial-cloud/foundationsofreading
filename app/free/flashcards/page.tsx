@@ -120,14 +120,6 @@ export default function FreeFlashcardsPage() {
     }, 150)
   }
 
-  function jumpTo(i: number) {
-    setIsFlipped(false)
-    setTimeout(() => {
-      setIndex(i)
-      setReviewedSet((s) => { const n = new Set(s); n.add(i); return n })
-    }, 150)
-  }
-
   function handleShuffle() {
     const shuffled = shuffle(CARDS.map((_, i) => i))
     setIndex(shuffled[0])
