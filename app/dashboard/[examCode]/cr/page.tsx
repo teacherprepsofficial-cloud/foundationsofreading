@@ -470,21 +470,79 @@ export default function CRPage() {
                   Practice writing like the real exam.
                 </h2>
                 <p className="text-sm text-[#5a5a5a] leading-relaxed mb-8" style={SF}>
-                  Each prompt gives you a real student scenario — a running record, phonics assessment, or comprehension observation — then asks you to analyze it in writing. Your response is scored 1–4 by AI using the official NES rubric.
+                  Each prompt gives you a real student scenario — a running record, phonics assessment, or comprehension observation — then asks you to analyze it in writing. Your response is scored 1–4 using the rubric below.
                 </p>
 
-                {/* How it works */}
-                <div className="space-y-3 mb-8">
+                {/* Scoring rubric */}
+                <div className="mb-8 rounded-xl border border-[#e8e0e2] overflow-hidden bg-white text-sm" style={SF}>
+                  <div className="bg-[#f9f0f2] px-5 py-2.5 border-b border-[#e8e0e2]">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#7c1c2e]" style={SF}>Scoring Rubric</p>
+                  </div>
                   {[
-                    { n: '1', label: 'Read the student scenario', desc: 'Review the exhibits — running records, fluency data, or comprehension notes.' },
-                    { n: '2', label: 'Write your response', desc: 'Aim for 150–300 words. Identify a strength, a need, a strategy, and explain why it works.' },
-                    { n: '3', label: 'Get scored instantly', desc: 'AI grades your response 1–4 using the official NES rubric — same criteria as exam day.' },
-                  ].map((step) => (
-                    <div key={step.n} className="flex items-start gap-4 rounded-xl border border-[#e8e0e2] bg-white px-5 py-4">
-                      <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#f9f0f2] text-xs font-bold text-[#7c1c2e]" style={SF}>{step.n}</span>
-                      <div>
-                        <p className="text-sm font-semibold text-[#1a1a1a]" style={SF}>{step.label}</p>
-                        <p className="mt-0.5 text-xs text-[#6b6b6b] leading-relaxed" style={SF}>{step.desc}</p>
+                    {
+                      score: '4',
+                      label: 'Thorough',
+                      color: '#16a34a',
+                      summary: 'Shows thorough knowledge and understanding of the subject matter.',
+                      bullets: [
+                        'The purpose of the assignment is fully achieved.',
+                        'Subject matter knowledge is applied substantially, accurately, and appropriately.',
+                        'Supporting evidence is sound, with high-quality and relevant examples.',
+                        'The response demonstrates ably reasoned, comprehensive understanding.',
+                      ],
+                    },
+                    {
+                      score: '3',
+                      label: 'Adequate',
+                      color: '#2563eb',
+                      summary: 'Shows adequate knowledge and understanding of the subject matter.',
+                      bullets: [
+                        'The purpose of the assignment is largely achieved.',
+                        'Subject matter knowledge is generally accurate and appropriately applied.',
+                        'Supporting evidence is adequate, with some relevant examples.',
+                        'The response demonstrates adequately reasoned understanding.',
+                      ],
+                    },
+                    {
+                      score: '2',
+                      label: 'Limited',
+                      color: '#d97706',
+                      summary: 'Shows limited knowledge and understanding of the subject matter.',
+                      bullets: [
+                        'The purpose of the assignment is only partially achieved.',
+                        'Subject matter knowledge is limited and may be inaccurate or inappropriate.',
+                        'Supporting evidence is limited, with few relevant examples.',
+                        'The response demonstrates limited, poorly reasoned understanding.',
+                      ],
+                    },
+                    {
+                      score: '1',
+                      label: 'Weak',
+                      color: '#dc2626',
+                      summary: 'Shows weak knowledge and understanding of the subject matter.',
+                      bullets: [
+                        'The purpose of the assignment is not achieved.',
+                        'There is little or no accurate or appropriate application of subject matter knowledge.',
+                        'Supporting evidence, if present, is weak with few or no relevant examples.',
+                        'The response reflects little or no reasoning or understanding of the topic.',
+                      ],
+                    },
+                  ].map((row, i, arr) => (
+                    <div key={row.score} className={`flex gap-0 ${i < arr.length - 1 ? 'border-b border-[#e8e0e2]' : ''}`}>
+                      <div className="flex-shrink-0 w-14 flex flex-col items-center justify-start pt-4 border-r border-[#e8e0e2]">
+                        <span className="text-xl font-bold" style={{ color: row.color }}>{row.score}</span>
+                        <span className="text-[9px] font-semibold uppercase tracking-wide mt-0.5" style={{ color: row.color }}>{row.label}</span>
+                      </div>
+                      <div className="px-5 py-4 flex-1">
+                        <p className="text-[13px] font-semibold text-[#1a1a1a] mb-2" style={SF}>{row.summary}</p>
+                        <ul className="space-y-1">
+                          {row.bullets.map((b, j) => (
+                            <li key={j} className="flex items-start gap-2 text-xs text-[#5a5a5a] leading-relaxed" style={SF}>
+                              <span className="mt-1 flex-shrink-0 h-1 w-1 rounded-full bg-[#9b9b9b]" />
+                              {b}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     </div>
                   ))}
