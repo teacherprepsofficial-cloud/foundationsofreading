@@ -57,8 +57,6 @@ export default async function ExamDashboardPage({
   const crCount = progress?.crAttemptsCompleted?.length || 0
   const isBundle = access.tier === 'bundle'
 
-  const daysLeft = Math.max(0, Math.ceil((new Date(access.expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
-
   const firstName = user?.name?.split(' ')[0] || 'there'
 
   return (
@@ -73,17 +71,6 @@ export default async function ExamDashboardPage({
             <h1 className="text-xl font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>
               Welcome back, {firstName}.
             </h1>
-          </div>
-          <div className="text-right">
-            <p
-              className={`text-sm font-semibold ${daysLeft <= 5 ? 'text-red-600' : 'text-[#7c1c2e]'}`}
-              style={{ fontFamily: 'var(--font-sans)' }}
-            >
-              {daysLeft} day{daysLeft !== 1 ? 's' : ''} left
-            </p>
-            <p className="text-xs text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>
-              NES 190 &amp; 890 · {isBundle ? 'Bundle' : 'Starter'}
-            </p>
           </div>
         </div>
 
