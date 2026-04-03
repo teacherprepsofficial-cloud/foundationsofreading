@@ -157,7 +157,7 @@ export default function FreeFlashcardsPage() {
           </p>
         </div>
 
-        <div className="mx-auto max-w-3xl px-6 py-10">
+        <div className="mx-auto max-w-5xl px-6 py-10">
 
           {/* Header + subarea selector */}
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
