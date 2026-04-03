@@ -149,7 +149,7 @@ export default function ResultsDemoPage() {
               2–4 full-length tests, each with a real NES-format results page. Know exactly where you stand.
             </p>
             <a href="/#pricing" className="mt-4 inline-block rounded bg-[#7c1c2e] px-8 py-3 text-sm font-semibold text-white hover:bg-[#5a1220]" style={{ fontFamily: 'var(--font-sans)' }}>
-              Get Full Access — Starts at $49
+              Get Full Access →
             </a>
           </div>
         </div>

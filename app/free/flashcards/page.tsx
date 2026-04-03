@@ -123,7 +123,7 @@ export default function FreeFlashcardsPage() {
             <p className="font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>150+ terms in the full deck.</p>
             <p className="mt-1 text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>Every key term across all 4 subareas, plus the Vocab Matching game.</p>
             <a href="/#pricing" className="mt-4 inline-block rounded bg-[#7c1c2e] px-8 py-3 text-sm font-semibold text-white hover:bg-[#5a1220]" style={{ fontFamily: 'var(--font-sans)' }}>
-              Get Full Access — $49
+              Get Full Access →
             </a>
           </div>
         </div>

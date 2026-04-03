@@ -97,15 +97,7 @@ export default function FreePracticeTestPage() {
         <div className="mx-auto max-w-2xl px-6 py-10">
           {submitted ? (
             <>
-              <div className={`rounded-xl p-6 text-center ${pct >= 60 ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
-                <p className="text-4xl font-bold" style={{ fontFamily: 'var(--font-serif)', color: pct >= 60 ? '#166534' : '#991b1b' }}>
-                  {score} / {QUESTIONS.length}
-                </p>
-                <p className="mt-1 text-sm font-semibold" style={{ fontFamily: 'var(--font-sans)', color: pct >= 60 ? '#166534' : '#991b1b' }}>
-                  {pct}% — {pct >= 60 ? 'Great start!' : 'The full study guide will build these skills.'}
-                </p>
-              </div>
-              <div className="mt-6 space-y-5">
+              <div className="space-y-5">
                 {QUESTIONS.map((q, i) => {
                   const chosen = answers[q.id]
                   const correct = chosen === q.correct
@@ -130,10 +122,18 @@ export default function FreePracticeTestPage() {
                   )
                 })}
               </div>
-              <div className="mt-8 rounded-xl border-2 border-[#7c1c2e] bg-white p-6 text-center">
+              <div className={`mt-6 rounded-xl p-6 text-center ${pct >= 60 ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
+                <p className="text-4xl font-bold" style={{ fontFamily: 'var(--font-serif)', color: pct >= 60 ? '#166534' : '#991b1b' }}>
+                  {score} / {QUESTIONS.length}
+                </p>
+                <p className="mt-1 text-sm font-semibold" style={{ fontFamily: 'var(--font-sans)', color: pct >= 60 ? '#166534' : '#991b1b' }}>
+                  {pct}% — {pct >= 60 ? 'Great start!' : 'The full study guide will build these skills.'}
+                </p>
+              </div>
+              <div className="mt-6 rounded-xl border-2 border-[#7c1c2e] bg-white p-6 text-center">
                 <p className="font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>Ready for the real deal?</p>
                 <p className="mt-1 text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>Full tests: 100 questions, 4 hours, scored on the real NES 100–300 scale with subarea breakdown.</p>
-                <a href="/#pricing" className="mt-4 inline-block rounded bg-[#7c1c2e] px-8 py-3 text-sm font-semibold text-white hover:bg-[#5a1220]" style={{ fontFamily: 'var(--font-sans)' }}>Get Full Access — $49</a>
+                <a href="/#pricing" className="mt-4 inline-block rounded bg-[#7c1c2e] px-8 py-3 text-sm font-semibold text-white hover:bg-[#5a1220]" style={{ fontFamily: 'var(--font-sans)' }}>Get Full Access →</a>
               </div>
             </>
           ) : (

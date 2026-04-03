@@ -87,7 +87,7 @@ export default function PracticeTestPage() {
       <section className="mt-16">
         <CtaBanner
           heading="Save $10 with the Complete Bundle"
-          subtext="Get the Practice Test and Study Guide together for just $59.99 — everything you need to pass the FORT."
+          subtext="Everything you need to pass the FoRT — in one place."
           buttonText="View Bundle"
           buttonHref="/bundle"
         />

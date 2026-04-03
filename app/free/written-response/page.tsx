@@ -131,7 +131,7 @@ export default function FreeWrittenResponsePage() {
                   <p className="font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>You&apos;ve used your free grading.</p>
                   <p className="mt-1 text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>Get 4–8 graded written responses with the full prep.</p>
                   <a href="/#pricing" className="mt-3 inline-block rounded bg-[#7c1c2e] px-8 py-3 text-sm font-semibold text-white hover:bg-[#5a1220]" style={{ fontFamily: 'var(--font-sans)' }}>
-                    Get Full Access — $49
+                    Get Full Access →
                   </a>
                 </div>
               ) : (
@@ -185,7 +185,7 @@ export default function FreeWrittenResponsePage() {
                 <p className="font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>Get 4–8 graded responses with the full prep.</p>
                 <p className="mt-1 text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>Each with detailed feedback, strengths, and improvement areas — same rubric as the real exam.</p>
                 <a href="/#pricing" className="mt-4 inline-block rounded bg-[#7c1c2e] px-8 py-3 text-sm font-semibold text-white hover:bg-[#5a1220]" style={{ fontFamily: 'var(--font-sans)' }}>
-                  Get Full Access — $49
+                  Get Full Access →
                 </a>
               </div>
             </div>
