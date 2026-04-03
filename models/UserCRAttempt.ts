@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document, Model } from 'mongoose'
 
-export type CRScore = 0 | 1 | 2
+export type CRScore = 1 | 2 | 3 | 4
 export type CRPerformanceLevel = 'Thorough' | 'Adequate' | 'Limited' | 'Weak'
 
 export interface IUserCRAttempt extends Document {
@@ -27,7 +27,7 @@ const UserCRAttemptSchema = new Schema<IUserCRAttempt>(
     examCode: { type: String, enum: ['190', '890'], required: true },
     responseText: { type: String, required: true },
     wordCount: { type: Number, required: true },
-    score: { type: Number, enum: [0, 1, 2], required: true },
+    score: { type: Number, enum: [1, 2, 3, 4], required: true },
     performanceLevel: {
       type: String,
       enum: ['Thorough', 'Adequate', 'Limited', 'Weak'],

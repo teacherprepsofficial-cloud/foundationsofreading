@@ -1,22 +1,22 @@
 import mongoose, { Schema, Document, Model } from 'mongoose'
 import type { ExamCode } from './UserAccess'
 
-// CR type: which open-response assignment this maps to
 export type CRType = 'foundational_reading_skills' | 'reading_comprehension'
 
 export interface IConstructedResponse extends Document {
   _id: mongoose.Types.ObjectId
   examCode: ExamCode
-  crNumber: number // 1-4 for starter, 5-8 for bundle-only
+  crNumber: number
   crType: CRType
   prompt: string
-  scenarioContext?: string // background/stimulus text
+  scenarioContext?: string
   rubric: {
-    score2: string // what earns a 2 (Thorough)
-    score1: string // what earns a 1 (Adequate/Limited)
-    score0: string // what earns a 0 (Weak/No credit)
+    score4: string
+    score3: string
+    score2: string
+    score1: string
   }
-  bundleOnly: boolean // true = only bundle users can access
+  bundleOnly: boolean
   isPublished: boolean
   createdAt: Date
   updatedAt: Date
@@ -34,9 +34,10 @@ const ConstructedResponseSchema = new Schema<IConstructedResponse>(
     prompt: { type: String, required: true },
     scenarioContext: { type: String },
     rubric: {
+      score4: { type: String, required: true },
+      score3: { type: String, required: true },
       score2: { type: String, required: true },
       score1: { type: String, required: true },
-      score0: { type: String, required: true },
     },
     bundleOnly: { type: Boolean, default: false },
     isPublished: { type: Boolean, default: false },

@@ -15,7 +15,7 @@ interface CR {
 
 interface Attempt {
   _id: string
-  score: 0 | 1 | 2
+  score: 1 | 2 | 3 | 4
   performanceLevel: string
   wordCount: number
   feedback: string
@@ -26,8 +26,8 @@ interface Attempt {
 
 const PERF_COLOR: Record<string, string> = {
   Thorough: '#16a34a',
-  Adequate: '#ca8a04',
-  Limited: '#ea580c',
+  Adequate: '#2563eb',
+  Limited: '#d97706',
   Weak: '#dc2626',
 }
 
@@ -354,7 +354,7 @@ export default function CRPage() {
         <div className="border-l border-[#a04060] pl-5">
           <h1 className="text-base font-bold text-white leading-none" style={SE}>Written Response Practice</h1>
           <p className="mt-0.5 text-[11px] text-[#e8b4bc]" style={SF}>
-            Read the scenario · Write your response · Get scored 0–2 by AI
+            Read the scenario · Write your response · Get scored 1–4 by AI
           </p>
         </div>
       </div>
@@ -421,7 +421,7 @@ export default function CRPage() {
                   {[
                     { n: '1', label: 'Read the student scenario', desc: 'Review the exhibits — running records, fluency data, or comprehension notes.' },
                     { n: '2', label: 'Write your response', desc: 'Aim for 150–300 words. Identify a strength, a need, a strategy, and explain why it works.' },
-                    { n: '3', label: 'Get scored instantly', desc: 'AI grades your response 0–2 with specific feedback, strengths, and improvements.' },
+                    { n: '3', label: 'Get scored instantly', desc: 'AI grades your response 1–4 using the official NES rubric — same criteria as exam day.' },
                   ].map((step) => (
                     <div key={step.n} className="flex items-start gap-4 rounded-xl border border-[#e8e0e2] bg-white px-5 py-4">
                       <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#f9f0f2] text-xs font-bold text-[#7c1c2e]" style={SF}>{step.n}</span>
@@ -541,7 +541,7 @@ export default function CRPage() {
                       className="text-5xl font-bold leading-none"
                       style={{ ...SE, color: PERF_COLOR[result.performanceLevel] || '#1a1a1a' }}
                     >
-                      {result.score}/2
+                      {result.score}/4
                     </span>
                     <div>
                       <span
@@ -617,7 +617,7 @@ export default function CRPage() {
                           className="text-sm font-bold"
                           style={{ ...SF, color: PERF_COLOR[a.performanceLevel] || '#1a1a1a' }}
                         >
-                          {a.score}/2 — {a.performanceLevel}
+                          {a.score}/4 — {a.performanceLevel}
                         </span>
                       </div>
                     ))}

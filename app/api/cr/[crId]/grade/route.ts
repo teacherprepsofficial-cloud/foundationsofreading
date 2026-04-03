@@ -15,8 +15,9 @@ function countWords(text: string): number {
 }
 
 function scoreToPerformance(score: CRScore): CRPerformanceLevel {
-  if (score === 2) return 'Thorough'
-  if (score === 1) return 'Adequate'
+  if (score === 4) return 'Thorough'
+  if (score === 3) return 'Adequate'
+  if (score === 2) return 'Limited'
   return 'Weak'
 }
 
@@ -53,7 +54,7 @@ export async function POST(
 
     const wordCount = countWords(responseText)
 
-    // Auto-score 0 if under 50 words
+    // Auto-score 1 (Weak) if under 50 words
     if (wordCount < 50) {
       const attempt = await UserCRAttempt.create({
         userId: auth.userId,
@@ -61,15 +62,15 @@ export async function POST(
         examCode: cr.examCode,
         responseText,
         wordCount,
-        score: 0 as CRScore,
+        score: 1 as CRScore,
         performanceLevel: 'Weak' as CRPerformanceLevel,
-        feedback: `Your response is only ${wordCount} words. The exam requires thorough, developed responses of 150+ words. Please expand your answer with specific examples, strategies, and explanations.`,
+        feedback: `Your response is only ${wordCount} words. The exam requires thorough, developed responses of 150–300 words that address all four parts of the assignment with specific evidence and pedagogical reasoning.`,
         strengths: [],
         improvements: [
-          'Write at least 150 words',
-          'Address all parts of the prompt',
-          'Include specific pedagogical strategies',
-          'Support your points with examples from the scenario',
+          'Write at least 150 words to fully develop your analysis',
+          'Address all four parts: strength, need, strategy, and explanation of effectiveness',
+          'Cite specific evidence from the exhibits to support every claim',
+          'Name and describe the instructional strategy with implementation details',
         ],
       })
 
@@ -80,7 +81,7 @@ export async function POST(
       )
 
       return NextResponse.json({
-        score: 0,
+        score: 1,
         performanceLevel: 'Weak',
         wordCount,
         feedback: attempt.feedback,
@@ -90,34 +91,59 @@ export async function POST(
       })
     }
 
-    // Use Claude to grade
-    const systemPrompt = `You are an expert NES Foundations of Reading exam scorer. You grade constructed-response items using the official 0-2 rubric:
+    // Grade with Claude using the official NES 4-point rubric criteria
+    const systemPrompt = `You are an expert NES Foundations of Reading exam scorer. Grade constructed-response items using the official 4-point rubric below.
 
-SCORE 2 (Thorough): Response demonstrates comprehensive understanding of evidence-based reading instruction. Addresses ALL parts of the prompt with specific, accurate strategies and clear explanations. Uses appropriate pedagogical terminology.
+SCORE 4 — THOROUGH:
+- The purpose of the assignment is fully achieved.
+- There is substantial, accurate, and appropriate application of subject matter knowledge.
+- The supporting evidence is sound; there are high-quality, relevant examples cited directly from the exhibits.
+- The response reflects an ably reasoned, comprehensive understanding of the topic.
 
-SCORE 1 (Adequate/Limited): Response is relevant and shows some understanding but is incomplete, lacks specificity, or has minor inaccuracies. Addresses most but not all parts of the prompt.
+SCORE 3 — ADEQUATE:
+- The purpose of the assignment is largely achieved.
+- There is a generally accurate and appropriate application of subject matter knowledge.
+- The supporting evidence is adequate; there are some acceptable, relevant examples.
+- The response reflects an adequately reasoned understanding of the topic.
 
-SCORE 0 (Weak): Response shows little understanding, is off-topic, inaccurate, or fails to address the prompt meaningfully.
+SCORE 2 — LIMITED:
+- The purpose of the assignment is partially achieved.
+- There is limited, possibly inaccurate or inappropriate application of subject matter knowledge.
+- The supporting evidence is limited; there are few relevant examples.
+- The response reflects a limited, poorly reasoned understanding of the topic.
+
+SCORE 1 — WEAK:
+- The purpose of the assignment is not achieved.
+- There is little or no appropriate or accurate application of subject matter knowledge.
+- The supporting evidence, if present, is weak; there are few or no relevant examples.
+- The response reflects little or no reasoning about or understanding of the subject matter.
+
+Scoring criteria: PURPOSE (achieves all 4 parts of the assignment), SUBJECT KNOWLEDGE (accurate instructional terminology and strategies), SUPPORT (specific evidence from the exhibits), RATIONALE (clear reasoning for why the strategy works for this specific student).
+
+A SCORE 4 response must: name the specific phonics pattern or comprehension skill with correct terminology, cite exact data from the exhibits, describe the strategy with enough implementation detail to actually carry it out, and explain WHY it addresses this student's specific need.
 
 Respond ONLY with valid JSON in this exact format:
 {
-  "score": 0|1|2,
-  "feedback": "2-3 sentence overall assessment",
-  "strengths": ["strength 1", "strength 2"],
-  "improvements": ["improvement 1", "improvement 2", "improvement 3"]
+  "score": 1,
+  "performanceLevel": "Weak",
+  "feedback": "2-3 sentence overall assessment focused on the most important strength and gap",
+  "strengths": ["specific strength 1", "specific strength 2"],
+  "improvements": ["specific actionable improvement 1", "specific actionable improvement 2", "specific actionable improvement 3"]
 }`
 
-    const userPrompt = `PROMPT: ${cr.prompt}
+    const userPrompt = `ASSIGNMENT:
+${cr.prompt}
 
-${cr.scenarioContext ? `SCENARIO: ${cr.scenarioContext}\n\n` : ''}RUBRIC:
-- Score 2: ${cr.rubric.score2}
-- Score 1: ${cr.rubric.score1}
-- Score 0: ${cr.rubric.score0}
+${cr.scenarioContext ? `STUDENT SCENARIO AND EXHIBITS:\n${cr.scenarioContext}\n\n` : ''}OFFICIAL RUBRIC:
+Score 4: ${cr.rubric.score4}
+Score 3: ${cr.rubric.score3}
+Score 2: ${cr.rubric.score2}
+Score 1: ${cr.rubric.score1}
 
 CANDIDATE RESPONSE (${wordCount} words):
 ${responseText}
 
-Grade this response.`
+Score this response 1–4 using the official rubric criteria. Be rigorous — a Score 4 requires specific terminology, specific exhibit evidence, and specific strategy implementation details. Most responses should score 2 or 3.`
 
     const message = await client.messages.create({
       model: 'claude-sonnet-4-6',
@@ -138,7 +164,7 @@ Grade this response.`
       throw new Error('Failed to parse grading response')
     }
 
-    const score = parsed.score as CRScore
+    const score = Math.max(1, Math.min(4, parsed.score)) as CRScore
     const performanceLevel = scoreToPerformance(score)
 
     const attempt = await UserCRAttempt.create({
