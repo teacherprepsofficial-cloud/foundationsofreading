@@ -353,7 +353,7 @@ export default function CRPage() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
       setResult(data)
-      setAttemptedIds((prev) => new Set([...prev, selected._id]))
+      setAttemptedIds((prev) => new Set(Array.from(prev).concat(selected._id)))
       setAttempts((prev) => [{ ...data, submittedAt: new Date().toISOString() } as Attempt, ...prev])
     } catch {
       setError('Failed to grade response. Please try again.')
