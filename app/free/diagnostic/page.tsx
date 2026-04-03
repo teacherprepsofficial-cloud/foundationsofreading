@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 
-type Phase = 'intro' | 'test' | 'cr' | 'grading' | 'results'
+type Phase = 'intro' | 'test' | 'cr' | 'grading' | 'sent'
 
 const SF = { fontFamily: 'var(--font-sans)' }
 const SE = { fontFamily: 'var(--font-serif)' }
@@ -342,9 +342,12 @@ export default function FreeDiagnosticPage() {
   const [answers, setAnswers] = useState<Record<number, number>>({})
   const [timeLeft, setTimeLeft] = useState(60 * 60)
   const [crResponse, setCrResponse] = useState('')
-  const [crResult, setCrResult] = useState<CRResult | null>(null)
   const [gradingError, setGradingError] = useState('')
-  const [showReview, setShowReview] = useState(false)
+  const [showModal, setShowModal] = useState(false)
+  const [firstName, setFirstName] = useState('')
+  const [email, setEmail] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [modalError, setModalError] = useState('')
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   // Timer runs only during MC test phase
@@ -378,28 +381,44 @@ export default function FreeDiagnosticPage() {
     setPhase('cr')
   }
 
-  async function handleSubmitDiagnostic() {
+  function handleGetResults() {
     const wordCount = crResponse.trim().split(/\s+/).filter(Boolean).length
     if (wordCount < 50) {
       setGradingError('Please write at least 50 words before submitting.')
       return
     }
     setGradingError('')
+    setShowModal(true)
+  }
+
+  async function handleModalSubmit() {
+    if (!firstName.trim()) { setModalError('Please enter your first name.'); return }
+    if (!email.trim() || !email.includes('@')) { setModalError('Please enter a valid email address.'); return }
+    setModalError('')
+    setSubmitting(true)
+    setShowModal(false)
     setPhase('grading')
 
     try {
-      const res = await fetch('/api/free/grade-cr', {
+      const res = await fetch('/api/free/send-diagnostic-results', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: CR_PROMPT, response: crResponse }),
+        body: JSON.stringify({
+          firstName: firstName.trim(),
+          email: email.trim(),
+          answers,
+          crResponse,
+          crPrompt: CR_PROMPT,
+        }),
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Grading failed')
-      setCrResult(data)
-      setPhase('results')
+      if (!res.ok) throw new Error(data.error || 'Failed to send results')
+      setPhase('sent')
     } catch (err) {
-      setGradingError(err instanceof Error ? err.message : 'Grading failed. Please try again.')
+      setGradingError(err instanceof Error ? err.message : 'Failed to send results. Please try again.')
       setPhase('cr')
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -660,15 +679,71 @@ export default function FreeDiagnosticPage() {
           )}
 
           <button
-            onClick={handleSubmitDiagnostic}
+            onClick={handleGetResults}
             disabled={wordCount < 50}
             className="w-full rounded-lg bg-[#7c1c2e] py-4 text-sm font-bold text-white hover:bg-[#5a1220] transition-colors disabled:opacity-40"
             style={SF}
           >
-            {wordCount < 50 ? `Write at least 50 words to submit (${wordCount} words)` : 'Submit Diagnostic & See Results →'}
+            {wordCount < 50 ? `Write at least 50 words to submit (${wordCount} words)` : 'Get My Results →'}
           </button>
         </div>
       </div>
+
+      {/* Modal */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-md rounded-2xl bg-white shadow-2xl overflow-hidden">
+            <div className="bg-[#7c1c2e] px-6 py-5">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[#e8b4bc]" style={SF}>Almost there</p>
+              <h2 className="mt-1 text-xl font-bold text-white" style={SE}>Send My FoRT Diagnostic Test Results</h2>
+              <p className="mt-1 text-sm text-[#e8b4bc]" style={SF}>We&apos;ll email your score report PDF and a 15% discount — right now.</p>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-widest text-[#6b6b6b] mb-1.5" style={SF}>First Name</label>
+                <input
+                  type="text"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  placeholder="Your first name"
+                  className="w-full rounded-lg border border-[#e8e0e2] px-4 py-3 text-sm text-[#1a1a1a] outline-none focus:border-[#7c1c2e] focus:ring-1 focus:ring-[#7c1c2e]"
+                  style={SF}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-widest text-[#6b6b6b] mb-1.5" style={SF}>Email Address</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  className="w-full rounded-lg border border-[#e8e0e2] px-4 py-3 text-sm text-[#1a1a1a] outline-none focus:border-[#7c1c2e] focus:ring-1 focus:ring-[#7c1c2e]"
+                  style={SF}
+                  onKeyDown={(e) => e.key === 'Enter' && handleModalSubmit()}
+                />
+              </div>
+              {modalError && (
+                <p className="rounded bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700" style={SF}>{modalError}</p>
+              )}
+              <button
+                onClick={handleModalSubmit}
+                disabled={submitting}
+                className="w-full rounded-lg bg-[#7c1c2e] py-3.5 text-sm font-bold text-white hover:bg-[#5a1220] transition-colors disabled:opacity-50"
+                style={SF}
+              >
+                Send My Results →
+              </button>
+              <button
+                onClick={() => setShowModal(false)}
+                className="w-full text-center text-sm text-[#9b9b9b] hover:text-[#6b6b6b]"
+                style={SF}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     )
   }
 
@@ -684,185 +759,38 @@ export default function FreeDiagnosticPage() {
     )
   }
 
-  // ── Results ────────────────────────────────────────────────────────────────
-  if (phase === 'results' && crResult) {
-    const mcCorrect = QUESTIONS.filter((qq) => answers[qq.id] === qq.correct).length
-    const scaledScore = calcScaledScore(mcCorrect, crResult.score)
-    const passed = scaledScore >= 220
 
-    const subareaResults = SUBAREAS.map((sa) => {
-      const qs = QUESTIONS.filter((qq) => qq.subarea === sa.id)
-      const correct = qs.filter((qq) => answers[qq.id] === qq.correct).length
-      const pct = Math.round((correct / qs.length) * 100)
-      return { ...sa, total: qs.length, correct, pct, level: getLevel(pct) }
-    })
-
-    const crColor = CR_COLORS[crResult.performanceLevel] || '#6b6b6b'
-
+  // ── Sent confirmation ─────────────────────────────────────────────────────
+  if (phase === 'sent') {
     return (
       <>
         <SiteHeader />
-        <main className="min-h-screen bg-[#faf8f5]">
-          <div className="border-b border-[#e8e0e2] bg-white px-6 py-3 text-center">
-            <p className="text-sm text-[#6b6b6b]" style={SF}>
-              Ready to start your full prep?{' '}
-              <a href="/#pricing" className="font-semibold text-[#7c1c2e] hover:underline">Get the full FoRT prep here →</a>
+        <main className="min-h-screen bg-[#faf8f5] flex items-center justify-center px-6">
+          <div className="w-full max-w-lg text-center">
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+              <span className="text-3xl text-green-600">✓</span>
+            </div>
+            <h1 className="text-3xl font-bold text-[#1a1a1a] mb-3" style={SE}>Results on their way!</h1>
+            <p className="text-base text-[#5a5a5a] leading-relaxed mb-2" style={SF}>
+              Your FoRT Diagnostic Score Report PDF is being sent to <strong>{email}</strong>.
             </p>
-          </div>
+            <p className="text-sm text-[#9b9b9b] mb-8" style={SF}>Check your inbox — it should arrive within a minute. Don&apos;t see it? Check your spam folder.</p>
 
-          <div className="mx-auto max-w-3xl px-6 py-10 space-y-6">
-
-            {/* Score header */}
-            <div className={`rounded-xl p-8 text-center ${passed ? 'bg-green-50 border border-green-200' : 'bg-[#faf8f5] border border-[#e8e0e2]'}`}>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-[#7c1c2e] mb-2" style={SF}>
-                NES Foundations of Reading — Diagnostic Results
-              </p>
-              <p className="text-7xl font-bold mb-3" style={{ ...SE, color: passed ? '#166534' : '#7c1c2e' }}>
-                {scaledScore}
-              </p>
-              <p className="text-sm text-[#6b6b6b] mb-3" style={SF}>Score range: 100–300 &nbsp;·&nbsp; Passing: 220</p>
-              <span className={`inline-block rounded px-4 py-1.5 text-sm font-bold ${passed ? 'bg-green-600 text-white' : 'bg-[#7c1c2e] text-white'}`} style={SF}>
-                {passed ? 'PASSED' : 'NOT YET — KEEP STUDYING'}
-              </span>
-              <div className="mt-5 flex justify-center gap-8 text-sm" style={SF}>
-                <div className="text-center">
-                  <p className="text-[#9b9b9b] text-xs uppercase tracking-widest">MC Correct</p>
-                  <p className="font-bold text-[#1a1a1a] text-lg">{mcCorrect} / {QUESTIONS.length}</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-[#9b9b9b] text-xs uppercase tracking-widest">Written Response</p>
-                  <p className="font-bold text-lg" style={{ color: crColor }}>{crResult.score} / 4 — {crResult.performanceLevel}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Subarea performance */}
-            <div className="rounded-xl border border-[#e8e0e2] bg-white overflow-hidden">
-              <div className="border-b border-[#e8e0e2] px-6 py-3">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-[#7c1c2e]" style={SF}>Performance by Objective Area</p>
-              </div>
-              <div className="divide-y divide-[#e8e0e2]">
-                {subareaResults.map((sa) => (
-                  <div key={sa.id} className="px-6 py-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <div>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-[#9b9b9b]" style={SF}>{sa.abbr}</p>
-                        <p className="text-sm font-semibold text-[#1a1a1a]" style={SF}>{sa.name}</p>
-                      </div>
-                      <div className="text-right flex-shrink-0 ml-4">
-                        <p className="text-sm font-bold" style={{ ...SF, color: sa.level.color }}>{sa.correct}/{sa.total}</p>
-                        <p className="text-xs font-semibold" style={{ ...SF, color: sa.level.color }}>{sa.level.label}</p>
-                      </div>
-                    </div>
-                    <div className="h-2 rounded-full bg-[#f0ece8]">
-                      <div
-                        className="h-full rounded-full transition-all duration-500"
-                        style={{ width: `${sa.pct}%`, background: sa.level.color }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Written response result */}
-            <div className="rounded-xl border border-[#e8e0e2] bg-white overflow-hidden">
-              <div className="border-b border-[#e8e0e2] px-6 py-3 flex items-center justify-between">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-[#7c1c2e]" style={SF}>Written Response</p>
-                <span className="text-sm font-bold" style={{ ...SF, color: crColor }}>
-                  {crResult.score}/4 — {crResult.performanceLevel}
-                </span>
-              </div>
-              <div className="px-6 py-5 space-y-4">
-                <p className="text-sm text-[#1a1a1a] leading-relaxed" style={SF}>{crResult.feedback}</p>
-
-                {crResult.strengths.length > 0 && (
-                  <div className="rounded-lg bg-green-50 border border-green-200 px-4 py-3">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-green-800 mb-2" style={SF}>Strengths</p>
-                    <ul className="space-y-1.5">
-                      {crResult.strengths.map((s, i) => (
-                        <li key={i} className="flex items-start gap-2 text-sm text-green-900" style={SF}>
-                          <span className="mt-0.5 text-green-600">✓</span>{s}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {crResult.improvements.length > 0 && (
-                  <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-3">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-amber-800 mb-2" style={SF}>Areas to Strengthen</p>
-                    <ul className="space-y-1.5">
-                      {crResult.improvements.map((s, i) => (
-                        <li key={i} className="flex items-start gap-2 text-sm text-amber-900" style={SF}>
-                          <span className="mt-0.5">→</span>{s}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Question review */}
-            <div className="rounded-xl border border-[#e8e0e2] bg-white overflow-hidden">
-              <button
-                onClick={() => setShowReview((v) => !v)}
-                className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-[#faf8f5] transition-colors"
-              >
-                <p className="text-[10px] font-bold uppercase tracking-widest text-[#7c1c2e]" style={SF}>Review MC Questions</p>
-                <span className="text-sm text-[#6b6b6b]" style={SF}>{showReview ? '▲ Hide' : '▼ Show'}</span>
-              </button>
-              {showReview && (
-                <div className="border-t border-[#e8e0e2] divide-y divide-[#e8e0e2]">
-                  {QUESTIONS.map((qq, i) => {
-                    const chosen = answers[qq.id]
-                    const correct = chosen === qq.correct
-                    return (
-                      <div key={qq.id} className="px-6 py-5">
-                        <div className="flex items-start gap-3 mb-3">
-                          <span className={`flex-shrink-0 mt-0.5 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold text-white ${correct ? 'bg-green-500' : 'bg-red-500'}`}>
-                            {correct ? '✓' : '✗'}
-                          </span>
-                          <p className="text-sm font-semibold text-[#1a1a1a]" style={SF}>{i + 1}. {qq.text}</p>
-                        </div>
-                        <div className="space-y-1 ml-8">
-                          {qq.choices.map((c, ci) => {
-                            let cls = 'rounded px-3 py-1.5 text-xs'
-                            if (ci === qq.correct) cls += ' bg-green-100 text-green-800 font-semibold'
-                            else if (ci === chosen && !correct) cls += ' bg-red-100 text-red-700'
-                            else cls += ' text-[#6b6b6b]'
-                            return <p key={ci} className={cls} style={SF}>{String.fromCharCode(65 + ci)}. {c}</p>
-                          })}
-                        </div>
-                        <div className="ml-8 mt-2 rounded bg-[#f9f0f2] px-3 py-2">
-                          <p className="text-xs text-[#7c1c2e]" style={SF}><strong>Explanation:</strong> {qq.explanation}</p>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
-
-            {/* CTA */}
-            <div className="rounded-xl border-2 border-[#7c1c2e] bg-white p-8 text-center">
-              <p className="text-2xl font-bold text-[#1a1a1a] mb-2" style={SE}>
-                {passed ? 'Great start — now prep to make it official.' : 'You know where to focus. Now put in the work.'}
-              </p>
-              <p className="text-sm text-[#6b6b6b] mb-6 max-w-lg mx-auto" style={SF}>
-                The full prep includes a complete study guide across all 4 subareas, 4 timed practice tests on the real 100–300 scale, 8 AI-graded written responses, and flashcards — everything in one place.
-              </p>
+            <div className="rounded-xl bg-[#7c1c2e] p-7 text-left mb-6">
+              <p className="text-sm font-bold text-white mb-1" style={SF}>Your email also includes a 15% discount.</p>
+              <p className="text-sm text-[#e8b4bc] mb-4" style={SF}>Use code <span className="font-bold text-white tracking-widest">FORT15</span> at checkout — valid for 24 hours.</p>
               <a
                 href="/#pricing"
-                className="inline-block rounded-lg bg-[#7c1c2e] px-10 py-4 text-base font-bold text-white hover:bg-[#5a1220] transition-colors"
+                className="inline-block rounded-lg bg-white px-6 py-3 text-sm font-bold text-[#7c1c2e] hover:bg-[#f9f0f2] transition-colors"
                 style={SF}
               >
                 Get the full FoRT prep here →
               </a>
-              <p className="mt-3 text-xs text-[#9b9b9b]" style={SF}>Instant access. No subscription.</p>
             </div>
 
+            <a href="/free/diagnostic" className="text-sm text-[#9b9b9b] hover:text-[#6b6b6b] underline" style={SF}>
+              Take the diagnostic again
+            </a>
           </div>
         </main>
         <SiteFooter />
