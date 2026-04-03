@@ -244,7 +244,7 @@ export default function FreeWrittenResponsePage() {
                   className="mt-4 w-full rounded bg-[#7c1c2e] py-4 text-sm font-semibold text-white transition-colors hover:bg-[#5a1220] disabled:opacity-40"
                   style={{ fontFamily: 'var(--font-sans)' }}
                 >
-                  {loading ? 'Grading with AI...' : wordCount < WORD_MIN ? `Write at least ${WORD_MIN} words (${wordCount}/${WORD_MIN})` : 'Submit for AI Grading'}
+                  {loading ? 'Grade My Essay...' : wordCount < WORD_MIN ? `Write at least ${WORD_MIN} words (${wordCount}/${WORD_MIN})` : 'Grade My Essay'}
                 </button>
               )}
             </>
