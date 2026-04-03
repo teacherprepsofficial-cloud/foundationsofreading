@@ -1,6 +1,13 @@
 import mongoose, { Schema, Document, Model } from 'mongoose'
 import type { ExamCode } from './UserAccess'
 
+export interface ICRPrompt {
+  promptNumber: 1 | 2
+  crType: 'foundational_reading_skills' | 'reading_comprehension'
+  scenarioContext: string
+  prompt: string
+}
+
 export interface IPracticeTest extends Document {
   _id: mongoose.Types.ObjectId
   examCode: ExamCode
@@ -14,6 +21,8 @@ export interface IPracticeTest extends Document {
     subarea: 'I' | 'II' | 'III'
     count: number
   }[]
+  // Written response prompts (2 per practice test, mirrors real exam)
+  crPrompts?: ICRPrompt[]
   isPublished: boolean
   createdAt: Date
   updatedAt: Date
@@ -31,6 +40,15 @@ const PracticeTestSchema = new Schema<IPracticeTest>(
       {
         subarea: { type: String, enum: ['I', 'II', 'III'] },
         count: { type: Number },
+        _id: false,
+      },
+    ],
+    crPrompts: [
+      {
+        promptNumber: { type: Number, enum: [1, 2] },
+        crType: { type: String, enum: ['foundational_reading_skills', 'reading_comprehension'] },
+        scenarioContext: { type: String },
+        prompt: { type: String },
         _id: false,
       },
     ],

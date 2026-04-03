@@ -51,7 +51,7 @@ export async function GET(
 
     if (inProgress) {
       return NextResponse.json({
-        test: { _id: test._id, name: test.name, timeLimitMinutes: test.timeLimitMinutes, isDiagnostic: test.isDiagnostic },
+        test: { _id: test._id, name: test.name, timeLimitMinutes: test.timeLimitMinutes, isDiagnostic: test.isDiagnostic, crPrompts: test.crPrompts ?? [] },
         questions,
         attempt: {
           _id: inProgress._id,
@@ -77,7 +77,7 @@ export async function GET(
     })
 
     return NextResponse.json({
-      test: { _id: test._id, name: test.name, timeLimitMinutes: test.timeLimitMinutes, isDiagnostic: test.isDiagnostic },
+      test: { _id: test._id, name: test.name, timeLimitMinutes: test.timeLimitMinutes, isDiagnostic: test.isDiagnostic, crPrompts: test.crPrompts ?? [] },
       questions,
       attempt: { _id: attempt._id, responses: [], startedAt: attempt.startedAt, timeSpentSeconds: 0 },
       resumed: false,

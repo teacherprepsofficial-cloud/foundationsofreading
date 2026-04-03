@@ -36,11 +36,20 @@ export interface IUserTestAttempt extends Document {
   timeLimitSeconds: number
   subareaScores: ISubareaScore[]
   passed: boolean
-  // Constructed response (diagnostic only)
+  // Constructed response (diagnostic: single CR)
   crResponse?: string
   crScore?: number // 0-4
   crPerformanceLevel?: 'Thorough' | 'Adequate' | 'Limited' | 'Weak' | 'No Response'
   crFeedback?: string
+  // Constructed responses (practice tests: 2 CRs)
+  cr1Response?: string
+  cr1Score?: number
+  cr1PerformanceLevel?: 'Thorough' | 'Adequate' | 'Limited' | 'Weak' | 'No Response'
+  cr1Feedback?: string
+  cr2Response?: string
+  cr2Score?: number
+  cr2PerformanceLevel?: 'Thorough' | 'Adequate' | 'Limited' | 'Weak' | 'No Response'
+  cr2Feedback?: string
   startedAt: Date
   completedAt?: Date
   status: 'in_progress' | 'completed' | 'abandoned'
@@ -93,6 +102,14 @@ const UserTestAttemptSchema = new Schema<IUserTestAttempt>(
     crScore: { type: Number },
     crPerformanceLevel: { type: String, enum: ['Thorough', 'Adequate', 'Limited', 'Weak', 'No Response'] },
     crFeedback: { type: String },
+    cr1Response: { type: String },
+    cr1Score: { type: Number },
+    cr1PerformanceLevel: { type: String, enum: ['Thorough', 'Adequate', 'Limited', 'Weak', 'No Response'] },
+    cr1Feedback: { type: String },
+    cr2Response: { type: String },
+    cr2Score: { type: Number },
+    cr2PerformanceLevel: { type: String, enum: ['Thorough', 'Adequate', 'Limited', 'Weak', 'No Response'] },
+    cr2Feedback: { type: String },
     startedAt: { type: Date, required: true },
     completedAt: { type: Date },
     status: { type: String, enum: ['in_progress', 'completed', 'abandoned'], default: 'in_progress' },

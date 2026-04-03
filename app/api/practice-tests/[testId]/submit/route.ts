@@ -92,7 +92,7 @@ export async function POST(
     if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const { testId } = await params
-    const { attemptId, responses, timeSpentSeconds, crResponse } = await request.json()
+    const { attemptId, responses, timeSpentSeconds, crResponse, cr1Response, cr2Response } = await request.json()
 
     await connectDB()
 
@@ -127,11 +127,31 @@ export async function POST(
 
     const mcPercentage = (totalCorrect / questions.length) * 100
 
-    // Grade CR if present (diagnostic only) — never let grading failure block submission
+    // Grade CR(s) — never let grading failure block submission
+    // Supports: single crResponse (diagnostic), or cr1Response + cr2Response (practice tests)
     let crScore = 0
     let crPerformanceLevel: 'Thorough' | 'Adequate' | 'Limited' | 'Weak' | 'No Response' = 'No Response'
     let crFeedback = ''
-    if (crResponse?.trim()) {
+    let cr1Score = 0, cr2Score = 0
+    let cr1PerformanceLevel: typeof crPerformanceLevel = 'No Response'
+    let cr2PerformanceLevel: typeof crPerformanceLevel = 'No Response'
+    let cr1Feedback = '', cr2Feedback = ''
+
+    // Practice test: 2 CR responses (each 10% weight)
+    const hasTwoCRs = cr1Response?.trim() || cr2Response?.trim()
+    if (hasTwoCRs) {
+      const [g1, g2] = await Promise.all([
+        cr1Response?.trim() ? gradeCR(cr1Response).catch(() => ({ score: 2, feedback: '' })) : Promise.resolve({ score: 0, feedback: '' }),
+        cr2Response?.trim() ? gradeCR(cr2Response).catch(() => ({ score: 2, feedback: '' })) : Promise.resolve({ score: 0, feedback: '' }),
+      ])
+      cr1Score = g1.score; cr1Feedback = g1.feedback; cr1PerformanceLevel = crScoreToLevel(cr1Score)
+      cr2Score = g2.score; cr2Feedback = g2.feedback; cr2PerformanceLevel = crScoreToLevel(cr2Score)
+      // Average of both CR scores for summary
+      crScore = Math.round((cr1Score + cr2Score) / 2)
+      crPerformanceLevel = crScoreToLevel(crScore)
+      crFeedback = [cr1Feedback, cr2Feedback].filter(Boolean).join(' | ')
+    } else if (crResponse?.trim()) {
+      // Diagnostic: single CR
       try {
         const graded = await gradeCR(crResponse)
         crScore = graded.score
@@ -146,9 +166,11 @@ export async function POST(
       }
     }
 
-    // Combined score: 80% MC + 20% CR (CR scored 0–4, normalized to 0–100)
+    // Combined score: 80% MC + 10% CR1 + 10% CR2 (practice) or 80% MC + 20% CR (diagnostic)
     const hasCR = crResponse?.trim()
-    const combinedPercentage = hasCR
+    const combinedPercentage = hasTwoCRs
+      ? (mcPercentage * 0.80) + ((cr1Score / 4) * 100 * 0.10) + ((cr2Score / 4) * 100 * 0.10)
+      : hasCR
       ? (mcPercentage * 0.80) + ((crScore / 4) * 100 * 0.20)
       : mcPercentage
     const score = Math.round(mcPercentage)
@@ -193,7 +215,20 @@ export async function POST(
     attempt.timeSpentSeconds = timeSpentSeconds
     attempt.subareaScores = subareaScores
     attempt.passed = passed
-    if (crResponse?.trim()) {
+    if (hasTwoCRs) {
+      if (cr1Response?.trim()) {
+        attempt.cr1Response = cr1Response
+        attempt.cr1Score = cr1Score
+        attempt.cr1PerformanceLevel = cr1PerformanceLevel
+        attempt.cr1Feedback = cr1Feedback
+      }
+      if (cr2Response?.trim()) {
+        attempt.cr2Response = cr2Response
+        attempt.cr2Score = cr2Score
+        attempt.cr2PerformanceLevel = cr2PerformanceLevel
+        attempt.cr2Feedback = cr2Feedback
+      }
+    } else if (crResponse?.trim()) {
       attempt.crResponse = crResponse
       attempt.crScore = crScore
       attempt.crPerformanceLevel = crPerformanceLevel
@@ -243,9 +278,15 @@ export async function POST(
         timeSpentSeconds,
         attemptId: attempt._id,
         isDiagnostic: attempt.isDiagnostic,
-        crScore: crResponse?.trim() ? crScore : undefined,
-        crPerformanceLevel: crResponse?.trim() ? crPerformanceLevel : undefined,
-        crFeedback: crResponse?.trim() ? crFeedback : undefined,
+        crScore: crResponse?.trim() ? crScore : hasTwoCRs ? crScore : undefined,
+        crPerformanceLevel: crResponse?.trim() ? crPerformanceLevel : hasTwoCRs ? crPerformanceLevel : undefined,
+        crFeedback: crResponse?.trim() ? crFeedback : hasTwoCRs ? crFeedback : undefined,
+        cr1Score: hasTwoCRs ? cr1Score : undefined,
+        cr1PerformanceLevel: hasTwoCRs ? cr1PerformanceLevel : undefined,
+        cr1Feedback: hasTwoCRs ? cr1Feedback : undefined,
+        cr2Score: hasTwoCRs ? cr2Score : undefined,
+        cr2PerformanceLevel: hasTwoCRs ? cr2PerformanceLevel : undefined,
+        cr2Feedback: hasTwoCRs ? cr2Feedback : undefined,
       },
       questionsWithAnswers,
       responses: gradedResponses,
