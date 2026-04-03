@@ -83,6 +83,7 @@ export default function FreePracticeTestPage() {
 
   return (
     <>
+      <SiteHeader />
       {/* Sticky test bar */}
       <div className="sticky top-0 z-40 flex items-center justify-between border-b border-[#e8e0e2] bg-white px-6 py-3">
         <p className="text-sm font-semibold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-sans)' }}>
