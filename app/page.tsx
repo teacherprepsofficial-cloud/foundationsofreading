@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { CountdownBanner } from '@/components/countdown-banner'
 import { PricingSection } from '@/components/pricing-section'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
@@ -106,7 +105,6 @@ const FEATURES = [
 export default function HomePage() {
   return (
     <>
-      <CountdownBanner />
       <SiteHeader />
       <main>
         {/* Hero */}
