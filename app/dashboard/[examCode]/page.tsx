@@ -5,16 +5,8 @@ import connectDB from '@/lib/mongodb'
 import UserAccess from '@/models/UserAccess'
 import UserProgress from '@/models/UserProgress'
 import UserTestAttempt from '@/models/UserTestAttempt'
-import DashboardHeader from '@/components/dashboard-header'
-
-function DaysLeft({ expiresAt }: { expiresAt: Date }) {
-  const days = Math.max(0, Math.ceil((new Date(expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
-  return (
-    <span className={`text-sm font-semibold ${days <= 5 ? 'text-red-600' : 'text-[#7c1c2e]'}`} style={{ fontFamily: 'var(--font-sans)' }}>
-      {days} day{days !== 1 ? 's' : ''} left
-    </span>
-  )
-}
+import User from '@/models/User'
+import DashboardSidebar from '@/components/dashboard-sidebar'
 
 export default async function ExamDashboardPage({
   params,
@@ -30,19 +22,17 @@ export default async function ExamDashboardPage({
   await connectDB()
   const now = new Date()
 
-  const access = await UserAccess.findOne({
-    userId: auth.userId,
-    examCode,
-    isActive: true,
-    expiresAt: { $gt: now },
-  })
+  const [access, user] = await Promise.all([
+    UserAccess.findOne({ userId: auth.userId, examCode, isActive: true, expiresAt: { $gt: now } }),
+    User.findById(auth.userId).select('name email'),
+  ])
 
   if (!access) redirect('/dashboard')
 
   const progress = await UserProgress.findOne({ userId: auth.userId, examCode })
 
-  // Get diagnostic attempt if completed
-  let diagnosticScore = null
+  // Diagnostic score
+  let diagnosticScore: { scaledScore: number; passed: boolean; subareaScores: { subarea: string; subareaName: string; percentage: number }[] } | null = null
   if (progress?.diagnosticAttemptId) {
     const attempt = await UserTestAttempt.findById(progress.diagnosticAttemptId)
     if (attempt) {
@@ -54,180 +44,191 @@ export default async function ExamDashboardPage({
     }
   }
 
+  // All completed practice test attempts (non-diagnostic)
+  const practiceAttempts = await UserTestAttempt.find({
+    userId: auth.userId,
+    examCode,
+    isDiagnostic: false,
+    status: 'completed',
+  }).sort({ completedAt: 1 }).lean()
+
   const diagnosticDone = progress?.diagnosticCompleted || false
   const module1Done = progress?.module1Completed || false
   const practiceTestsCount = progress?.practiceTestsCompleted?.length || 0
   const crCount = progress?.crAttemptsCompleted?.length || 0
   const isBundle = access.tier === 'bundle'
 
-  const MODULES = [
-    {
-      number: 1,
-      title: 'About This Test',
-      description: 'Exam overview, format, timing, and what to expect on test day.',
-      href: `/dashboard/${examCode}/module-1`,
-      completed: module1Done,
-      locked: false,
-    },
-    {
-      number: 2,
-      title: 'Diagnostic Practice Test',
-      description: `25 MC + 1 written response. See your current level across all 4 subareas${diagnosticDone ? '' : ' — required before starting your prep'}.`,
-      href: `/dashboard/${examCode}/diagnostic`,
-      completed: diagnosticDone,
-      locked: !module1Done,
-      badge: diagnosticScore ? `Score: ${diagnosticScore.scaledScore}` : undefined,
-    },
-    {
-      number: 3,
-      title: 'Study Guide',
-      description: 'All 4 subareas, all 11 objectives. Read at your own pace.',
-      href: `/dashboard/${examCode}/study-guide`,
-      completed: false,
-      locked: !diagnosticDone,
-    },
-    {
-      number: 4,
-      title: 'Practice Tests',
-      description: `Full-length timed tests on the NES 100–300 scale. ${isBundle ? '4 tests available.' : '2 tests available.'}`,
-      href: `/dashboard/${examCode}/practice-tests`,
-      completed: practiceTestsCount >= (isBundle ? 4 : 2),
-      locked: !diagnosticDone,
-      badge: practiceTestsCount > 0 ? `${practiceTestsCount} completed` : undefined,
-    },
-    {
-      number: 5,
-      title: 'Flashcards',
-      description: '150+ terms across all subareas and objectives.',
-      href: `/dashboard/${examCode}/flashcards`,
-      completed: progress?.flashcardsCompleted || false,
-      locked: !diagnosticDone,
-    },
-    {
-      number: 6,
-      title: `Written Response Practice${isBundle ? ' (8 prompts)' : ' (4 prompts)'}`,
-      description: 'Type your response. Get scored 1–4 with feedback from AI — same rubric as the real exam.',
-      href: `/dashboard/${examCode}/cr`,
-      completed: crCount >= (isBundle ? 8 : 4),
-      locked: !diagnosticDone,
-      badge: crCount > 0 ? `${crCount} submitted` : undefined,
-    },
+  const daysLeft = Math.max(0, Math.ceil((new Date(access.expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+
+  const NAV = [
+    { label: 'Overview', href: `/dashboard/${examCode}`, icon: '⊞' },
+    { label: 'About This Test', href: `/dashboard/${examCode}/module-1`, icon: '1', done: module1Done },
+    { label: 'Diagnostic', href: `/dashboard/${examCode}/diagnostic`, icon: '2', done: diagnosticDone, locked: !module1Done },
+    { label: 'Study Guide', href: `/dashboard/${examCode}/study-guide`, icon: '3', locked: !diagnosticDone },
+    { label: 'Practice Tests', href: `/dashboard/${examCode}/practice-tests`, icon: '4', locked: !diagnosticDone, badge: practiceTestsCount > 0 ? `${practiceTestsCount}` : undefined },
+    { label: 'Flashcards', href: `/dashboard/${examCode}/flashcards`, icon: '5', locked: !diagnosticDone },
+    { label: 'Written Response', href: `/dashboard/${examCode}/cr`, icon: '6', locked: !diagnosticDone, badge: crCount > 0 ? `${crCount}` : undefined },
   ]
 
-  return (
-    <div className="min-h-screen bg-[#faf8f5]">
-      <DashboardHeader />
-      {/* Dashboard Header */}
-      <div className="bg-[#7c1c2e] px-6 py-8">
-        <div className="mx-auto max-w-4xl">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-[#e8b4bc]" style={{ fontFamily: 'var(--font-sans)' }}>
-                NES Foundations of Reading {examCode}
-              </p>
-              <h1 className="mt-1 text-2xl font-bold text-white" style={{ fontFamily: 'var(--font-serif)' }}>
-                Your Prep Dashboard
-              </h1>
-            </div>
-            <div className="text-right">
-              <DaysLeft expiresAt={access.expiresAt} />
-              <p className="mt-0.5 text-xs text-[#e8b4bc]" style={{ fontFamily: 'var(--font-sans)' }}>
-                {access.tier === 'bundle' ? 'Complete Bundle' : 'Starter'}
-              </p>
-            </div>
-          </div>
+  const firstName = user?.name?.split(' ')[0] || 'there'
 
-          {/* Progress bar */}
-          {diagnosticScore && (
-            <div className="mt-6 rounded-lg bg-[#5a1220] px-6 py-4">
-              <p className="text-sm font-semibold text-[#e8b4bc]" style={{ fontFamily: 'var(--font-sans)' }}>
-                Diagnostic Score
-              </p>
-              <div className="mt-2 flex items-center gap-4">
-                <p className="text-3xl font-bold text-white" style={{ fontFamily: 'var(--font-serif)' }}>
-                  {diagnosticScore.scaledScore}
-                </p>
+  return (
+    <div className="flex min-h-screen bg-[#faf8f5]">
+
+      {/* ── Left Sidebar ── */}
+      <DashboardSidebar examCode={examCode} nav={NAV} />
+
+      {/* ── Main Content ── */}
+      <div className="flex-1 overflow-auto">
+
+        {/* Top bar */}
+        <div className="flex items-center justify-between border-b border-[#e8e0e2] bg-white px-8 py-4">
+          <div>
+            <p className="text-xs text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>
+              {user?.email}
+            </p>
+            <h1 className="text-xl font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>
+              Welcome back, {firstName}.
+            </h1>
+          </div>
+          <div className="text-right">
+            <p
+              className={`text-sm font-semibold ${daysLeft <= 5 ? 'text-red-600' : 'text-[#7c1c2e]'}`}
+              style={{ fontFamily: 'var(--font-sans)' }}
+            >
+              {daysLeft} day{daysLeft !== 1 ? 's' : ''} left
+            </p>
+            <p className="text-xs text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>
+              NES 190 &amp; 890 · {isBundle ? 'Bundle' : 'Starter'}
+            </p>
+          </div>
+        </div>
+
+        <div className="px-8 py-8 max-w-3xl">
+
+          {/* ── My Progress ── */}
+          <p className="text-xs font-bold uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>My Progress</p>
+
+          {/* Diagnostic */}
+          <div className="mt-3 rounded-xl border border-[#e8e0e2] bg-white p-5">
+            <p className="text-sm font-semibold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-sans)' }}>Diagnostic Practice Test</p>
+            {diagnosticScore ? (
+              <div className="mt-3 flex items-center gap-4">
+                <div className="text-center">
+                  <p className="text-3xl font-bold text-[#7c1c2e]" style={{ fontFamily: 'var(--font-serif)' }}>{diagnosticScore.scaledScore}</p>
+                  <p className="text-xs text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>Scaled Score</p>
+                </div>
                 <span
-                  className={`rounded px-3 py-1 text-xs font-bold ${
-                    diagnosticScore.passed
-                      ? 'bg-green-600 text-white'
-                      : 'bg-[#7c1c2e] text-white border border-white/30'
-                  }`}
+                  className={`rounded px-3 py-1 text-xs font-bold ${diagnosticScore.passed ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
                   style={{ fontFamily: 'var(--font-sans)' }}
                 >
-                  {diagnosticScore.passed ? 'PASSED' : 'NOT YET — KEEP STUDYING'}
+                  {diagnosticScore.passed ? 'PASS' : 'NOT YET'}
                 </span>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Modules */}
-      <div className="mx-auto max-w-4xl px-6 py-10">
-        <p className="text-xs font-semibold uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>
-          Your Study Program
-        </p>
-        <div className="mt-4 space-y-3">
-          {MODULES.map((mod) => (
-            <div
-              key={mod.number}
-              className={`relative rounded-lg border bg-white ${
-                mod.locked ? 'border-[#e8e0e2] opacity-50' : 'border-[#e8e0e2] hover:border-[#7c1c2e] transition-colors'
-              }`}
-            >
-              {mod.completed && (
-                <div className="absolute right-4 top-4 flex h-6 w-6 items-center justify-center rounded-full bg-green-500">
-                  <span className="text-xs text-white">✓</span>
-                </div>
-              )}
-              <div className="p-6">
-                <div className="flex items-start gap-4">
-                  <span
-                    className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold ${
-                      mod.completed
-                        ? 'bg-[#7c1c2e] text-white'
-                        : mod.locked
-                        ? 'bg-[#e8e0e2] text-[#6b6b6b]'
-                        : 'bg-[#f9f0f2] text-[#7c1c2e]'
-                    }`}
-                    style={{ fontFamily: 'var(--font-sans)' }}
-                  >
-                    {mod.number}
-                  </span>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3">
-                      <p className="font-semibold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>
-                        {mod.title}
-                      </p>
-                      {mod.badge && (
-                        <span className="rounded-full bg-[#f9f0f2] px-2.5 py-0.5 text-xs font-semibold text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>
-                          {mod.badge}
-                        </span>
-                      )}
+                <div className="ml-auto flex gap-6">
+                  {diagnosticScore.subareaScores.map((s) => (
+                    <div key={s.subarea} className="text-center">
+                      <p className="text-sm font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-sans)' }}>{Math.round(s.percentage)}%</p>
+                      <p className="text-xs text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>Subarea {s.subarea}</p>
                     </div>
-                    <p className="mt-1 text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>
-                      {mod.description}
-                    </p>
-                    {mod.locked && (
-                      <p className="mt-2 text-xs text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>
-                        🔒 Complete the previous step to unlock
-                      </p>
-                    )}
-                  </div>
-                  {!mod.locked && (
-                    <Link
-                      href={mod.href}
-                      className="flex-shrink-0 rounded bg-[#7c1c2e] px-5 py-2 text-sm font-semibold text-white hover:bg-[#5a1220]"
-                      style={{ fontFamily: 'var(--font-sans)' }}
-                    >
-                      {mod.completed ? 'Review' : 'Start'}
-                    </Link>
-                  )}
+                  ))}
                 </div>
               </div>
+            ) : (
+              <p className="mt-2 text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>
+                {!module1Done ? 'Complete Module 1 first to unlock.' : 'Not yet taken.'}
+                {module1Done && !diagnosticDone && (
+                  <Link href={`/dashboard/${examCode}/diagnostic`} className="ml-2 font-semibold text-[#7c1c2e] underline">
+                    Start now →
+                  </Link>
+                )}
+              </p>
+            )}
+          </div>
+
+          {/* Practice Tests */}
+          <div className="mt-4 rounded-xl border border-[#e8e0e2] bg-white p-5">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-semibold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-sans)' }}>Practice Tests</p>
+              <p className="text-xs text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>
+                {practiceTestsCount} of {isBundle ? 4 : 2} completed
+              </p>
             </div>
-          ))}
+            {practiceAttempts.length > 0 ? (
+              <div className="mt-3 overflow-hidden rounded-lg border border-[#e8e0e2]">
+                <table className="w-full text-sm" style={{ fontFamily: 'var(--font-sans)' }}>
+                  <thead>
+                    <tr className="border-b border-[#e8e0e2] bg-[#faf8f5]">
+                      <th className="px-4 py-2.5 text-left text-xs font-semibold text-[#6b6b6b]">Test</th>
+                      <th className="px-4 py-2.5 text-left text-xs font-semibold text-[#6b6b6b]">Score</th>
+                      <th className="px-4 py-2.5 text-left text-xs font-semibold text-[#6b6b6b]">Result</th>
+                      <th className="px-4 py-2.5 text-left text-xs font-semibold text-[#6b6b6b]">Mode</th>
+                      <th className="px-4 py-2.5 text-left text-xs font-semibold text-[#6b6b6b]">Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {practiceAttempts.map((a, i) => (
+                      <tr key={String(a._id)} className={i < practiceAttempts.length - 1 ? 'border-b border-[#e8e0e2]' : ''}>
+                        <td className="px-4 py-3 font-semibold text-[#1a1a1a]">Practice Test {i + 1}</td>
+                        <td className="px-4 py-3 font-bold text-[#7c1c2e]">{a.scaledScore}</td>
+                        <td className="px-4 py-3">
+                          <span className={`rounded px-2 py-0.5 text-xs font-bold ${a.passed ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                            {a.passed ? 'PASS' : 'NOT YET'}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 capitalize text-[#6b6b6b]">{a.mode}</td>
+                        <td className="px-4 py-3 text-[#6b6b6b]">
+                          {a.completedAt ? new Date(a.completedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="mt-2 text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>
+                {!diagnosticDone ? 'Complete the diagnostic first to unlock.' : 'No tests taken yet.'}
+                {diagnosticDone && (
+                  <Link href={`/dashboard/${examCode}/practice-tests`} className="ml-2 font-semibold text-[#7c1c2e] underline">
+                    Start now →
+                  </Link>
+                )}
+              </p>
+            )}
+          </div>
+
+          {/* Written Response */}
+          <div className="mt-4 rounded-xl border border-[#e8e0e2] bg-white p-5">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-semibold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-sans)' }}>AI-Graded Written Responses</p>
+              <p className="text-xs text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>
+                {crCount} of {isBundle ? 8 : 4} submitted
+              </p>
+            </div>
+            {crCount === 0 && (
+              <p className="mt-2 text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>
+                {!diagnosticDone ? 'Complete the diagnostic first to unlock.' : 'No responses submitted yet.'}
+                {diagnosticDone && (
+                  <Link href={`/dashboard/${examCode}/cr`} className="ml-2 font-semibold text-[#7c1c2e] underline">
+                    Start now →
+                  </Link>
+                )}
+              </p>
+            )}
+            {crCount > 0 && (
+              <div className="mt-2">
+                <div className="h-2 rounded-full bg-[#e8e0e2]">
+                  <div
+                    className="h-2 rounded-full bg-[#7c1c2e] transition-all"
+                    style={{ width: `${(crCount / (isBundle ? 8 : 4)) * 100}%` }}
+                  />
+                </div>
+                <p className="mt-1 text-xs text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>
+                  {crCount} submitted
+                </p>
+              </div>
+            )}
+          </div>
+
         </div>
       </div>
     </div>
