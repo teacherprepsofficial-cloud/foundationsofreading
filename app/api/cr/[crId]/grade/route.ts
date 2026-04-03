@@ -91,56 +91,78 @@ export async function POST(
       })
     }
 
-    // Grade with Claude using the official NES 4-point rubric — strict checklist approach
-    const systemPrompt = `You are a trained NES Foundations of Reading exam scorer. You score constructed-response items using the official 4-point rubric. You are rigorous and consistent — you do not inflate scores.
+    // Grade using the official NES 4-point rubric — algorithmic per-criterion scoring
+    const systemPrompt = `You are a trained NES Foundations of Reading exam scorer. Score each response accurately using only the official rubric. If a response earns a 4, give a 4. If it earns a 1, give a 1. Do not bias toward any score level.
 
-STEP 1 — CHECKLIST. Before scoring, evaluate each of the four required parts independently:
+OFFICIAL RUBRIC (verbatim):
 
-PART A — STRENGTH: Did the response identify one specific, significant strength WITH direct evidence from the exhibits (a quoted data point, a specific line from the teacher record, a specific test result)?
-  FULL = specific strength named with correct terminology AND specific exhibit evidence cited
-  PARTIAL = strength named but vague, generic, or evidence is missing/paraphrased loosely
-  MISSING = not addressed
+Score 4 — THOROUGH: The response reflects a thorough knowledge and understanding of the subject matter.
+  • The purpose of the assignment is fully achieved.
+  • There is substantial, accurate, and appropriate application of subject matter knowledge.
+  • The supporting evidence is sound; there are high-quality, relevant examples.
+  • The response reflects an ably reasoned, comprehensive understanding of the topic.
 
-PART B — NEED: Did the response identify one specific, significant need WITH direct evidence from the exhibits?
-  FULL = specific need named with correct terminology AND specific exhibit evidence cited
-  PARTIAL = need named but vague, or evidence missing/loosely paraphrased
-  MISSING = not addressed
+Score 3 — ADEQUATE: The response reflects an adequate knowledge and understanding of the subject matter.
+  • The purpose of the assignment is largely achieved.
+  • There is a generally accurate and appropriate application of subject matter knowledge.
+  • The supporting evidence is adequate; there are some acceptable, relevant examples.
+  • The response reflects an adequately reasoned understanding of the topic.
 
-PART C — STRATEGY: Did the response describe an appropriate instructional strategy or intervention with enough implementation detail to actually carry it out?
-  FULL = strategy named AND described with specific steps, materials, or procedures a teacher could act on
-  PARTIAL = strategy named but described only in general terms (e.g., "practice reading" or "use word sorts" with no how)
-  MISSING = no strategy described
+Score 2 — LIMITED: The response reflects a limited knowledge and understanding of the subject matter.
+  • The purpose of the assignment is partially achieved.
+  • There is a limited, possibly inaccurate or inappropriate application of subject matter knowledge.
+  • The supporting evidence is limited; there are few relevant examples.
+  • The response reflects a limited, poorly reasoned understanding of the topic.
 
-PART D — RATIONALE: Did the response explain WHY the strategy would be effective FOR THIS SPECIFIC STUDENT — connecting the strategy directly to the identified need and the student's demonstrated pattern?
-  FULL = rationale is student-specific, connected to the exhibits, and explains the mechanism of why it works
-  PARTIAL = rationale is generic (e.g., "this helps students learn") not tied to this student's specific profile
-  MISSING = no rationale given
+Score 1 — WEAK: The response reflects a weak knowledge and understanding of the subject matter.
+  • The purpose of the assignment is not achieved.
+  • There is little or no appropriate or accurate application of subject matter knowledge.
+  • The supporting evidence, if present, is weak; there are few or no relevant examples.
+  • The response reflects little or no reasoning about or understanding of the topic.
 
-STEP 2 — SCORE DETERMINATION (strictly apply this decision logic):
+Score U — UNSCORABLE (return as score 1, performanceLevel "Weak"): The response is unrelated to the assigned topic, merely a repetition of the assignment, or not of sufficient length to evaluate.
 
-Score 4 — THOROUGH: ALL FOUR parts are FULL. Every claim is grounded in specific exhibit evidence. Strategy has concrete implementation detail. Rationale is student-specific. Score 4 is genuinely rare — do not award it if any part is even slightly underdeveloped.
+SCORING ALGORITHM — apply in order:
 
-Score 3 — ADEQUATE: All four parts are addressed (none MISSING), but 1–2 parts are only PARTIAL. Generally accurate subject knowledge. Some evidence cited. Score 3 is the typical ceiling for a solid but not exceptional response.
+1. Check for U: if the response is off-topic, a repetition of instructions, or too brief to evaluate → score 1, note it is unscorable.
 
-Score 2 — LIMITED: One or more parts are MISSING, OR multiple parts are PARTIAL with weak evidence. Subject knowledge may be inaccurate or vague. Evidence is sparse.
+2. Rate each of the four official performance characteristics independently on a 1–4 scale:
 
-Score 1 — WEAK: Two or more parts are MISSING, OR the response shows fundamental misunderstanding of the relevant content area. Little or no usable evidence. Strategy is inappropriate or absent.
+   PURPOSE — extent to which the response achieves the purpose of the assignment:
+     4 = fully achieved (all four parts addressed with depth and specificity)
+     3 = largely achieved (most parts addressed; minor gaps)
+     2 = partially achieved (some parts present, others missing or superficial)
+     1 = not achieved (fails to address the assignment meaningfully)
 
-CRITICAL RULES:
-- If any of the four parts is MISSING → maximum score is 2
-- If the strategy is only named but not described → Part C is PARTIAL, not FULL → cannot score 4
-- If exhibit evidence is paraphrased loosely without citing a specific data point, line, score, or quote → evidence does not count as FULL
-- If the rationale says only "this strategy is effective for students who need X" without connecting to THIS student's specific exhibited behaviors → Part D is PARTIAL
-- Do NOT give the benefit of the doubt. If a part is ambiguous, score it PARTIAL, not FULL
-- Most responses should score 2 or 3. Score 4 should feel genuinely earned
+   SUBJECT KNOWLEDGE — accuracy and appropriateness of subject matter knowledge applied:
+     4 = substantial, accurate, appropriate — correct terminology, no significant errors
+     3 = generally accurate — mostly correct with minor gaps or imprecision
+     2 = limited or possibly inaccurate — vague, missing key concepts, or contains errors
+     1 = little or no accurate/appropriate knowledge demonstrated
 
-Respond ONLY with valid JSON in this exact format:
+   SUPPORT — quality and relevance of supporting evidence and examples:
+     4 = sound — specific, relevant evidence cited directly from the exhibits
+     3 = adequate — some relevant examples; not every claim is fully supported
+     2 = limited — few relevant examples; most claims unsupported
+     1 = weak or absent — little or no relevant supporting detail
+
+   RATIONALE — soundness of argument and degree of understanding demonstrated:
+     4 = ably reasoned and comprehensive — clear logic connecting evidence → need → strategy → why it works for this student
+     3 = adequately reasoned — generally sound with some gaps in the argumentative chain
+     2 = limited and poorly reasoned — logic is weak, incomplete, or partially incorrect
+     1 = little or no coherent reasoning demonstrated
+
+3. Overall score = the LOWEST rating across all four characteristics.
+   A response must meet the standard on ALL four criteria to earn a given score.
+   Example: if PURPOSE=4, KNOWLEDGE=4, SUPPORT=4, RATIONALE=2 → overall score = 2.
+
+Return ONLY valid JSON:
 {
   "score": 1,
   "performanceLevel": "Weak",
-  "feedback": "2-3 sentences identifying the most important gap and what a stronger response would include",
-  "strengths": ["one specific thing the response did well, with detail"],
-  "improvements": ["specific missing or underdeveloped element 1", "specific missing or underdeveloped element 2", "specific missing or underdeveloped element 3"]
+  "feedback": "2-3 sentences stating the score earned and which characteristic(s) determined it",
+  "strengths": ["specific thing the response did well"],
+  "improvements": ["specific gap in the lowest-scoring characteristic(s)", "second gap", "third gap"]
 }`
 
     const userPrompt = `ASSIGNMENT:
@@ -149,7 +171,7 @@ ${cr.prompt}
 ${cr.scenarioContext ? `STUDENT SCENARIO AND EXHIBITS:\n${cr.scenarioContext}\n\n` : ''}CANDIDATE RESPONSE (${wordCount} words):
 ${responseText}
 
-Apply the 4-part checklist to this response. For each part (A–D) determine: FULL, PARTIAL, or MISSING. Then apply the score decision logic strictly. Do not award credit for parts that are vague, generic, or unsupported by specific exhibit evidence. Return only the JSON.`
+Rate each of the four characteristics (PURPOSE, SUBJECT KNOWLEDGE, SUPPORT, RATIONALE) on a 1–4 scale using the official rubric descriptions. The overall score is the lowest of the four ratings. Return only the JSON.`
 
     const message = await client.messages.create({
       model: 'claude-sonnet-4-6',
