@@ -155,7 +155,7 @@ export default function HomePage() {
                   Pass the Foundations of Reading Test.
                 </h1>
                 <p className="mt-6 text-lg leading-relaxed text-[#f0d0d5]" style={{ fontFamily: 'var(--font-sans)' }}>
-                  Diagnostic test, full study guide, timed practice tests, AI-graded written responses, and flashcards. Everything in one place.
+                  Our exam preparation program includes a diagnostic test, comprehensive study guide, timed practice tests, AI-graded constructed responses, and flashcards. Everything in one place.
                 </p>
                 <div className="mt-10 flex flex-col gap-4 sm:flex-row">
                   <a href="#pricing" className="inline-flex items-center justify-center rounded bg-white px-8 py-4 text-sm font-semibold text-[#7c1c2e] transition-colors hover:bg-[#f9f0f2]" style={{ fontFamily: 'var(--font-sans)' }}>
