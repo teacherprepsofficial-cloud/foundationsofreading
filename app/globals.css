@@ -210,6 +210,18 @@ body {
   line-height: 1.6;
 }
 
+/* Global button hover grow */
+button:not([disabled]):hover,
+a[class*="bg-"]:hover {
+  transform: scale(1.03);
+}
+button:not([disabled]),
+a[class*="bg-"] {
+  transition-property: color, background-color, border-color, transform;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
+}
+
 @keyframes pulse-slow {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.75; }
