@@ -678,8 +678,7 @@ export default function FreeDiagnosticPage() {
       <div className="min-h-screen bg-[#faf8f5] flex items-center justify-center">
         <div className="text-center">
           <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-[#e8e0e2] border-t-[#7c1c2e] mb-5" />
-          <p className="text-base font-semibold text-[#1a1a1a]" style={SE}>Scoring your diagnostic…</p>
-          <p className="mt-2 text-sm text-[#6b6b6b]" style={SF}>AI is grading your written response using the official NES rubric.</p>
+          <p className="text-base font-semibold text-[#1a1a1a]" style={SE}>One moment as we grade your FoRT diagnostic test…</p>
         </div>
       </div>
     )
