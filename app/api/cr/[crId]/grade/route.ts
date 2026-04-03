@@ -131,7 +131,9 @@ Grade this response.`
 
     let parsed
     try {
-      parsed = JSON.parse(content.text)
+      const jsonMatch = content.text.match(/\{[\s\S]*\}/)
+      if (!jsonMatch) throw new Error('No JSON found')
+      parsed = JSON.parse(jsonMatch[0])
     } catch {
       throw new Error('Failed to parse grading response')
     }
