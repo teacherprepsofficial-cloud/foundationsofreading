@@ -346,7 +346,7 @@ export async function POST(request: NextRequest) {
       weekday: 'long', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit',
     })
 
-    await resend.emails.send({
+    const { error: resendError } = await resend.emails.send({
       from: 'Foundations of Reading <support@teacherpreps.com>',
       to: email.trim(),
       subject: `${firstName.trim()}, your FoRT Diagnostic Results are ready`,
@@ -409,6 +409,11 @@ export async function POST(request: NextRequest) {
 </body>
 </html>`,
     })
+
+    if (resendError) {
+      console.error('Resend error:', resendError)
+      return NextResponse.json({ error: 'Failed to send email. Please try again.' }, { status: 500 })
+    }
 
     return NextResponse.json({ success: true, scaledScore, passed, mcCorrect })
   } catch (err) {
