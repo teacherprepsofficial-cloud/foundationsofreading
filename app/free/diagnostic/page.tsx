@@ -122,7 +122,7 @@ const QUESTIONS: Question[] = [
     explanation: 'Prosody refers to reading with appropriate expression, intonation, and phrasing. Reading accurately and quickly without prosody suggests the student has not yet internalized text meaning as they read.',
   },
   {
-    id: 12, subarea: 2, subareaName: 'Development of Reading Comprehension',
+    id: 12, subarea: 3, subareaName: 'Reading Assessment and Instruction',
     text: 'Which of the following is the most effective, evidence-based strategy for building oral reading fluency?',
     choices: [
       'Silent sustained reading of self-selected books',
@@ -134,7 +134,7 @@ const QUESTIONS: Question[] = [
     explanation: 'Repeated reading — rereading the same passage with teacher feedback — is one of the most research-supported fluency strategies. Silent reading alone does not provide the corrective feedback needed to build accurate, fluent reading.',
   },
   {
-    id: 13, subarea: 2, subareaName: 'Development of Reading Comprehension',
+    id: 13, subarea: 3, subareaName: 'Reading Assessment and Instruction',
     text: 'A third-grade student reads 68 words per minute with 94% accuracy. Based on research-based oral reading fluency norms, this student\'s reading is best described as:',
     choices: ['Well above grade level', 'At grade level', 'Below grade level', 'Unable to determine without more information'],
     correct: 2,
@@ -216,7 +216,7 @@ const QUESTIONS: Question[] = [
     explanation: '"They" is a high-frequency sight word that does not follow regular phonics patterns. Students must memorize it as a whole word. Misreading it as "the" suggests insufficient practice with this irregular word.',
   },
   {
-    id: 21, subarea: 3, subareaName: 'Reading Assessment and Instruction',
+    id: 21, subarea: 2, subareaName: 'Development of Reading Comprehension',
     text: 'A student uses the surrounding words and sentences to determine the meaning of an unfamiliar word. Which strategy is the student demonstrating?',
     choices: ['Morphological analysis', 'Syntactic analysis', 'Use of context clues', 'Phonological recoding'],
     correct: 2,

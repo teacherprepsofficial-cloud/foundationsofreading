@@ -37,8 +37,8 @@ function getLevel(pct: number): string {
 
 const SUBAREAS = [
   { id: 1, name: 'Foundations of Reading Development', abbr: 'Subarea I', qIds: [1,2,3,4,5,6,7,8,9,10,11] },
-  { id: 2, name: 'Development of Reading Comprehension', abbr: 'Subarea II', qIds: [12,13,14,15,16,17,18,19] },
-  { id: 3, name: 'Reading Assessment and Instruction', abbr: 'Subarea III', qIds: [20,21,22,23,24,25] },
+  { id: 2, name: 'Development of Reading Comprehension', abbr: 'Subarea II', qIds: [14,15,16,17,18,19,21] },
+  { id: 3, name: 'Reading Assessment and Instruction', abbr: 'Subarea III', qIds: [12,13,20,22,23,24,25] },
 ]
 
 const CORRECT_ANSWERS: Record<number, number> = {
