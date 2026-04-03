@@ -4,19 +4,47 @@ import { useState, useEffect } from 'react'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 
-const PROMPT = `A third-grade teacher notices that several students read words accurately but very slowly and without expression. The students can decode unfamiliar words using phonics, but they do not read fluently.
+const PROMPT = `STUDENT SCENARIO
 
-Describe TWO specific, evidence-based instructional strategies the teacher should use to develop oral reading fluency for these students. For each strategy:
-• Name and describe the strategy
-• Explain how it supports fluency development
-• Describe how you would implement it in this classroom context`
+Student: Maya | Grade: 2
+
+Exhibit 1 — Teacher Record
+Early in the school year, Maya reads aloud a passage from an unfamiliar narrative text. The teacher records the following:
+
+Passage text with Maya's reading:
+• "Sam and his dog Rex ran down the muddy trail."
+  Maya read "muddy" as "mudy" (substitution)
+• "Rex jumped over a log and landed in a puddle."
+  Maya read "jumped" as "jumpt" then self-corrected | read "landed" as "land" (substitution)
+• "Sam laughed and wiped mud from his face."
+  Maya paused long on "laughed" | read "wiped" as "wipe" (substitution)
+• "They raced all the way home as the sun began to set."
+  Maya repeated "raced" | read "began" as "begin" (substitution)
+
+Exhibit 2 — Oral Fluency Reading Rubric
+Words correct per minute: 71 wcpm
+Accuracy: 88%
+Pace (1–4): 3
+Smoothness (1–4): 2
+Phrasing (1–4): 3
+Note: Second-grade 50th percentile fall benchmark is 72 wcpm.
+
+ASSIGNMENT
+Using your knowledge of foundational reading skills (e.g., phonemic awareness, phonics, recognition of high-frequency words, syllabication, morphemic analysis, automaticity, reading fluency [accuracy, rate, and prosody], self-correcting), write a response of approximately 150–300 words in which you:
+1. Identify one significant strength that Maya demonstrates related to foundational reading skills.
+2. Identify one significant need that Maya demonstrates related to foundational reading skills.
+3. Based on the need you identified, describe an appropriate instructional strategy, activity, or intervention to use with Maya.
+4. Explain why the instructional strategy, activity, or intervention you described would be effective for Maya.
+
+Be sure to cite specific evidence from the information provided to support all parts of your response.`
 
 const WORD_MIN = 150
 
 const SCORE_LABELS: Record<number, { label: string; color: string; bg: string }> = {
-  2: { label: 'Thorough', color: '#166534', bg: '#f0fdf4' },
-  1: { label: 'Adequate', color: '#854d0e', bg: '#fefce8' },
-  0: { label: 'Limited/Weak', color: '#991b1b', bg: '#fef2f2' },
+  4: { label: 'Thorough', color: '#166534', bg: '#f0fdf4' },
+  3: { label: 'Adequate', color: '#1e40af', bg: '#eff6ff' },
+  2: { label: 'Limited', color: '#854d0e', bg: '#fefce8' },
+  1: { label: 'Weak', color: '#991b1b', bg: '#fef2f2' },
 }
 
 interface GradeResult {
@@ -46,7 +74,7 @@ export default function FreeWrittenResponsePage() {
     setLoading(true)
     setError('')
     try {
-      const res = await fetch('/api/free/grade-response', {
+      const res = await fetch('/api/free/grade-cr', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: PROMPT, response }),
@@ -78,7 +106,7 @@ export default function FreeWrittenResponsePage() {
           <p className="text-xs font-semibold uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>Free Preview · One Use</p>
           <h1 className="mt-2 text-3xl font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>AI-Graded Written Response</h1>
           <p className="mt-2 text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>
-            Type your response below. Our AI scores it 0–2 using the same rubric as the real NES exam.
+            Type your response below. Our AI scores it 1–4 using the same rubric as the real NES exam.
           </p>
 
           {/* Prompt */}
@@ -94,8 +122,8 @@ export default function FreeWrittenResponsePage() {
           {/* Rubric reference */}
           <div className="mt-4 rounded-lg border border-[#e8e0e2] bg-[#faf8f5] p-4">
             <p className="text-xs font-semibold uppercase tracking-widest text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>Scoring Rubric</p>
-            <div className="mt-2 grid grid-cols-3 gap-2">
-              {[['2 — Thorough', 'Demonstrates strong, accurate knowledge with specific, well-supported strategies'], ['1 — Adequate', 'Demonstrates adequate knowledge; strategies are relevant but may lack depth or specificity'], ['0 — Limited/Weak', 'Demonstrates limited knowledge; strategies are vague, inaccurate, or off-topic']].map(([label, desc]) => (
+            <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {[['4 — Thorough', 'Purpose fully achieved. Substantial, accurate knowledge. Sound evidence and high-quality examples.'], ['3 — Adequate', 'Purpose largely achieved. Generally accurate knowledge. Adequate evidence with relevant examples.'], ['2 — Limited', 'Purpose partially achieved. Limited or possibly inaccurate knowledge. Few relevant examples.'], ['1 — Weak', 'Purpose not achieved. Little or no accurate knowledge. Weak or absent evidence.']].map(([label, desc]) => (
                 <div key={label} className="rounded border border-[#e8e0e2] bg-white p-2.5">
                   <p className="text-xs font-bold text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>{label}</p>
                   <p className="mt-1 text-xs text-[#6b6b6b] leading-snug" style={{ fontFamily: 'var(--font-sans)' }}>{desc}</p>
@@ -150,7 +178,7 @@ export default function FreeWrittenResponsePage() {
               {/* Score */}
               <div className="rounded-xl p-5 text-center" style={{ background: SCORE_LABELS[result.score]?.bg }}>
                 <p className="text-4xl font-bold" style={{ fontFamily: 'var(--font-serif)', color: SCORE_LABELS[result.score]?.color }}>
-                  {result.score} / 2
+                  {result.score} / 4
                 </p>
                 <p className="mt-1 text-sm font-semibold" style={{ fontFamily: 'var(--font-sans)', color: SCORE_LABELS[result.score]?.color }}>
                   {result.performanceLevel}
