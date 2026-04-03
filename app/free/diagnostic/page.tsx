@@ -668,7 +668,7 @@ export default function FreeDiagnosticPage() {
             <div className="bg-[#7c1c2e] px-6 py-5">
               <p className="text-[10px] font-bold uppercase tracking-widest text-[#e8b4bc]" style={SF}>Almost there</p>
               <h2 className="mt-1 text-xl font-bold text-white" style={SE}>Send My FoRT Diagnostic Test Results</h2>
-              <p className="mt-1 text-sm text-[#e8b4bc]" style={SF}>We&apos;ll email your score report PDF and a 15% discount — right now.</p>
+              <p className="mt-1 text-sm text-[#e8b4bc]" style={SF}>We&apos;ll email your score report right now.</p>
             </div>
             <div className="p-6 space-y-4">
               <div>
