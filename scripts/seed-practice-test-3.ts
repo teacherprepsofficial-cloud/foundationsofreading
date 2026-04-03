@@ -1897,24 +1897,54 @@ const pt3Cr1 = {
       context:
         'Grade 2 — Oral Reading Record. The passage below is a second-grade instructional-level text. Caleb\'s reading behaviors are marked on each line. Substitutions are shown above the text word. "SC" indicates a self-correction.',
       lines: [
-        {
-          text: 'The rain fell softly on the garden path.',
-          student: 'ran',
-          mark: 'sub',
-        },
-        {
-          text: 'A toad sat near the old oak tree and waited.',
-        },
-        {
-          text: 'It croaked once, then leaped into the tall green',
-          student: null,
-          mark: null,
-        },
-        {
-          text: 'grass. The boat floated past on the narrow stream.',
-          student: 'bot | SC boat',
-          mark: 'sc',
-        },
+        // Line 1: "The rain fell softly on the garden path."
+        [
+          { text: 'The' },
+          { text: 'rain', student: 'ran', mark: 'sub' },
+          { text: 'fell' },
+          { text: 'softly' },
+          { text: 'on' },
+          { text: 'the' },
+          { text: 'garden' },
+          { text: 'path.' },
+        ],
+        // Line 2: "A toad sat near the old oak tree and waited."
+        [
+          { text: 'A' },
+          { text: 'toad' },
+          { text: 'sat' },
+          { text: 'near' },
+          { text: 'the' },
+          { text: 'old' },
+          { text: 'oak' },
+          { text: 'tree' },
+          { text: 'and' },
+          { text: 'waited.' },
+        ],
+        // Line 3: "It croaked once, then leaped into the tall green"
+        [
+          { text: 'It' },
+          { text: 'croaked' },
+          { text: 'once,' },
+          { text: 'then' },
+          { text: 'leaped' },
+          { text: 'into' },
+          { text: 'the' },
+          { text: 'tall' },
+          { text: 'green' },
+        ],
+        // Line 4: "grass. The boat floated past on the narrow stream."
+        [
+          { text: 'grass.' },
+          { text: 'The' },
+          { text: 'boat', student: 'bot', mark: 'sc' },
+          { text: 'floated' },
+          { text: 'past' },
+          { text: 'on' },
+          { text: 'the' },
+          { text: 'narrow' },
+          { text: 'stream.' },
+        ],
       ],
     },
     {
@@ -1965,20 +1995,20 @@ const pt3Cr2 = {
         'Grade 3 — Reading observation notes recorded during small-group discussion of the passage above over two sessions.',
       notes: [
         {
-          date: 'Session 1',
+          label: 'Session 1 — Literal Retell',
           text: 'Asked Nadia where monarchs spend the winter. She pointed immediately to the second sentence and read it aloud accurately. No hesitation.',
         },
         {
-          date: 'Session 1',
-          text: 'Asked why scientists think navigation is built into the butterflies. Nadia said "because they go to Mexico." Did not address the absence of parental teaching or what that implies.',
+          label: 'Session 1 — Inferential Question: "Why do scientists think navigation is built into monarchs?"',
+          text: 'Nadia said "because they go to Mexico." Did not address the absence of parental teaching or what that implies about inherited biological ability.',
         },
         {
-          date: 'Session 2',
-          text: 'Asked what the author wants the reader to think about monarch butterflies. Nadia replied, "That they travel far." Did not identify the author\'s implied message about the remarkable nature of inherited biological ability.',
+          label: 'Session 2 — Evaluative Question: "What does the author want readers to think about monarchs?"',
+          text: 'Nadia replied, "That they travel far." Did not identify the author\'s implied message about the remarkable nature of inherited biological navigation.',
         },
         {
-          date: 'Session 2',
-          text: 'When asked directly what the word "inherited" means in context, Nadia found the sentence quickly and read it correctly — strong literal retrieval. Struggled when asked what that word tells us about why the butterflies can navigate without being taught.',
+          label: 'Session 2 — Vocabulary in Context: "inherited"',
+          text: 'Nadia located the sentence quickly and read it correctly — strong literal retrieval. Struggled when asked what "inherited" tells us about why the butterflies can navigate without being taught.',
         },
       ],
     },
