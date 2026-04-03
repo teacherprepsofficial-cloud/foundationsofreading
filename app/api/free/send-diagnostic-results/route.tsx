@@ -338,7 +338,8 @@ export async function POST(request: NextRequest) {
         date={date}
       />
     )
-    const pdfBuffer = await pdf(pdfDoc).toBuffer()
+    const rawPdf = await pdf(pdfDoc).toBuffer()
+    const pdfBuffer = Buffer.from(await new Response(rawPdf as unknown as BodyInit).arrayBuffer())
 
     // Send email
     const discountExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleDateString('en-US', {
