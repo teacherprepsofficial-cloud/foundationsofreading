@@ -294,31 +294,6 @@ export default function FreeFlashcardsPage() {
           </div>
           <p style={{ marginTop: 16, fontSize: 12, ...SF, color: '#6b6b6b' }}>← → arrow keys to navigate</p>
 
-          {/* Term chips */}
-          <div style={{ width: '100%', maxWidth: 680, marginTop: 32, background: 'white', border: '1px solid #e8e0e2', borderRadius: 12, padding: '20px 24px' }}>
-            <p style={{ ...SF, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#6b6b6b', marginBottom: 12 }}>All 43 terms — jump to any</p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-              {CARDS.map((c, i) => (
-                <button
-                  key={i}
-                  onClick={() => jumpTo(i)}
-                  style={{
-                    borderRadius: 20,
-                    border: `1px solid ${i === index ? '#7c1c2e' : reviewedSet.has(i) ? '#7c1c2e' : '#e8e0e2'}`,
-                    background: i === index ? '#7c1c2e' : 'transparent',
-                    color: i === index ? 'white' : reviewedSet.has(i) ? '#7c1c2e' : '#6b6b6b',
-                    padding: '4px 12px',
-                    fontSize: 12,
-                    ...SF,
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                  }}
-                >
-                  {c.term}
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
 
         {/* ── Matching Activity ── */}
