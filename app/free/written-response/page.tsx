@@ -4,7 +4,16 @@ import { useState, useEffect } from 'react'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 
-const PROMPT = `STUDENT SCENARIO
+const WORD_MIN = 150
+
+const SCORE_LABELS: Record<number, { label: string; color: string; bg: string }> = {
+  4: { label: 'Thorough', color: '#166534', bg: '#f0fdf4' },
+  3: { label: 'Adequate', color: '#1e40af', bg: '#eff6ff' },
+  2: { label: 'Limited', color: '#854d0e', bg: '#fefce8' },
+  1: { label: 'Weak', color: '#991b1b', bg: '#fef2f2' },
+}
+
+const PROMPT_TEXT = `STUDENT SCENARIO
 
 Student: Maya | Grade: 2
 
@@ -38,15 +47,6 @@ Using your knowledge of foundational reading skills (e.g., phonemic awareness, p
 
 Be sure to cite specific evidence from the information provided to support all parts of your response.`
 
-const WORD_MIN = 150
-
-const SCORE_LABELS: Record<number, { label: string; color: string; bg: string }> = {
-  4: { label: 'Thorough', color: '#166534', bg: '#f0fdf4' },
-  3: { label: 'Adequate', color: '#1e40af', bg: '#eff6ff' },
-  2: { label: 'Limited', color: '#854d0e', bg: '#fefce8' },
-  1: { label: 'Weak', color: '#991b1b', bg: '#fef2f2' },
-}
-
 interface GradeResult {
   score: number
   performanceLevel: string
@@ -77,7 +77,7 @@ export default function FreeWrittenResponsePage() {
       const res = await fetch('/api/free/grade-cr', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: PROMPT, response }),
+        body: JSON.stringify({ prompt: PROMPT_TEXT, response }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed to grade')
@@ -102,7 +102,7 @@ export default function FreeWrittenResponsePage() {
           </p>
         </div>
 
-        <div className="mx-auto max-w-2xl px-6 py-12">
+        <div className="mx-auto max-w-5xl px-6 py-12">
           <p className="text-xs font-semibold uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>Free Preview · One Use</p>
           <h1 className="mt-2 text-3xl font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>AI-Graded Written Response</h1>
           <p className="mt-2 text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>
@@ -111,19 +111,94 @@ export default function FreeWrittenResponsePage() {
 
           {/* Prompt */}
           <div className="mt-7 rounded-lg border border-[#e8e0e2] bg-white p-6">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>Prompt</p>
-            <div className="mt-3 space-y-3">
-              {PROMPT.split('\n\n').map((para, i) => (
-                <p key={i} className="text-sm leading-relaxed text-[#1a1a1a] whitespace-pre-wrap" style={{ fontFamily: 'var(--font-sans)' }}>{para}</p>
-              ))}
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#7c1c2e] mb-4" style={{ fontFamily: 'var(--font-sans)' }}>Prompt</p>
+
+            {/* Student Scenario header */}
+            <p className="text-sm font-bold text-[#1a1a1a] uppercase tracking-wide mb-3" style={{ fontFamily: 'var(--font-sans)' }}>Student Scenario</p>
+            <p className="text-sm text-[#1a1a1a] mb-4" style={{ fontFamily: 'var(--font-sans)' }}>
+              <strong>Student:</strong> Maya &nbsp;|&nbsp; <strong>Grade:</strong> 2
+            </p>
+
+            {/* Exhibit 1 */}
+            <div className="mb-4">
+              <p className="text-sm font-bold text-[#1a1a1a] mb-1" style={{ fontFamily: 'var(--font-sans)' }}>Exhibit 1 — Teacher Record</p>
+              <p className="text-sm text-[#1a1a1a] mb-3" style={{ fontFamily: 'var(--font-sans)' }}>
+                Early in the school year, Maya reads aloud a passage from an unfamiliar narrative text. The teacher records the following:
+              </p>
+              <div className="rounded-md bg-[#faf8f5] border border-[#e8e0e2] p-4 space-y-3">
+                {[
+                  { quote: '"Sam and his dog Rex ran down the muddy trail."', note: 'Maya read "muddy" as "mudy" (substitution)' },
+                  { quote: '"Rex jumped over a log and landed in a puddle."', note: 'Maya read "jumped" as "jumpt" then self-corrected | read "landed" as "land" (substitution)' },
+                  { quote: '"Sam laughed and wiped mud from his face."', note: 'Maya paused long on "laughed" | read "wiped" as "wipe" (substitution)' },
+                  { quote: '"They raced all the way home as the sun began to set."', note: 'Maya repeated "raced" | read "began" as "begin" (substitution)' },
+                ].map(({ quote, note }, i) => (
+                  <div key={i}>
+                    <p className="text-sm text-[#1a1a1a] italic" style={{ fontFamily: 'var(--font-sans)' }}>{quote}</p>
+                    <p className="text-xs text-[#6b6b6b] mt-0.5 pl-3" style={{ fontFamily: 'var(--font-sans)' }}>↳ {note}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Exhibit 2 */}
+            <div className="mb-5">
+              <p className="text-sm font-bold text-[#1a1a1a] mb-2" style={{ fontFamily: 'var(--font-sans)' }}>Exhibit 2 — Oral Fluency Reading Rubric</p>
+              <div className="rounded-md bg-[#faf8f5] border border-[#e8e0e2] p-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-1.5">
+                  {[
+                    ['Words correct per minute', '71 wcpm'],
+                    ['Accuracy', '88%'],
+                    ['Pace (1–4)', '3'],
+                    ['Smoothness (1–4)', '2'],
+                    ['Phrasing (1–4)', '3'],
+                  ].map(([label, val]) => (
+                    <div key={label} className="flex justify-between gap-2">
+                      <span className="text-xs text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>{label}</span>
+                      <span className="text-xs font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-sans)' }}>{val}</span>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-2 text-xs text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>
+                  Note: Second-grade 50th percentile fall benchmark is 72 wcpm.
+                </p>
+              </div>
+            </div>
+
+            {/* Assignment */}
+            <div>
+              <p className="text-sm font-bold text-[#1a1a1a] mb-2" style={{ fontFamily: 'var(--font-sans)' }}>Assignment</p>
+              <p className="text-sm text-[#1a1a1a] mb-3 leading-relaxed" style={{ fontFamily: 'var(--font-sans)' }}>
+                Using your knowledge of foundational reading skills (e.g., phonemic awareness, phonics, recognition of high-frequency words, syllabication, morphemic analysis, automaticity, reading fluency [accuracy, rate, and prosody], self-correcting), write a response of approximately 150–300 words in which you:
+              </p>
+              <ol className="space-y-1.5 pl-1">
+                {[
+                  'Identify one significant strength that Maya demonstrates related to foundational reading skills.',
+                  'Identify one significant need that Maya demonstrates related to foundational reading skills.',
+                  'Based on the need you identified, describe an appropriate instructional strategy, activity, or intervention to use with Maya.',
+                  'Explain why the instructional strategy, activity, or intervention you described would be effective for Maya.',
+                ].map((item, i) => (
+                  <li key={i} className="flex gap-2.5 text-sm text-[#1a1a1a]" style={{ fontFamily: 'var(--font-sans)' }}>
+                    <span className="font-bold text-[#7c1c2e] shrink-0">{i + 1}.</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ol>
+              <p className="mt-3 text-xs text-[#6b6b6b] italic" style={{ fontFamily: 'var(--font-sans)' }}>
+                Be sure to cite specific evidence from the information provided to support all parts of your response.
+              </p>
             </div>
           </div>
 
           {/* Rubric reference */}
           <div className="mt-4 rounded-lg border border-[#e8e0e2] bg-[#faf8f5] p-4">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>Scoring Rubric</p>
-            <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {[['4 — Thorough', 'Purpose fully achieved. Substantial, accurate knowledge. Sound evidence and high-quality examples.'], ['3 — Adequate', 'Purpose largely achieved. Generally accurate knowledge. Adequate evidence with relevant examples.'], ['2 — Limited', 'Purpose partially achieved. Limited or possibly inaccurate knowledge. Few relevant examples.'], ['1 — Weak', 'Purpose not achieved. Little or no accurate knowledge. Weak or absent evidence.']].map(([label, desc]) => (
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#6b6b6b] mb-2" style={{ fontFamily: 'var(--font-sans)' }}>Scoring Rubric</p>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {[
+                ['4 — Thorough', 'Purpose fully achieved. Substantial, accurate knowledge. Sound evidence and high-quality examples.'],
+                ['3 — Adequate', 'Purpose largely achieved. Generally accurate knowledge. Adequate evidence with relevant examples.'],
+                ['2 — Limited', 'Purpose partially achieved. Limited or possibly inaccurate knowledge. Few relevant examples.'],
+                ['1 — Weak', 'Purpose not achieved. Little or no accurate knowledge. Weak or absent evidence.'],
+              ].map(([label, desc]) => (
                 <div key={label} className="rounded border border-[#e8e0e2] bg-white p-2.5">
                   <p className="text-xs font-bold text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>{label}</p>
                   <p className="mt-1 text-xs text-[#6b6b6b] leading-snug" style={{ fontFamily: 'var(--font-sans)' }}>{desc}</p>
@@ -144,7 +219,7 @@ export default function FreeWrittenResponsePage() {
                 <textarea
                   value={response}
                   onChange={(e) => setResponse(e.target.value)}
-                  placeholder="Write your response here. Aim for 150–400 words. Address both strategies with specific detail."
+                  placeholder="Write your response here. Aim for 150–300 words. Address all four parts with specific evidence from the exhibits."
                   rows={14}
                   disabled={alreadyUsed}
                   className="mt-2 w-full rounded-lg border border-[#e8e0e2] p-4 text-sm text-[#1a1a1a] outline-none focus:border-[#7c1c2e] focus:ring-1 focus:ring-[#7c1c2e] disabled:bg-[#faf8f5] disabled:text-[#6b6b6b]"
