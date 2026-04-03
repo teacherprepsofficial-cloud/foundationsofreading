@@ -36,10 +36,9 @@ function getLevel(pct: number): string {
 // ── Question bank (same as page.tsx — needed server-side for scoring) ────────
 
 const SUBAREAS = [
-  { id: 1, name: 'Phonological and Phonemic Awareness', abbr: 'Subarea I', qIds: [1,2,3,4,5] },
-  { id: 2, name: 'Phonics, Spelling, and Word Study Skills', abbr: 'Subarea II', qIds: [6,7,8,9,10] },
-  { id: 3, name: 'Fluency', abbr: 'Subarea III', qIds: [11,12,13] },
-  { id: 4, name: 'Vocabulary, Reading Comprehension, and Reading-Writing Connections', abbr: 'Subarea IV', qIds: [14,15,16,17,18,19,20,21,22,23,24,25] },
+  { id: 1, name: 'Foundations of Reading Development', abbr: 'Subarea I', qIds: [1,2,3,4,5,6,7,8,9,10,11] },
+  { id: 2, name: 'Development of Reading Comprehension', abbr: 'Subarea II', qIds: [12,13,14,15,16,17,18,19] },
+  { id: 3, name: 'Reading Assessment and Instruction', abbr: 'Subarea III', qIds: [20,21,22,23,24,25] },
 ]
 
 const CORRECT_ANSWERS: Record<number, number> = {

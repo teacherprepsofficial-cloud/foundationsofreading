@@ -12,7 +12,7 @@ const SE = { fontFamily: 'var(--font-serif)' }
 // ── 25 Questions ──────────────────────────────────────────────────────────────
 interface Question {
   id: number
-  subarea: 1 | 2 | 3 | 4
+  subarea: 1 | 2 | 3
   subareaName: string
   text: string
   choices: string[]
@@ -21,37 +21,37 @@ interface Question {
 }
 
 const QUESTIONS: Question[] = [
-  // ── Subarea I: Phonological and Phonemic Awareness (Q1–5) ──
+  // ── Subarea I: Foundations of Reading Development (Q1–11) ──
   {
-    id: 1, subarea: 1, subareaName: 'Phonological and Phonemic Awareness',
+    id: 1, subarea: 1, subareaName: 'Foundations of Reading Development',
     text: 'A first-grade student can recognize that "cat" and "bat" rhyme but cannot identify the individual sounds in either word. Which level of phonological awareness is the student demonstrating?',
     choices: ['Phoneme level', 'Onset-rime level', 'Syllable level', 'Word level'],
     correct: 1,
     explanation: 'Recognizing rhyme is an onset-rime skill — the student hears that two words share the same rime (-at) but has not yet developed phoneme-level awareness.',
   },
   {
-    id: 2, subarea: 1, subareaName: 'Phonological and Phonemic Awareness',
+    id: 2, subarea: 1, subareaName: 'Foundations of Reading Development',
     text: 'Which of the following best represents a phoneme?',
     choices: ['The word "ship"', 'The syllable "ship"', 'The /sh/ sound in "ship"', 'The letter "s" in "ship"'],
     correct: 2,
     explanation: 'A phoneme is the smallest unit of sound. /sh/ is one phoneme — two letters representing a single sound (a digraph).',
   },
   {
-    id: 3, subarea: 1, subareaName: 'Phonological and Phonemic Awareness',
+    id: 3, subarea: 1, subareaName: 'Foundations of Reading Development',
     text: 'A kindergarten teacher asks students to clap once for each syllable in "butterfly." How many claps should students produce?',
     choices: ['2', '3', '4', '5'],
     correct: 1,
     explanation: '"But-ter-fly" has three syllables. Syllable segmentation is an early phonological awareness skill that precedes phoneme-level work.',
   },
   {
-    id: 4, subarea: 1, subareaName: 'Phonological and Phonemic Awareness',
+    id: 4, subarea: 1, subareaName: 'Foundations of Reading Development',
     text: 'A teacher asks students to say "batch" and then say it again without the /b/ sound. Which phonemic awareness skill is this task targeting?',
     choices: ['Phoneme identification', 'Phoneme blending', 'Phoneme deletion', 'Phoneme categorization'],
     correct: 2,
     explanation: 'Phoneme deletion requires students to mentally remove a phoneme from a word — a higher-order manipulation skill that supports both reading and spelling.',
   },
   {
-    id: 5, subarea: 1, subareaName: 'Phonological and Phonemic Awareness',
+    id: 5, subarea: 1, subareaName: 'Foundations of Reading Development',
     text: 'Which of the following is the correct developmental sequence for phonological awareness skills?',
     choices: [
       'Phoneme segmentation → rhyme recognition → syllable blending → onset-rime manipulation',
@@ -63,23 +63,22 @@ const QUESTIONS: Question[] = [
     explanation: 'Phonological awareness develops from larger to smaller units: students first develop rhyme awareness, then syllable awareness, then onset-rime skills, and finally phoneme manipulation.',
   },
 
-  // ── Subarea II: Phonics, Spelling, and Word Study (Q6–10) ──
   {
-    id: 6, subarea: 2, subareaName: 'Phonics, Spelling, and Word Study Skills',
+    id: 6, subarea: 1, subareaName: 'Foundations of Reading Development',
     text: 'A student reads "make" as "mak." This error most likely indicates a weakness in:',
     choices: ['Consonant digraph knowledge', 'CVCe (silent-e) pattern recognition', 'Consonant blend decoding', 'Short vowel discrimination'],
     correct: 1,
     explanation: '"Make" follows the CVCe pattern where the final silent-e signals a long vowel. The student read it as a short-vowel CVC word, indicating they have not internalized this pattern.',
   },
   {
-    id: 7, subarea: 2, subareaName: 'Phonics, Spelling, and Word Study Skills',
+    id: 7, subarea: 1, subareaName: 'Foundations of Reading Development',
     text: 'Which of the following is an example of an inflectional morpheme?',
     choices: ['-tion in "nation"', 'un- in "unhappy"', '-s in "cats"', '-er in "teacher" (meaning one who teaches)'],
     correct: 2,
     explanation: 'Inflectional morphemes change the grammatical form of a word without changing its meaning or part of speech. The plural -s in "cats" is inflectional; the others are derivational.',
   },
   {
-    id: 8, subarea: 2, subareaName: 'Phonics, Spelling, and Word Study Skills',
+    id: 8, subarea: 1, subareaName: 'Foundations of Reading Development',
     text: 'A teacher introduces the word "unhappy" by analyzing its morphemes. Which analysis is correct?',
     choices: [
       'un- (prefix meaning again) + happy (root word)',
@@ -91,7 +90,7 @@ const QUESTIONS: Question[] = [
     explanation: 'The prefix un- means "not." Combined with the root word "happy," it creates the meaning "not happy." Morphological awareness directly supports both vocabulary and spelling development.',
   },
   {
-    id: 9, subarea: 2, subareaName: 'Phonics, Spelling, and Word Study Skills',
+    id: 9, subarea: 1, subareaName: 'Foundations of Reading Development',
     text: 'A student spells "night" as "nit." This spelling most likely indicates the student:',
     choices: [
       'Has mastered long vowel patterns',
@@ -103,7 +102,7 @@ const QUESTIONS: Question[] = [
     explanation: 'The student is spelling phonetically (representing sounds heard) but has not yet learned the igh vowel pattern. This is characteristic of the Phonetic/Letter Name spelling stage.',
   },
   {
-    id: 10, subarea: 2, subareaName: 'Phonics, Spelling, and Word Study Skills',
+    id: 10, subarea: 1, subareaName: 'Foundations of Reading Development',
     text: 'Which sequence best represents the correct developmental order of spelling stages?',
     choices: [
       'Phonetic → Transitional → Within Word Pattern → Derivational Relations',
@@ -115,16 +114,15 @@ const QUESTIONS: Question[] = [
     explanation: 'Spelling development moves from Preliterate → Semiphonetic → Phonetic (Letter Name) → Within Word Pattern → Syllables & Affixes → Derivational Relations, reflecting increasing orthographic knowledge.',
   },
 
-  // ── Subarea III: Fluency (Q11–13) ──
   {
-    id: 11, subarea: 3, subareaName: 'Fluency',
+    id: 11, subarea: 1, subareaName: 'Foundations of Reading Development',
     text: 'A second-grade student reads quickly and accurately but uses no expression or phrasing. Which component of reading fluency is most in need of development?',
     choices: ['Accuracy', 'Rate', 'Automaticity', 'Prosody'],
     correct: 3,
     explanation: 'Prosody refers to reading with appropriate expression, intonation, and phrasing. Reading accurately and quickly without prosody suggests the student has not yet internalized text meaning as they read.',
   },
   {
-    id: 12, subarea: 3, subareaName: 'Fluency',
+    id: 12, subarea: 2, subareaName: 'Development of Reading Comprehension',
     text: 'Which of the following is the most effective, evidence-based strategy for building oral reading fluency?',
     choices: [
       'Silent sustained reading of self-selected books',
@@ -136,16 +134,15 @@ const QUESTIONS: Question[] = [
     explanation: 'Repeated reading — rereading the same passage with teacher feedback — is one of the most research-supported fluency strategies. Silent reading alone does not provide the corrective feedback needed to build accurate, fluent reading.',
   },
   {
-    id: 13, subarea: 3, subareaName: 'Fluency',
+    id: 13, subarea: 2, subareaName: 'Development of Reading Comprehension',
     text: 'A third-grade student reads 68 words per minute with 94% accuracy. Based on research-based oral reading fluency norms, this student\'s reading is best described as:',
     choices: ['Well above grade level', 'At grade level', 'Below grade level', 'Unable to determine without more information'],
     correct: 2,
     explanation: 'Research-based ORF norms for grade 3 mid-year suggest approximately 90–107 wpm for proficiency. At 68 wpm, this student is below the expected range and would benefit from targeted fluency intervention.',
   },
 
-  // ── Subarea IV: Vocabulary, Comprehension, and Writing (Q14–25) ──
   {
-    id: 14, subarea: 4, subareaName: 'Vocabulary, Reading Comprehension, and Reading-Writing Connections',
+    id: 14, subarea: 2, subareaName: 'Development of Reading Comprehension',
     text: 'Which type of vocabulary instruction has the strongest evidence base for improving reading comprehension?',
     choices: [
       'Having students look up and copy dictionary definitions',
@@ -157,7 +154,7 @@ const QUESTIONS: Question[] = [
     explanation: 'Tier 2 words (e.g., "analyze," "significant") are high-utility academic words that appear across subject areas and are rarely learned through everyday conversation. Explicit, rich instruction in these words most directly benefits comprehension.',
   },
   {
-    id: 15, subarea: 4, subareaName: 'Vocabulary, Reading Comprehension, and Reading-Writing Connections',
+    id: 15, subarea: 2, subareaName: 'Development of Reading Comprehension',
     text: 'Which of the following best describes a Tier 2 vocabulary word?',
     choices: [
       'Basic words that most students learn through everyday oral language (e.g., "run," "happy")',
@@ -169,7 +166,7 @@ const QUESTIONS: Question[] = [
     explanation: 'Beck, McKeown, and Kucan\'s three-tier model classifies Tier 2 words as sophisticated, academic words used across disciplines. These are the highest-leverage words to teach because they appear often in text but are rarely encountered in conversation.',
   },
   {
-    id: 16, subarea: 4, subareaName: 'Vocabulary, Reading Comprehension, and Reading-Writing Connections',
+    id: 16, subarea: 2, subareaName: 'Development of Reading Comprehension',
     text: 'A teacher asks students to predict what will happen next in a story, then read on to confirm or revise their predictions. This strategy primarily develops which aspect of reading comprehension?',
     choices: [
       'Literal recall of story details',
@@ -181,7 +178,7 @@ const QUESTIONS: Question[] = [
     explanation: 'Predict-and-confirm is a metacognitive strategy that teaches students to actively monitor their understanding as they read, checking whether their predictions were accurate and adjusting their thinking accordingly.',
   },
   {
-    id: 17, subarea: 4, subareaName: 'Vocabulary, Reading Comprehension, and Reading-Writing Connections',
+    id: 17, subarea: 2, subareaName: 'Development of Reading Comprehension',
     text: 'A student reads an informational text about ecosystems accurately but is unable to summarize the main idea. This most likely indicates difficulty with:',
     choices: [
       'Decoding multisyllabic words',
@@ -193,14 +190,14 @@ const QUESTIONS: Question[] = [
     explanation: 'The student can decode (reads accurately) but struggles to construct meaning — specifically to identify the central idea and how details support it. This points to a comprehension and text structure challenge, not a decoding one.',
   },
   {
-    id: 18, subarea: 4, subareaName: 'Vocabulary, Reading Comprehension, and Reading-Writing Connections',
+    id: 18, subarea: 2, subareaName: 'Development of Reading Comprehension',
     text: 'A passage describes how a prolonged drought causes crop failures, which then leads to food shortages in a region. Which text structure is being used?',
     choices: ['Comparison-contrast', 'Problem-solution', 'Cause-and-effect', 'Chronological sequence'],
     correct: 2,
     explanation: 'The passage shows a chain of causation — drought causes crop failure, which causes food shortage. Signal words like "causes," "leads to," and "as a result" typically signal cause-and-effect text structure.',
   },
   {
-    id: 19, subarea: 4, subareaName: 'Vocabulary, Reading Comprehension, and Reading-Writing Connections',
+    id: 19, subarea: 2, subareaName: 'Development of Reading Comprehension',
     text: 'A teacher wants to assess students\' ability to make inferences while reading. Which question best targets this skill?',
     choices: [
       '"What happened at the beginning of the story?"',
@@ -212,21 +209,21 @@ const QUESTIONS: Question[] = [
     explanation: 'Making inferences requires students to combine text evidence with their own reasoning to draw conclusions not explicitly stated. Questions about character motivation or emotion based on actions are classic inference tasks.',
   },
   {
-    id: 20, subarea: 4, subareaName: 'Vocabulary, Reading Comprehension, and Reading-Writing Connections',
+    id: 20, subarea: 3, subareaName: 'Reading Assessment and Instruction',
     text: 'A student decodes "they" as "the." This error most likely indicates difficulty with:',
     choices: ['Phonemic awareness', 'Sight word recognition', 'Phonics decoding patterns', 'Reading rate'],
     correct: 1,
     explanation: '"They" is a high-frequency sight word that does not follow regular phonics patterns. Students must memorize it as a whole word. Misreading it as "the" suggests insufficient practice with this irregular word.',
   },
   {
-    id: 21, subarea: 4, subareaName: 'Vocabulary, Reading Comprehension, and Reading-Writing Connections',
+    id: 21, subarea: 3, subareaName: 'Reading Assessment and Instruction',
     text: 'A student uses the surrounding words and sentences to determine the meaning of an unfamiliar word. Which strategy is the student demonstrating?',
     choices: ['Morphological analysis', 'Syntactic analysis', 'Use of context clues', 'Phonological recoding'],
     correct: 2,
     explanation: 'Using context clues means drawing on the surrounding text to infer word meaning. It is a valuable comprehension strategy, though research suggests it works best in combination with direct vocabulary instruction.',
   },
   {
-    id: 22, subarea: 4, subareaName: 'Vocabulary, Reading Comprehension, and Reading-Writing Connections',
+    id: 22, subarea: 3, subareaName: 'Reading Assessment and Instruction',
     text: 'According to the Simple View of Reading, reading comprehension is best described as:',
     choices: [
       'Phonemic awareness × phonics ability',
@@ -238,21 +235,21 @@ const QUESTIONS: Question[] = [
     explanation: 'Gough and Tunmer\'s Simple View of Reading (1986) proposes that Reading Comprehension = Decoding × Language Comprehension. Both components are necessary; weakness in either limits overall reading.',
   },
   {
-    id: 23, subarea: 4, subareaName: 'Vocabulary, Reading Comprehension, and Reading-Writing Connections',
+    id: 23, subarea: 3, subareaName: 'Reading Assessment and Instruction',
     text: 'A first-grade teacher reads aloud from a picture book and stops to think aloud about how she pictures the scene in her mind as she reads. Which comprehension strategy is she modeling?',
     choices: ['Summarizing', 'Questioning', 'Making connections', 'Creating mental images'],
     correct: 3,
     explanation: 'Visualizing — forming mental images while reading — deepens comprehension by helping readers engage more actively with the text. Think-alouds are an effective way to make this invisible strategy visible to students.',
   },
   {
-    id: 24, subarea: 4, subareaName: 'Vocabulary, Reading Comprehension, and Reading-Writing Connections',
+    id: 24, subarea: 3, subareaName: 'Reading Assessment and Instruction',
     text: 'A teacher evaluates a student\'s essay to determine whether the central argument is clear and well-supported with relevant evidence. Which writing trait is being assessed?',
     choices: ['Voice', 'Organization', 'Ideas and content', 'Word choice'],
     correct: 2,
     explanation: 'The Ideas and Content trait (in the 6+1 Traits model) evaluates the clarity and development of the central message, thesis, or argument and the quality of supporting details — exactly what the teacher is assessing here.',
   },
   {
-    id: 25, subarea: 4, subareaName: 'Vocabulary, Reading Comprehension, and Reading-Writing Connections',
+    id: 25, subarea: 3, subareaName: 'Reading Assessment and Instruction',
     text: 'A teacher uses a Frayer Model to introduce new vocabulary. This graphic organizer builds word knowledge by asking students to define the word, identify essential characteristics, provide examples, and:',
     choices: [
       'Use the word in a simple sentence',
@@ -294,10 +291,9 @@ Using the information above:
 
 // ── Subarea config ─────────────────────────────────────────────────────────────
 const SUBAREAS = [
-  { id: 1, name: 'Phonological and Phonemic Awareness', abbr: 'Subarea I' },
-  { id: 2, name: 'Phonics, Spelling, and Word Study Skills', abbr: 'Subarea II' },
-  { id: 3, name: 'Fluency', abbr: 'Subarea III' },
-  { id: 4, name: 'Vocabulary, Reading Comprehension, and Reading-Writing Connections', abbr: 'Subarea IV' },
+  { id: 1, name: 'Foundations of Reading Development', abbr: 'Subarea I' },
+  { id: 2, name: 'Development of Reading Comprehension', abbr: 'Subarea II' },
+  { id: 3, name: 'Reading Assessment and Instruction', abbr: 'Subarea III' },
 ]
 
 function fmtTime(s: number): string {
