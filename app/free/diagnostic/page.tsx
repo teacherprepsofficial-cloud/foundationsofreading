@@ -627,7 +627,7 @@ export default function FreeDiagnosticPage() {
 
         <div className="mx-auto max-w-3xl px-6 py-8 space-y-5">
           {/* Scenario */}
-          <div className="rounded-xl border border-[#e8e0e2] bg-white overflow-hidden shadow-sm">
+          <div className="rounded-xl border border-[#e8e0e2] bg-white overflow-hidden shadow-sm select-none">
             <div className="border-b border-[#e8e0e2] px-5 py-2.5">
               <p className="text-[10px] font-bold uppercase tracking-widest text-[#7c1c2e]" style={SF}>Student Scenario</p>
             </div>
