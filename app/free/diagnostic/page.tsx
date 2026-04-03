@@ -633,6 +633,7 @@ export default function FreeDiagnosticPage() {
     const wordCount = crResponse.trim().split(/\s+/).filter(Boolean).length
 
     return (
+      <>
       <div className="min-h-screen bg-[#faf8f5]">
         <div className="flex-shrink-0 bg-[#7c1c2e] px-6 py-3.5 flex items-center justify-between">
           <div>
@@ -744,6 +745,7 @@ export default function FreeDiagnosticPage() {
           </div>
         </div>
       )}
+      </>
     )
   }
 
