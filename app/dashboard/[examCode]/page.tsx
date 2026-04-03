@@ -105,14 +105,6 @@ export default async function ExamDashboardPage({
     },
     {
       number: 6,
-      title: 'Vocabulary Match',
-      description: 'Interactive matching activity to reinforce key terms.',
-      href: `/dashboard/${examCode}/vocab-match`,
-      completed: (progress?.vocabMatchHighScore || 0) > 0,
-      locked: !diagnosticDone,
-    },
-    {
-      number: 7,
       title: `Written Response Practice${isBundle ? ' (8 prompts)' : ' (4 prompts)'}`,
       description: 'Type your response. Get scored 0–2 with feedback from AI — same rubric as the real exam.',
       href: `/dashboard/${examCode}/cr`,
