@@ -50,9 +50,17 @@ interface Results {
   timeSpentSeconds: number
   attemptId: string
   isDiagnostic: boolean
+  // Single CR (diagnostic)
   crScore?: number
   crPerformanceLevel?: string
   crFeedback?: string
+  // Dual CR (practice tests)
+  cr1Score?: number
+  cr1PerformanceLevel?: string
+  cr1Feedback?: string
+  cr2Score?: number
+  cr2PerformanceLevel?: string
+  cr2Feedback?: string
   questionsWithAnswers: QuestionWithAnswer[]
   responses: GradedResponse[]
   testName: string
@@ -286,30 +294,65 @@ export default function ResultsPage() {
                 </tr>
               ))}
 
-              {/* Written Response row — Subarea IV */}
-              <tr className="border-b border-[#e8e0e2]">
-                <td className="px-5 py-3 border-r border-[#e8e0e2]" style={{ fontFamily: 'var(--font-sans)' }}>
-                  <span className="font-semibold text-[#1a1a1a]">Subarea IV</span>
-                  <span className="ml-2 text-[#6b6b6b]">— Written Response</span>
-                </td>
-                <td className="px-5 py-3" style={{ fontFamily: 'var(--font-sans)' }}>
-                  {results.crScore !== undefined && results.crPerformanceLevel ? (
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-[#1a1a1a]">{results.crScore} / 4</span>
-                        <span className={`text-sm font-semibold ${CR_LEVEL_COLORS[results.crPerformanceLevel] ?? 'text-[#6b6b6b]'}`}>
-                          — {results.crPerformanceLevel}
-                        </span>
+              {/* Written Response rows — Subarea IV */}
+              {results.cr1Score !== undefined || results.cr2Score !== undefined ? (
+                // Practice test: two separate CR rows
+                <>
+                  {[
+                    { label: 'Written Response 1', section: 'Foundational Reading Skills', score: results.cr1Score, level: results.cr1PerformanceLevel, feedback: results.cr1Feedback },
+                    { label: 'Written Response 2', section: 'Reading Comprehension', score: results.cr2Score, level: results.cr2PerformanceLevel, feedback: results.cr2Feedback },
+                  ].map((cr, i) => (
+                    <tr key={i} className="border-b border-[#e8e0e2]">
+                      <td className="px-5 py-3 border-r border-[#e8e0e2]" style={{ fontFamily: 'var(--font-sans)' }}>
+                        <span className="font-semibold text-[#1a1a1a]">Subarea IV — {cr.label}</span>
+                        <span className="ml-2 text-[#6b6b6b]">— {cr.section}</span>
+                      </td>
+                      <td className="px-5 py-4" style={{ fontFamily: 'var(--font-sans)' }}>
+                        {cr.score !== undefined && cr.level ? (
+                          <div>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-bold text-[#1a1a1a]">{cr.score} / 4</span>
+                              <span className={`text-sm font-semibold ${CR_LEVEL_COLORS[cr.level] ?? 'text-[#6b6b6b]'}`}>
+                                — {cr.level}
+                              </span>
+                            </div>
+                            {cr.feedback && (
+                              <p className="mt-2 text-xs text-[#6b6b6b] leading-relaxed max-w-prose">{cr.feedback}</p>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-xs text-[#6b6b6b]">Not submitted</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </>
+              ) : (
+                // Diagnostic: single CR row
+                <tr className="border-b border-[#e8e0e2]">
+                  <td className="px-5 py-3 border-r border-[#e8e0e2]" style={{ fontFamily: 'var(--font-sans)' }}>
+                    <span className="font-semibold text-[#1a1a1a]">Subarea IV</span>
+                    <span className="ml-2 text-[#6b6b6b]">— Written Response</span>
+                  </td>
+                  <td className="px-5 py-3" style={{ fontFamily: 'var(--font-sans)' }}>
+                    {results.crScore !== undefined && results.crPerformanceLevel ? (
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-[#1a1a1a]">{results.crScore} / 4</span>
+                          <span className={`text-sm font-semibold ${CR_LEVEL_COLORS[results.crPerformanceLevel] ?? 'text-[#6b6b6b]'}`}>
+                            — {results.crPerformanceLevel}
+                          </span>
+                        </div>
+                        {results.crFeedback && (
+                          <p className="mt-1 text-xs text-[#6b6b6b] leading-relaxed">{results.crFeedback}</p>
+                        )}
                       </div>
-                      {results.crFeedback && (
-                        <p className="mt-1 text-xs text-[#6b6b6b] leading-relaxed">{results.crFeedback}</p>
-                      )}
-                    </div>
-                  ) : (
-                    <span className="text-xs text-[#6b6b6b]">Not scored</span>
-                  )}
-                </td>
-              </tr>
+                    ) : (
+                      <span className="text-xs text-[#6b6b6b]">Not scored</span>
+                    )}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
