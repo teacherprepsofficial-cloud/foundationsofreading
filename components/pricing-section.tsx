@@ -17,7 +17,7 @@ const SE = { fontFamily: 'var(--font-serif)' }
 const CARDS = [
   {
     tier: 'starter' as const,
-    name: 'Foundations Prep',
+    name: 'Foundations of Reading Prep',
     regularPrice: 3900,
     discountedPrice: 3120,
     description: 'Everything you need to pass.',
@@ -28,13 +28,12 @@ const CARDS = [
       '2 Full-Length Practice Tests (100 MC each)',
       '4 AI-Graded Written Responses',
       'Flashcards + Vocab Matching (150+ terms)',
-      '30-day access',
     ],
     isFeatured: false,
   },
   {
     tier: 'bundle' as const,
-    name: 'FoRT Bundle',
+    name: 'Foundations of Reading Prep Plus',
     regularPrice: 4900,
     discountedPrice: 3920,
     description: 'Maximum practice, maximum confidence.',
@@ -114,12 +113,13 @@ export function PricingSection() {
                 <p className="text-xs font-semibold uppercase tracking-widest text-[#7c1c2e]" style={SF}>
                   {card.name}
                 </p>
-                <div className="mt-3 flex items-baseline gap-2">
+                <div className="mt-3 flex items-baseline gap-1">
                   <span className="text-4xl font-bold text-[#1a1a1a]" style={SE}>
                     ${Math.round(price / 100)}
                   </span>
+                  <span className="text-sm text-[#6b6b6b]" style={SF}>/mo</span>
                   {discountActive && (
-                    <span className="text-lg text-[#6b6b6b] line-through" style={SF}>
+                    <span className="ml-1 text-lg text-[#6b6b6b] line-through" style={SF}>
                       ${Math.round(card.regularPrice / 100)}
                     </span>
                   )}
@@ -161,7 +161,7 @@ export function PricingSection() {
                   {loading ? 'Loading...' : 'Get Instant Access'}
                 </button>
                 <p className="mt-3 text-center text-xs text-[#6b6b6b]" style={SF}>
-                  30-day access · One-time payment
+                  Monthly Subscription · Cancel anytime
                 </p>
               </div>
             )
