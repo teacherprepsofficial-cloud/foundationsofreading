@@ -57,10 +57,10 @@ export function CountdownBanner() {
   return (
     <div
       className={`w-full py-2.5 text-center text-sm ${isUrgent ? 'animate-pulse-slow' : ''}`}
-      style={{ fontFamily: 'var(--font-sans)', background: '#b45309', color: '#fff' }}
+      style={{ fontFamily: 'var(--font-sans)', background: '#0f766e', color: '#fff' }}
     >
       <span className="font-medium">20% off expires in </span>
-      <span className="font-bold tabular-nums bg-[#92400e] px-2 py-0.5 rounded">
+      <span className="font-bold tabular-nums bg-[#0d5c56] px-2 py-0.5 rounded">
         {fmt(minutes)}:{fmt(seconds)}
       </span>
       <span className="mx-3 opacity-50">|</span>
