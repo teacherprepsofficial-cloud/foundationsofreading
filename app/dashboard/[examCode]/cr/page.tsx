@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 
@@ -13,9 +13,17 @@ interface CR {
   bundleOnly: boolean
 }
 
+interface CriteriaScores {
+  purpose: number
+  knowledge: number
+  support: number
+  rationale: number
+}
+
 interface Attempt {
   _id: string
   score: 1 | 2 | 3 | 4
+  criteria?: CriteriaScores
   performanceLevel: string
   wordCount: number
   feedback: string
@@ -275,6 +283,20 @@ function PromptBody({ text }: { text: string }) {
 
 // ── Main page ─────────────────────────────────────────────────────────────────
 
+const CRITERION_LABEL: Record<string, string> = {
+  purpose: 'Purpose',
+  knowledge: 'Subject Knowledge',
+  support: 'Support',
+  rationale: 'Rationale',
+}
+
+function criterionColor(score: number) {
+  if (score === 4) return '#16a34a'
+  if (score === 3) return '#2563eb'
+  if (score === 2) return '#d97706'
+  return '#dc2626'
+}
+
 export default function CRPage() {
   const params = useParams()
   const examCode = params.examCode as string
@@ -282,11 +304,14 @@ export default function CRPage() {
   const [crs, setCrs] = useState<CR[]>([])
   const [selected, setSelected] = useState<CR | null>(null)
   const [attempts, setAttempts] = useState<Attempt[]>([])
+  const [attemptedIds, setAttemptedIds] = useState<Set<string>>(new Set())
   const [responseText, setResponseText] = useState('')
   const [grading, setGrading] = useState(false)
+  const [loadingCR, setLoadingCR] = useState(false)
   const [result, setResult] = useState<Attempt | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
     fetch(`/api/cr?examCode=${examCode}`)
@@ -300,10 +325,19 @@ export default function CRPage() {
     setResponseText('')
     setResult(null)
     setError('')
-    const res = await fetch(`/api/cr/${cr._id}`)
-    const data = await res.json()
-    if (data.cr) setSelected(data.cr)
-    setAttempts(data.attempts || [])
+    setLoadingCR(true)
+    try {
+      const res = await fetch(`/api/cr/${cr._id}`)
+      const data = await res.json()
+      if (data.cr) setSelected(data.cr)
+      const fetchedAttempts = data.attempts || []
+      setAttempts(fetchedAttempts)
+      if (fetchedAttempts.length > 0) {
+        setAttemptedIds((prev) => new Set([...prev, cr._id]))
+      }
+    } finally {
+      setLoadingCR(false)
+    }
   }
 
   async function handleGrade() {
@@ -319,11 +353,21 @@ export default function CRPage() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
       setResult(data)
+      setAttemptedIds((prev) => new Set([...prev, selected._id]))
       setAttempts((prev) => [{ ...data, submittedAt: new Date().toISOString() } as Attempt, ...prev])
     } catch {
       setError('Failed to grade response. Please try again.')
     }
     setGrading(false)
+  }
+
+  function handleTryAgain() {
+    setResult(null)
+    setResponseText('')
+    setTimeout(() => {
+      textareaRef.current?.focus()
+      textareaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 50)
   }
 
   const wordCount = responseText.trim().split(/\s+/).filter(Boolean).length
@@ -383,9 +427,16 @@ export default function CRPage() {
                     borderLeft: active ? '3px solid #7c1c2e' : '3px solid transparent',
                   }}
                 >
-                  <p className="text-[13px] font-semibold text-[#1a1a1a] leading-snug" style={SF}>
-                    Response {cr.crNumber}
-                  </p>
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-[13px] font-semibold text-[#1a1a1a] leading-snug" style={SF}>
+                      Response {cr.crNumber}
+                    </p>
+                    {attemptedIds.has(cr._id) && (
+                      <span className="flex-shrink-0 h-4 w-4 rounded-full bg-green-500 flex items-center justify-center">
+                        <span className="text-[8px] text-white font-bold">✓</span>
+                      </span>
+                    )}
+                  </div>
                   <p className="mt-0.5 text-[10px] text-[#7c1c2e] leading-snug" style={SF}>
                     {TYPE_LABEL[cr.crType]}
                   </p>
@@ -404,7 +455,12 @@ export default function CRPage() {
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto relative">
+          {loadingCR && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#faf8f5]/80">
+              <div className="h-6 w-6 animate-spin rounded-full border-4 border-[#e8e0e2] border-t-[#7c1c2e]" />
+            </div>
+          )}
           {!selected ? (
             <div className="flex h-full items-center justify-center px-8">
               <div className="max-w-lg w-full">
@@ -511,6 +567,7 @@ export default function CRPage() {
                   </div>
                   <div className="p-5">
                     <textarea
+                      ref={textareaRef}
                       value={responseText}
                       onChange={(e) => setResponseText(e.target.value)}
                       disabled={grading}
@@ -556,8 +613,26 @@ export default function CRPage() {
                   </div>
 
                   <div className="p-6 space-y-5">
+                    {/* Per-criterion scores */}
+                    {result.criteria && (
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-[#9b9b9b] mb-2.5" style={SF}>Score by Criterion</p>
+                        <div className="grid grid-cols-2 gap-2">
+                          {(Object.keys(CRITERION_LABEL) as (keyof CriteriaScores)[]).map((key) => {
+                            const val = result.criteria![key]
+                            return (
+                              <div key={key} className="flex items-center justify-between rounded-lg border border-[#e8e0e2] px-3 py-2">
+                                <span className="text-xs text-[#4a4a4a]" style={SF}>{CRITERION_LABEL[key]}</span>
+                                <span className="text-xs font-bold" style={{ ...SF, color: criterionColor(val) }}>{val}/4</span>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Feedback */}
-                    <p className="text-sm leading-relaxed text-[#1a1a1a]" style={SF}>{result.feedback}</p>
+                    <p className="text-sm leading-relaxed text-[#1a1a1a] border-t border-[#f0eaeb] pt-4" style={SF}>{result.feedback}</p>
 
                     {/* Strengths */}
                     {result.strengths.length > 0 && (
@@ -589,8 +664,21 @@ export default function CRPage() {
                       </div>
                     )}
 
+                    {/* Rubric reminder */}
+                    <div className="rounded-lg bg-[#faf8f5] border border-[#e8e0e2] px-4 py-3">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-[#9b9b9b] mb-1.5" style={SF}>Official Scoring Scale</p>
+                      <div className="grid grid-cols-4 gap-2">
+                        {([['4', 'Thorough', '#16a34a'], ['3', 'Adequate', '#2563eb'], ['2', 'Limited', '#d97706'], ['1', 'Weak', '#dc2626']] as const).map(([n, label, color]) => (
+                          <div key={n} className="text-center">
+                            <p className="text-sm font-bold" style={{ ...SF, color }}>{n}</p>
+                            <p className="text-[10px] text-[#6b6b6b]" style={SF}>{label}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
                     <button
-                      onClick={() => { setResult(null); setResponseText('') }}
+                      onClick={handleTryAgain}
                       className="rounded-lg border-2 border-[#7c1c2e] px-6 py-2.5 text-sm font-semibold text-[#7c1c2e] hover:bg-[#f9f0f2] transition-colors"
                       style={SF}
                     >

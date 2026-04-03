@@ -82,6 +82,7 @@ export async function POST(
 
       return NextResponse.json({
         score: 1,
+        criteria: null,
         performanceLevel: 'Weak',
         wordCount,
         feedback: attempt.feedback,
@@ -159,6 +160,7 @@ SCORING ALGORITHM — apply in order:
 Return ONLY valid JSON:
 {
   "score": 1,
+  "criteria": { "purpose": 1, "knowledge": 2, "support": 3, "rationale": 2 },
   "performanceLevel": "Weak",
   "feedback": "2-3 sentences stating the score earned and which characteristic(s) determined it",
   "strengths": ["specific thing the response did well"],
@@ -216,6 +218,7 @@ Rate each of the four characteristics (PURPOSE, SUBJECT KNOWLEDGE, SUPPORT, RATI
 
     return NextResponse.json({
       score,
+      criteria: parsed.criteria || null,
       performanceLevel,
       wordCount,
       feedback: parsed.feedback,
