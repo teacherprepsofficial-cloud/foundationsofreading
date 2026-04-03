@@ -39,6 +39,242 @@ const TYPE_LABEL: Record<string, string> = {
 const SF = { fontFamily: 'var(--font-sans)' }
 const SE = { fontFamily: 'var(--font-serif)' }
 
+// ── Scenario parsing ──────────────────────────────────────────────────────────
+
+function parseScenario(raw: string) {
+  const parts = raw.split(/─{8,}/).map((s) => s.trim()).filter(Boolean)
+  const header = parts[0] || ''
+  const exhibits: { title: string; content: string }[] = []
+  for (let i = 1; i < parts.length; i += 2) {
+    exhibits.push({
+      title: parts[i]?.trim() || '',
+      content: parts[i + 1]?.trim() || '',
+    })
+  }
+  return { header, exhibits }
+}
+
+function parseStudentLine(header: string) {
+  const sm = header.match(/STUDENT:\s*([^|]+)/)
+  const gm = header.match(/GRADE:\s*([^|]+)/)
+  const cm = header.match(/CONTEXT:\s*([\s\S]+)/)
+  return {
+    student: sm?.[1]?.trim() ?? '',
+    grade: gm?.[1]?.trim() ?? '',
+    context: cm?.[1]?.trim() ?? '',
+  }
+}
+
+// ── Exhibit content renderers ─────────────────────────────────────────────────
+
+function FluencyRubric({ content }: { content: string }) {
+  const lines = content.split('\n').map((l) => l.trimEnd())
+  const benchmarkLine = lines.find((l) => l.trim().startsWith('Benchmark'))
+  const dataLines = lines.filter(
+    (l) => l.trim() && !l.trim().startsWith('Benchmark') && l.trim() !== 'Prosody:'
+  )
+
+  const rows: { label: string; value: string; indent: boolean }[] = []
+  for (const line of dataLines) {
+    const m = line.match(/^(\s*)(.*?):\s+(.+)$/)
+    if (m) rows.push({ label: m[2].trim(), value: m[3].trim(), indent: m[1].length > 0 })
+  }
+
+  return (
+    <div style={SF}>
+      <div className="rounded-lg overflow-hidden border border-[#e8e0e2]">
+        <table className="w-full text-sm">
+          <tbody>
+            {rows.map((r, i) => (
+              <tr key={i} className={i % 2 === 0 ? 'bg-[#faf8f5]' : 'bg-white'}>
+                <td className={`py-2.5 font-medium text-[#4a4a4a] pr-6 ${r.indent ? 'pl-10' : 'pl-4'}`}>
+                  {r.label}
+                </td>
+                <td className="py-2.5 font-bold text-[#1a1a1a] pr-4 text-right">{r.value}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {benchmarkLine && (
+        <div className="mt-3 flex items-start gap-2 rounded-lg bg-[#f9f0f2] border border-[#e0ccd0] px-4 py-3">
+          <span className="text-[#7c1c2e] flex-shrink-0 font-bold text-sm">→</span>
+          <p className="text-sm text-[#5a1220] font-medium leading-snug">{benchmarkLine.trim()}</p>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function RunningRecord({ content }: { content: string }) {
+  const lines = content.split('\n')
+  const groups: { lineLabel: string; passage: string; annotations: string[] }[] = []
+  let preamble = ''
+
+  for (const line of lines) {
+    const trimmed = line.trim()
+    const lineMatch = trimmed.match(/^(Line \d+):\s*(.*)/)
+    if (lineMatch) {
+      groups.push({ lineLabel: lineMatch[1], passage: lineMatch[2], annotations: [] })
+    } else if (trimmed.startsWith('→') && groups.length > 0) {
+      groups[groups.length - 1].annotations.push(trimmed.replace(/^→\s*/, ''))
+    } else if (groups.length === 0 && trimmed) {
+      preamble += (preamble ? ' ' : '') + trimmed
+    }
+  }
+
+  return (
+    <div className="space-y-3" style={SF}>
+      {preamble && (
+        <p className="text-xs font-semibold uppercase tracking-wide text-[#6b6b6b] mb-1">{preamble}</p>
+      )}
+      {groups.map((g, i) => (
+        <div key={i} className="rounded-lg border border-[#e8e0e2] overflow-hidden">
+          <div className="bg-[#f4f0f1] px-3 py-1.5 border-b border-[#e8e0e2] flex items-center gap-2">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#7c1c2e]">{g.lineLabel}</span>
+          </div>
+          <div className="px-4 py-3">
+            <p className="text-sm font-mono text-[#1a1a1a] leading-relaxed">{g.passage}</p>
+            {g.annotations.length > 0 && (
+              <ul className="mt-2 space-y-1.5 border-t border-[#f0eaeb] pt-2">
+                {g.annotations.map((a, j) => (
+                  <li key={j} className="flex items-start gap-1.5 text-xs text-[#5a6070]">
+                    <span className="text-[#7c1c2e] flex-shrink-0 font-bold mt-0.5">→</span>
+                    <span>{a}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function ReadingPassage({ content }: { content: string }) {
+  return (
+    <div className="rounded-lg bg-[#fdfcfb] border border-[#e8e0e2] px-6 py-5">
+      <p className="text-sm leading-[1.85] text-[#1a1a1a]" style={SE}>{content}</p>
+    </div>
+  )
+}
+
+function LabeledSections({ content }: { content: string }) {
+  const blocks = content.split(/\n\n+/).map((b) => b.trim()).filter(Boolean)
+
+  return (
+    <div className="space-y-4" style={SF}>
+      {blocks.map((block, i) => {
+        const blockLines = block.split('\n')
+        const firstLine = blockLines[0].trim()
+        const restLines = blockLines.slice(1)
+        const restText = restLines.join('\n').trim()
+
+        // Detect label: ends with colon, or short first line followed by content
+        const isLabel = firstLine.endsWith(':') && restText.length > 0
+        if (isLabel) {
+          const label = firstLine.slice(0, -1)
+          // Check if restText has sub-annotations (→ lines)
+          const hasAnnotations = restLines.some((l) => l.trim().startsWith('→'))
+          if (hasAnnotations) {
+            const mainLines: string[] = []
+            const annotationLines: string[] = []
+            for (const l of restLines) {
+              if (l.trim().startsWith('→')) annotationLines.push(l.trim().replace(/^→\s*/, ''))
+              else if (l.trim()) mainLines.push(l.trim())
+            }
+            return (
+              <div key={i} className="rounded-lg border border-[#e8e0e2] overflow-hidden">
+                <div className="bg-[#f4f0f1] px-4 py-2 border-b border-[#e8e0e2]">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#7c1c2e]">{label}</span>
+                </div>
+                <div className="px-4 py-3 space-y-2">
+                  {mainLines.map((l, j) => <p key={j} className="text-sm text-[#1a1a1a] leading-relaxed">{l}</p>)}
+                  {annotationLines.map((a, j) => (
+                    <div key={j} className="flex items-start gap-2 text-xs text-[#5a6070] bg-[#faf8f5] rounded px-3 py-2">
+                      <span className="text-[#7c1c2e] font-bold flex-shrink-0">→</span>
+                      <span>{a}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          }
+          return (
+            <div key={i}>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[#7c1c2e] mb-1.5">{label}</p>
+              <p className="text-sm leading-relaxed text-[#1a1a1a]">{restText}</p>
+            </div>
+          )
+        }
+
+        // No label — check for inline annotations in block
+        const hasArrows = blockLines.some((l) => l.trim().startsWith('→') || l.trim().startsWith('✓') || l.trim().startsWith('✗'))
+        if (hasArrows) {
+          return (
+            <div key={i} className="rounded-lg border border-[#e8e0e2] overflow-hidden">
+              <div className="px-4 py-3 space-y-2">
+                {blockLines.map((l, j) => {
+                  const t = l.trim()
+                  if (t.startsWith('→')) {
+                    return (
+                      <div key={j} className="flex items-start gap-2 text-xs text-[#5a6070] bg-[#faf8f5] rounded px-3 py-2">
+                        <span className="text-[#7c1c2e] font-bold flex-shrink-0">→</span>
+                        <span>{t.replace(/^→\s*/, '')}</span>
+                      </div>
+                    )
+                  }
+                  if (t) return <p key={j} className="text-sm text-[#1a1a1a] leading-relaxed font-medium">{t}</p>
+                  return null
+                })}
+              </div>
+            </div>
+          )
+        }
+
+        // Plain paragraph
+        return <p key={i} className="text-sm leading-relaxed text-[#1a1a1a]">{block}</p>
+      })}
+    </div>
+  )
+}
+
+function ExhibitContent({ title, content }: { title: string; content: string }) {
+  if (content.includes('Words Correct Per Minute')) return <FluencyRubric content={content} />
+  if (title.toUpperCase().includes('PASSAGE')) return <ReadingPassage content={content} />
+  if (/Line \d+:/.test(content)) return <RunningRecord content={content} />
+  return <LabeledSections content={content} />
+}
+
+// ── Prompt renderer ───────────────────────────────────────────────────────────
+
+function PromptBody({ text }: { text: string }) {
+  const paragraphs = text.split(/\n\n+/).map((p) => p.trim()).filter(Boolean)
+  return (
+    <div className="space-y-4 text-sm text-[#1a1a1a]" style={SF}>
+      {paragraphs.map((para, i) => {
+        if (para.startsWith('•')) {
+          const items = para.split(/\n/).map((l) => l.replace(/^•\s*/, '').trim()).filter(Boolean)
+          return (
+            <ul key={i} className="space-y-2 pl-1">
+              {items.map((item, j) => (
+                <li key={j} className="flex items-start gap-2.5">
+                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[#7c1c2e] flex-shrink-0" />
+                  <span className="leading-relaxed">{item}</span>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+        return <p key={i} className="leading-relaxed text-[#2a2a2a]">{para}</p>
+      })}
+    </div>
+  )
+}
+
+// ── Main page ─────────────────────────────────────────────────────────────────
+
 export default function CRPage() {
   const params = useParams()
   const examCode = params.examCode as string
@@ -99,51 +335,64 @@ export default function CRPage() {
     )
   }
 
+  // Parse selected CR scenario
+  const scenario = selected?.scenarioContext ? parseScenario(selected.scenarioContext) : null
+  const studentInfo = scenario ? parseStudentLine(scenario.header) : null
+
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-[#faf8f5]">
 
-      {/* ── Top bar ───────────────────────────────────────────── */}
-      <div className="flex-shrink-0 bg-[#7c1c2e] px-6 py-4 flex items-center gap-6">
-        <Link href={`/dashboard/${examCode}`} className="text-sm text-[#e8b4bc] hover:text-white transition-colors" style={SF}>
-          ← Back to Dashboard
+      {/* ── Top bar ─────────────────────────────────────────────────────────── */}
+      <div className="flex-shrink-0 bg-[#7c1c2e] px-6 py-3.5 flex items-center gap-5">
+        <Link
+          href={`/dashboard/${examCode}`}
+          className="text-sm text-[#e8b4bc] hover:text-white transition-colors"
+          style={SF}
+        >
+          ← Dashboard
         </Link>
-        <div className="border-l border-[#a04060] pl-6">
-          <h1 className="text-lg font-bold text-white leading-none" style={SE}>Written Response Practice</h1>
-          <p className="mt-0.5 text-xs text-[#e8b4bc]" style={SF}>Read the scenario. Type your response. Get scored by AI — same rubric as the real exam.</p>
+        <div className="border-l border-[#a04060] pl-5">
+          <h1 className="text-base font-bold text-white leading-none" style={SE}>Written Response Practice</h1>
+          <p className="mt-0.5 text-[11px] text-[#e8b4bc]" style={SF}>
+            Read the scenario · Write your response · Get scored 0–2 by AI
+          </p>
         </div>
       </div>
 
-      {/* ── Body: sidebar + content ───────────────────────────── */}
+      {/* ── Body ────────────────────────────────────────────────────────────── */}
       <div className="flex flex-1 overflow-hidden">
 
         {/* Sidebar */}
-        <aside className="w-64 flex-shrink-0 overflow-y-auto border-r border-[#e8e0e2] bg-white">
-          <div className="px-4 py-4 border-b border-[#e8e0e2]">
-            <p className="text-[11px] font-bold uppercase tracking-widest text-[#6b6b6b]" style={SF}>
-              {crs.length} Prompts Available
+        <aside className="w-[220px] flex-shrink-0 overflow-y-auto border-r border-[#e8e0e2] bg-white">
+          <div className="px-4 pt-4 pb-3 border-b border-[#e8e0e2]">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-[#9b9b9b]" style={SF}>
+              {crs.length} Prompts
             </p>
           </div>
-          <nav className="py-2">
+          <nav className="py-1">
             {crs.map((cr) => {
               const active = selected?._id === cr._id
               return (
                 <button
                   key={cr._id}
                   onClick={() => selectCR(cr)}
-                  className="w-full text-left px-4 py-3.5 transition-colors relative"
+                  className="w-full text-left px-4 py-3 transition-colors"
                   style={{
                     background: active ? '#f9f0f2' : 'transparent',
                     borderLeft: active ? '3px solid #7c1c2e' : '3px solid transparent',
                   }}
                 >
-                  <p className="text-sm font-semibold text-[#1a1a1a] leading-none" style={SF}>
-                    Written Response {cr.crNumber}
+                  <p className="text-[13px] font-semibold text-[#1a1a1a] leading-snug" style={SF}>
+                    Response {cr.crNumber}
                   </p>
-                  <p className="mt-1 text-[11px] text-[#7c1c2e]" style={SF}>
+                  <p className="mt-0.5 text-[10px] text-[#7c1c2e] leading-snug" style={SF}>
                     {TYPE_LABEL[cr.crType]}
                   </p>
                   {cr.bundleOnly && (
-                    <span className="mt-1.5 inline-block rounded bg-[#7c1c2e] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-white" style={SF}>
+                    <span
+                      className="mt-1.5 inline-block rounded px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wide text-white"
+                      style={{ background: '#7c1c2e' }}
+                    >
                       Bundle
                     </span>
                   )}
@@ -158,136 +407,183 @@ export default function CRPage() {
           {!selected ? (
             <div className="flex h-full items-center justify-center">
               <div className="text-center">
-                <p className="text-2xl mb-3" style={SE}>←</p>
-                <p className="text-[#6b6b6b] text-sm" style={SF}>Select a prompt from the left to begin</p>
+                <p className="text-3xl mb-3 text-[#c8b8bb]">←</p>
+                <p className="text-sm text-[#9b9b9b]" style={SF}>Select a prompt to begin</p>
               </div>
             </div>
           ) : (
-            <div className="max-w-3xl mx-auto px-8 py-8 space-y-6">
+            <div className="max-w-3xl mx-auto px-8 py-8 space-y-5">
 
-              {/* Prompt header */}
+              {/* Prompt label */}
               <div>
-                <p className="text-[11px] font-bold uppercase tracking-widest text-[#7c1c2e]" style={SF}>
-                  Written Response {selected.crNumber} — {TYPE_LABEL[selected.crType]}
+                <p className="text-[10px] font-bold uppercase tracking-widest text-[#7c1c2e]" style={SF}>
+                  Written Response {selected.crNumber} · {TYPE_LABEL[selected.crType]}
                 </p>
               </div>
 
-              {/* Scenario / exhibits */}
-              {selected.scenarioContext && (
+              {/* Student info banner */}
+              {studentInfo && (
                 <div className="rounded-xl border border-[#e8e0e2] bg-white overflow-hidden shadow-sm">
-                  <div className="bg-[#7c1c2e] px-5 py-3">
-                    <p className="text-[11px] font-bold uppercase tracking-widest text-white" style={SF}>Student Scenario &amp; Exhibits</p>
+                  <div className="bg-[#7c1c2e] px-5 py-2.5 flex items-center gap-4">
+                    <div>
+                      <p className="text-xs font-bold text-white" style={SF}>{studentInfo.student}</p>
+                      <p className="text-[10px] text-[#e8b4bc]" style={SF}>Grade {studentInfo.grade}</p>
+                    </div>
                   </div>
-                  <div className="p-6">
-                    <pre className="text-sm leading-7 text-[#1a1a1a] whitespace-pre-wrap break-words" style={SF}>
-                      {selected.scenarioContext}
-                    </pre>
+                  <div className="px-5 py-3">
+                    <p className="text-sm text-[#3a3a3a] leading-relaxed" style={SF}>{studentInfo.context}</p>
                   </div>
                 </div>
               )}
 
+              {/* Exhibits */}
+              {scenario && scenario.exhibits.map((ex, i) => (
+                <div key={i} className="rounded-xl border border-[#e8e0e2] bg-white overflow-hidden shadow-sm">
+                  <div className="border-b border-[#e8e0e2] px-5 py-2.5 flex items-center gap-2">
+                    <span className="inline-flex items-center justify-center h-5 w-5 rounded bg-[#7c1c2e] text-white text-[9px] font-bold flex-shrink-0">
+                      {i + 1}
+                    </span>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#7c1c2e]" style={SF}>
+                      {ex.title.replace(/^EXHIBIT \d+ — /, '')}
+                    </p>
+                  </div>
+                  <div className="p-5">
+                    <ExhibitContent title={ex.title} content={ex.content} />
+                  </div>
+                </div>
+              ))}
+
               {/* Assignment */}
-              <div className="rounded-xl border border-[#e8e0e2] bg-white p-6 shadow-sm">
-                <p className="text-[11px] font-bold uppercase tracking-widest text-[#7c1c2e] mb-4" style={SF}>Assignment</p>
-                <div className="text-sm leading-relaxed text-[#1a1a1a] whitespace-pre-wrap" style={SF}>
-                  {selected.prompt}
+              <div className="rounded-xl border border-[#e8e0e2] bg-white overflow-hidden shadow-sm">
+                <div className="border-b border-[#e8e0e2] px-5 py-2.5">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-[#7c1c2e]" style={SF}>Assignment</p>
+                </div>
+                <div className="p-5">
+                  <PromptBody text={selected.prompt} />
                 </div>
               </div>
 
-              {/* Response or result */}
+              {/* Response or Result */}
               {!result ? (
-                <div className="rounded-xl border border-[#e8e0e2] bg-white p-6 shadow-sm">
-                  <div className="flex items-center justify-between mb-3">
-                    <p className="text-sm font-semibold text-[#1a1a1a]" style={SF}>Your Response</p>
-                    <span className={`text-xs font-semibold ${wordCount >= 150 ? 'text-green-600' : 'text-[#6b6b6b]'}`} style={SF}>
-                      {wordCount} words {wordCount >= 150 ? '✓' : '· aim for 150–300'}
+                <div className="rounded-xl border border-[#e8e0e2] bg-white overflow-hidden shadow-sm">
+                  <div className="border-b border-[#e8e0e2] px-5 py-2.5 flex items-center justify-between">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#7c1c2e]" style={SF}>Your Response</p>
+                    <span
+                      className={`text-xs font-semibold ${wordCount >= 150 ? 'text-green-600' : 'text-[#9b9b9b]'}`}
+                      style={SF}
+                    >
+                      {wordCount} words{wordCount >= 150 ? ' ✓' : ' · aim for 150–300'}
                     </span>
                   </div>
-                  <textarea
-                    value={responseText}
-                    onChange={(e) => setResponseText(e.target.value)}
-                    disabled={grading}
-                    className="w-full rounded-lg border border-[#e8e0e2] bg-[#faf8f5] p-4 text-sm text-[#1a1a1a] leading-relaxed outline-none focus:border-[#7c1c2e] focus:ring-1 focus:ring-[#7c1c2e] disabled:opacity-60 resize-y"
-                    style={{ ...SF, minHeight: '300px' }}
-                    placeholder="Write your response here…"
-                  />
-                  {error && (
-                    <p className="mt-3 rounded-lg bg-red-50 px-4 py-2.5 text-sm text-red-700" style={SF}>{error}</p>
-                  )}
-                  <button
-                    onClick={handleGrade}
-                    disabled={grading || !responseText.trim()}
-                    className="mt-4 w-full rounded-lg bg-[#7c1c2e] py-3.5 text-sm font-semibold text-white hover:bg-[#5a1220] disabled:opacity-50 transition-colors"
-                    style={SF}
-                  >
-                    {grading ? 'Grading your response…' : 'Submit for Grading'}
-                  </button>
+                  <div className="p-5">
+                    <textarea
+                      value={responseText}
+                      onChange={(e) => setResponseText(e.target.value)}
+                      disabled={grading}
+                      className="w-full rounded-lg border border-[#e8e0e2] bg-[#faf8f5] p-4 text-sm text-[#1a1a1a] leading-relaxed outline-none focus:border-[#7c1c2e] focus:ring-1 focus:ring-[#7c1c2e] disabled:opacity-60 resize-y"
+                      style={{ ...SF, minHeight: '280px' }}
+                      placeholder="Write your response here…"
+                    />
+                    {error && (
+                      <p className="mt-3 rounded-lg bg-red-50 px-4 py-2.5 text-sm text-red-700" style={SF}>{error}</p>
+                    )}
+                    <button
+                      onClick={handleGrade}
+                      disabled={grading || !responseText.trim()}
+                      className="mt-4 w-full rounded-lg bg-[#7c1c2e] py-3 text-sm font-semibold text-white hover:bg-[#5a1220] disabled:opacity-50 transition-colors"
+                      style={SF}
+                    >
+                      {grading ? 'Grading your response…' : 'Submit for Grading'}
+                    </button>
+                  </div>
                 </div>
               ) : (
-                <div className="rounded-xl border border-[#e8e0e2] bg-white p-6 shadow-sm space-y-5">
-                  {/* Score */}
-                  <div className="flex items-center gap-4">
-                    <span className="text-5xl font-bold" style={{ ...SE, color: PERF_COLOR[result.performanceLevel] || '#1a1a1a' }}>
+                <div className="rounded-xl border border-[#e8e0e2] bg-white overflow-hidden shadow-sm">
+                  {/* Score header */}
+                  <div
+                    className="px-6 py-5 flex items-center gap-5"
+                    style={{ borderBottom: '1px solid #e8e0e2' }}
+                  >
+                    <span
+                      className="text-5xl font-bold leading-none"
+                      style={{ ...SE, color: PERF_COLOR[result.performanceLevel] || '#1a1a1a' }}
+                    >
                       {result.score}/2
                     </span>
                     <div>
-                      <span className="inline-block rounded-full px-3 py-1 text-sm font-bold text-white" style={{ ...SF, backgroundColor: PERF_COLOR[result.performanceLevel] || '#1a1a1a' }}>
+                      <span
+                        className="inline-block rounded-full px-3 py-1 text-sm font-bold text-white"
+                        style={{ ...SF, backgroundColor: PERF_COLOR[result.performanceLevel] || '#1a1a1a' }}
+                      >
                         {result.performanceLevel}
                       </span>
-                      <p className="mt-1 text-xs text-[#6b6b6b]" style={SF}>{result.wordCount} words</p>
+                      <p className="mt-1 text-xs text-[#9b9b9b]" style={SF}>{result.wordCount} words</p>
                     </div>
                   </div>
 
-                  {/* Feedback */}
-                  <p className="text-sm leading-relaxed text-[#1a1a1a] border-t border-[#e8e0e2] pt-5" style={SF}>{result.feedback}</p>
+                  <div className="p-6 space-y-5">
+                    {/* Feedback */}
+                    <p className="text-sm leading-relaxed text-[#1a1a1a]" style={SF}>{result.feedback}</p>
 
-                  {/* Strengths */}
-                  {result.strengths.length > 0 && (
-                    <div>
-                      <p className="text-[11px] font-bold uppercase tracking-widest text-green-700 mb-2" style={SF}>Strengths</p>
-                      <ul className="space-y-1.5">
-                        {result.strengths.map((s, i) => (
-                          <li key={i} className="flex items-start gap-2 text-sm text-[#1a1a1a]" style={SF}>
-                            <span className="text-green-600 flex-shrink-0">✓</span>{s}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+                    {/* Strengths */}
+                    {result.strengths.length > 0 && (
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-green-700 mb-2.5" style={SF}>Strengths</p>
+                        <ul className="space-y-2">
+                          {result.strengths.map((s, i) => (
+                            <li key={i} className="flex items-start gap-2.5 text-sm text-[#1a1a1a]" style={SF}>
+                              <span className="text-green-600 flex-shrink-0 font-bold mt-0.5">✓</span>
+                              <span className="leading-relaxed">{s}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
 
-                  {/* Improvements */}
-                  {result.improvements.length > 0 && (
-                    <div>
-                      <p className="text-[11px] font-bold uppercase tracking-widest text-[#7c1c2e] mb-2" style={SF}>To Improve</p>
-                      <ul className="space-y-1.5">
-                        {result.improvements.map((s, i) => (
-                          <li key={i} className="flex items-start gap-2 text-sm text-[#1a1a1a]" style={SF}>
-                            <span className="text-[#7c1c2e] flex-shrink-0">→</span>{s}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+                    {/* Improvements */}
+                    {result.improvements.length > 0 && (
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-[#7c1c2e] mb-2.5" style={SF}>To Improve</p>
+                        <ul className="space-y-2">
+                          {result.improvements.map((s, i) => (
+                            <li key={i} className="flex items-start gap-2.5 text-sm text-[#1a1a1a]" style={SF}>
+                              <span className="text-[#7c1c2e] flex-shrink-0 font-bold mt-0.5">→</span>
+                              <span className="leading-relaxed">{s}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
 
-                  <button
-                    onClick={() => { setResult(null); setResponseText('') }}
-                    className="rounded-lg border-2 border-[#7c1c2e] px-6 py-2.5 text-sm font-semibold text-[#7c1c2e] hover:bg-[#f9f0f2] transition-colors"
-                    style={SF}
-                  >
-                    Try Again
-                  </button>
+                    <button
+                      onClick={() => { setResult(null); setResponseText('') }}
+                      className="rounded-lg border-2 border-[#7c1c2e] px-6 py-2.5 text-sm font-semibold text-[#7c1c2e] hover:bg-[#f9f0f2] transition-colors"
+                      style={SF}
+                    >
+                      Try Again
+                    </button>
+                  </div>
                 </div>
               )}
 
               {/* Previous attempts */}
               {attempts.length > 0 && !result && (
-                <div className="rounded-xl border border-[#e8e0e2] bg-white p-6 shadow-sm">
-                  <p className="text-sm font-semibold text-[#1a1a1a] mb-3" style={SF}>Previous Attempts ({attempts.length})</p>
-                  <div className="space-y-2">
+                <div className="rounded-xl border border-[#e8e0e2] bg-white overflow-hidden shadow-sm">
+                  <div className="border-b border-[#e8e0e2] px-5 py-2.5">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#9b9b9b]" style={SF}>
+                      Previous Attempts ({attempts.length})
+                    </p>
+                  </div>
+                  <div className="p-4 space-y-2">
                     {attempts.slice(0, 5).map((a, i) => (
-                      <div key={i} className="flex items-center justify-between rounded-lg border border-[#e8e0e2] px-4 py-2.5">
-                        <p className="text-sm text-[#6b6b6b]" style={SF}>{new Date(a.submittedAt).toLocaleDateString()}</p>
-                        <span className="text-sm font-bold" style={{ ...SF, color: PERF_COLOR[a.performanceLevel] || '#1a1a1a' }}>
+                      <div key={i} className="flex items-center justify-between rounded-lg border border-[#f0eaeb] px-4 py-2.5">
+                        <p className="text-sm text-[#9b9b9b]" style={SF}>
+                          {new Date(a.submittedAt).toLocaleDateString()}
+                        </p>
+                        <span
+                          className="text-sm font-bold"
+                          style={{ ...SF, color: PERF_COLOR[a.performanceLevel] || '#1a1a1a' }}
+                        >
                           {a.score}/2 — {a.performanceLevel}
                         </span>
                       </div>
@@ -296,6 +592,7 @@ export default function CRPage() {
                 </div>
               )}
 
+              <div className="h-6" />
             </div>
           )}
         </main>
