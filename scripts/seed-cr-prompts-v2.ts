@@ -3,6 +3,8 @@
  * Seeds exhibit-based CR prompts into Practice Test 1 and Practice Test 2.
  * Run: CONFIRM_RESEED=true npx tsx scripts/seed-cr-prompts-v2.ts
  */
+import dotenv from 'dotenv'
+dotenv.config({ path: '.env.local' })
 import connectDB from '../lib/mongodb'
 import PracticeTest from '../models/PracticeTest'
 
