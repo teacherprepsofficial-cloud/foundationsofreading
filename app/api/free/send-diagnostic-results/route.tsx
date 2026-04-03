@@ -234,7 +234,7 @@ function ResultsPDF({
           </View>
 
           {/* Written Response */}
-          <View style={styles.section}>
+          <View style={styles.section} break>
             <Text style={styles.sectionLabel}>Written Response</Text>
             <View style={styles.crBox}>
               <View style={styles.crScoreRow}>
@@ -268,7 +268,7 @@ function ResultsPDF({
           </View>
 
           {/* CTA */}
-          <View style={styles.ctaBox}>
+          <View style={styles.ctaBox} break>
             <Text style={styles.ctaTitle}>Ready to prep? Use code below for 15% off.</Text>
             <Text style={styles.ctaText}>
               Get the full FoRT prep — diagnostic, study guide, practice tests, AI-graded written responses, and flashcards. Everything in one place.
