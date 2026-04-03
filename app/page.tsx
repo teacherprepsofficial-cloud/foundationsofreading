@@ -166,7 +166,7 @@ export default function HomePage() {
                   </a>
                 </div>
                 <p className="mt-5 text-sm text-[#e8b4bc]" style={{ fontFamily: 'var(--font-sans)' }}>
-                  Instant access. No subscription.
+                  Get instant access, and put yourself on the path to pass.
                 </p>
               </div>
 
