@@ -6,78 +6,54 @@ import { getCurrentUser } from '@/lib/auth'
 import connectDB from '@/lib/mongodb'
 import User from '@/models/User'
 
-const PRICES = {
-  '190-starter': {
-    regular: 4900, // $49.00
-    discounted: 3920, // $39.20 (20% off)
-    name: 'NES Foundations of Reading 190 — Starter',
-  },
-  '190-bundle': {
-    regular: 5900,
-    discounted: 4720,
-    name: 'NES Foundations of Reading 190 — Complete Bundle',
-  },
-  '890-starter': {
-    regular: 4900,
-    discounted: 3920,
-    name: 'NES Foundations of Reading 890 — Starter',
-  },
-  '890-bundle': {
-    regular: 5900,
-    discounted: 4720,
-    name: 'NES Foundations of Reading 890 — Complete Bundle',
-  },
+const PRICE_IDS = {
+  starter: process.env.STRIPE_PRICE_STARTER!,
+  bundle: process.env.STRIPE_PRICE_BUNDLE!,
 }
+
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://foundationsofreading.com'
 
 export async function POST(request: NextRequest) {
   try {
-    const { examCode, tier, discounted } = await request.json()
-    const key = `${examCode}-${tier}` as keyof typeof PRICES
-    const priceInfo = PRICES[key]
-    if (!priceInfo) {
-      return NextResponse.json({ error: 'Invalid product selection' }, { status: 400 })
+    const { tier } = await request.json()
+    const priceId = PRICE_IDS[tier as 'starter' | 'bundle']
+    if (!priceId) {
+      return NextResponse.json({ error: 'Invalid plan' }, { status: 400 })
     }
 
     const stripe = getStripe()
     const auth = await getCurrentUser()
 
     let stripeCustomerId: string | undefined
+    let customerEmail: string | undefined
 
     if (auth) {
       await connectDB()
       const user = await User.findById(auth.userId)
-      if (user?.stripeCustomerId) {
-        stripeCustomerId = user.stripeCustomerId
-      }
+      if (user?.stripeCustomerId) stripeCustomerId = user.stripeCustomerId
+      customerEmail = user?.email
     }
 
-    const unitAmount = discounted ? priceInfo.discounted : priceInfo.regular
-
     const session = await stripe.checkout.sessions.create({
-      mode: 'payment',
-      customer: stripeCustomerId,
+      mode: 'subscription',
+      ...(stripeCustomerId ? { customer: stripeCustomerId } : customerEmail ? { customer_email: customerEmail } : {}),
       payment_method_types: ['card'],
-      line_items: [
-        {
-          price_data: {
-            currency: 'usd',
-            unit_amount: unitAmount,
-            product_data: {
-              name: priceInfo.name,
-              description: '30-day full access. Instant activation.',
-            },
-          },
-          quantity: 1,
+      line_items: [{ price: priceId, quantity: 1 }],
+      subscription_data: {
+        metadata: {
+          examCode: '190',
+          tier,
+          userId: auth?.userId || '',
         },
-      ],
+      },
       metadata: {
-        examCode,
+        examCode: '190',
         tier,
         userId: auth?.userId || '',
       },
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}&exam=${examCode}&tier=${tier}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}`,
-      allow_promotion_codes: false,
+      success_url: `${BASE_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: BASE_URL,
+      allow_promotion_codes: true,
     })
 
     return NextResponse.json({ url: session.url })

@@ -12,6 +12,8 @@ export interface IUserAccess extends Document {
   expiresAt: Date
   stripePaymentIntentId?: string
   stripeSessionId?: string
+  stripeSubscriptionId?: string
+  stripeCustomerId?: string
   isActive: boolean
   createdAt: Date
   updatedAt: Date
@@ -26,6 +28,8 @@ const UserAccessSchema = new Schema<IUserAccess>(
     expiresAt: { type: Date, required: true },
     stripePaymentIntentId: { type: String },
     stripeSessionId: { type: String },
+    stripeSubscriptionId: { type: String, index: true },
+    stripeCustomerId: { type: String },
     isActive: { type: Boolean, default: true },
   },
   { timestamps: true }

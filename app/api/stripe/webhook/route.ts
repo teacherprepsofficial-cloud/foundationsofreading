@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { NextRequest, NextResponse } from 'next/server'
 import { getStripe } from '@/lib/stripe'
 import connectDB from '@/lib/mongodb'
@@ -5,14 +7,21 @@ import User from '@/models/User'
 import UserAccess from '@/models/UserAccess'
 import type { ExamCode, AccessTier } from '@/models/UserAccess'
 import { Resend } from 'resend'
+import Stripe from 'stripe'
 
 const resend = new Resend(process.env.RESEND_API_KEY!)
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://foundationsofreading.com'
+
+function tierFromPriceId(priceId: string): AccessTier {
+  if (priceId === process.env.STRIPE_PRICE_BUNDLE) return 'bundle'
+  return 'starter'
+}
 
 export async function POST(request: NextRequest) {
   const body = await request.text()
   const sig = request.headers.get('stripe-signature')!
 
-  let event
+  let event: Stripe.Event
   try {
     const stripe = getStripe()
     event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!)
@@ -20,97 +29,175 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }
 
+  const stripe = getStripe()
+  await connectDB()
+
+  // ── checkout.session.completed ────────────────────────────────────────────
   if (event.type === 'checkout.session.completed') {
-    const session = event.data.object as {
-      id: string
-      customer: string | null
-      customer_details?: { email?: string; name?: string }
-      payment_intent: string | null
-      metadata: { examCode?: string; tier?: string; userId?: string }
-      amount_total: number
-    }
+    const session = event.data.object as Stripe.Checkout.Session
 
-    await connectDB()
-
-    const examCode = session.metadata.examCode as ExamCode
-    const tier = session.metadata.tier as AccessTier
+    const examCode = (session.metadata?.examCode || '190') as ExamCode
+    const tier = (session.metadata?.tier || 'starter') as AccessTier
     const customerEmail = session.customer_details?.email
     const customerName = session.customer_details?.name
+    const subscriptionId = session.subscription as string
+    const customerId = session.customer as string
 
-    if (!examCode || !tier || !customerEmail) {
-      console.error('Webhook missing metadata', session.metadata)
+    if (!customerEmail || !subscriptionId) {
+      console.error('Webhook missing email or subscription', session.id)
       return NextResponse.json({ received: true })
     }
+
+    // Get subscription period end
+    const subscription = await stripe.subscriptions.retrieve(subscriptionId)
+    const expiresAt = new Date(subscription.current_period_end * 1000)
 
     // Find or create user
     let user = await User.findOne({ email: customerEmail.toLowerCase() })
     if (!user) {
-      // New user — create account with temp password (they'll set one via email)
-      const tempPassword = Math.random().toString(36).slice(-12)
       user = await User.create({
         name: customerName || customerEmail.split('@')[0],
-        email: customerEmail,
-        password: tempPassword,
-        stripeCustomerId: session.customer || undefined,
+        email: customerEmail.toLowerCase(),
+        password: Math.random().toString(36).slice(-12),
+        stripeCustomerId: customerId,
       })
-    } else if (session.customer && !user.stripeCustomerId) {
-      user.stripeCustomerId = session.customer
+    } else if (customerId && !user.stripeCustomerId) {
+      user.stripeCustomerId = customerId
       await user.save()
     }
 
-    // Grant 30-day access
-    const purchaseDate = new Date()
-    const expiresAt = new Date(purchaseDate)
-    expiresAt.setDate(expiresAt.getDate() + 30)
+    // Deactivate any existing access for this user+exam
+    await UserAccess.updateMany(
+      { userId: user._id, examCode, isActive: true },
+      { isActive: false }
+    )
 
+    // Create new subscription access
     await UserAccess.create({
       userId: user._id,
       examCode,
       tier,
-      purchaseDate,
+      purchaseDate: new Date(),
       expiresAt,
       stripeSessionId: session.id,
-      stripePaymentIntentId: session.payment_intent || undefined,
+      stripeSubscriptionId: subscriptionId,
+      stripeCustomerId: customerId,
+      isActive: true,
     })
 
-    // Send welcome email with login link
-    const loginUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/login`
-    const dashboardUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/${examCode}`
-    const examName = examCode === '190' ? 'NES Foundations of Reading 190' : 'NES Foundations of Reading 890'
+    // Send welcome email with password reset link
+    const token = require('crypto').randomBytes(32).toString('hex')
+    user.resetPasswordToken = token
+    user.resetPasswordExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+    await user.save()
+
+    const setPasswordUrl = `${BASE_URL}/reset-password?token=${token}`
 
     await resend.emails.send({
       from: 'Foundations of Reading <prep@foundationsofreading.com>',
       to: customerEmail,
-      subject: `You're enrolled — ${examName} Prep`,
+      subject: "You're enrolled — set your password to get started",
       html: `
-        <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; color: #1a1a1a;">
-          <div style="background: #7c1c2e; padding: 32px; text-align: center;">
-            <h1 style="color: white; margin: 0; font-size: 24px;">Foundations of Reading</h1>
-            <p style="color: #f0d0d5; margin: 8px 0 0; font-size: 14px;">Test Preparation</p>
+        <div style="font-family: Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #1a1a1a;">
+          <div style="background: #7c1c2e; padding: 28px 32px;">
+            <p style="margin: 0; font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #e8b4bc;">Foundations of Reading</p>
+            <h1 style="margin: 6px 0 0; font-size: 22px; color: white; font-family: Georgia, serif;">You're enrolled.</h1>
           </div>
-          <div style="padding: 40px 32px;">
-            <h2 style="color: #7c1c2e; margin: 0 0 16px;">You're enrolled, ${customerName?.split(' ')[0] || 'there'}.</h2>
-            <p>Your 30-day access to the <strong>${examName}</strong> ${tier === 'bundle' ? 'Complete Bundle' : 'Starter Pack'} is now active.</p>
-            <p>Your access expires on <strong>${expiresAt.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</strong>.</p>
-            <div style="margin: 32px 0; text-align: center;">
-              <a href="${dashboardUrl}" style="background: #7c1c2e; color: white; padding: 14px 32px; border-radius: 4px; text-decoration: none; font-size: 16px; display: inline-block;">
-                Start Studying Now
+          <div style="padding: 36px 32px;">
+            <p style="font-size: 15px; line-height: 1.7; color: #333; margin: 0 0 20px;">
+              Hi ${customerName?.split(' ')[0] || 'there'}, your subscription is active. Set your password below to access your study program.
+            </p>
+            <div style="text-align: center; margin: 32px 0;">
+              <a href="${setPasswordUrl}" style="background: #7c1c2e; color: white; padding: 14px 32px; border-radius: 4px; text-decoration: none; font-size: 15px; font-weight: 600; display: inline-block;">
+                Set Your Password →
               </a>
             </div>
-            <p style="font-size: 14px; color: #666;">
-              Login at <a href="${loginUrl}" style="color: #7c1c2e;">${loginUrl}</a> with your email address.
-              ${!session.metadata.userId ? `<br><br>You'll be prompted to set your password on first login.` : ''}
-            </p>
-          </div>
-          <div style="background: #f9f5f5; padding: 20px 32px; font-size: 12px; color: #999; text-align: center;">
-            © Foundations of Reading Test Prep. All rights reserved.
+            <p style="font-size: 13px; color: #777; margin: 0;">This link expires in 7 days. After setting your password, log in at <a href="${BASE_URL}/login" style="color: #7c1c2e;">${BASE_URL}/login</a>.</p>
           </div>
         </div>
       `,
     })
   }
 
+  // ── invoice.paid — monthly renewal ───────────────────────────────────────
+  if (event.type === 'invoice.paid') {
+    const invoice = event.data.object as Stripe.Invoice
+    const subscriptionId = invoice.subscription as string
+    if (!subscriptionId) return NextResponse.json({ received: true })
+
+    const subscription = await stripe.subscriptions.retrieve(subscriptionId)
+    const expiresAt = new Date(subscription.current_period_end * 1000)
+
+    await UserAccess.findOneAndUpdate(
+      { stripeSubscriptionId: subscriptionId },
+      { isActive: true, expiresAt }
+    )
+  }
+
+  // ── customer.subscription.deleted — cancelled ─────────────────────────────
+  if (event.type === 'customer.subscription.deleted') {
+    const subscription = event.data.object as Stripe.Subscription
+    const access = await UserAccess.findOneAndUpdate(
+      { stripeSubscriptionId: subscription.id },
+      { isActive: false },
+      { new: true }
+    )
+
+    if (access) {
+      const user = await User.findById(access.userId)
+      if (user?.email) {
+        await resend.emails.send({
+          from: 'Foundations of Reading <prep@foundationsofreading.com>',
+          to: user.email,
+          subject: 'Your subscription has been cancelled',
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #1a1a1a; padding: 40px 32px;">
+              <p style="font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #7c1c2e; margin: 0 0 8px;">Foundations of Reading</p>
+              <h1 style="font-family: Georgia, serif; font-size: 22px; margin: 0 0 16px;">Subscription cancelled</h1>
+              <p style="font-size: 15px; line-height: 1.7; color: #333; margin: 0 0 16px;">Your subscription has been cancelled and your access has ended. If this was a mistake, you can re-subscribe at any time.</p>
+              <a href="${BASE_URL}/#pricing" style="background: #7c1c2e; color: white; padding: 12px 28px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: 600; display: inline-block;">Re-subscribe</a>
+            </div>
+          `,
+        })
+      }
+    }
+  }
+
+  // ── customer.subscription.updated — plan change ───────────────────────────
+  if (event.type === 'customer.subscription.updated') {
+    const subscription = event.data.object as Stripe.Subscription
+    const priceId = subscription.items.data[0]?.price?.id
+    if (!priceId) return NextResponse.json({ received: true })
+
+    const newTier = tierFromPriceId(priceId)
+    const expiresAt = new Date(subscription.current_period_end * 1000)
+
+    await UserAccess.findOneAndUpdate(
+      { stripeSubscriptionId: subscription.id },
+      { tier: newTier, expiresAt, isActive: subscription.status === 'active' }
+    )
+  }
+
+  // ── invoice.payment_failed — warn user ───────────────────────────────────
+  if (event.type === 'invoice.payment_failed') {
+    const invoice = event.data.object as Stripe.Invoice
+    const email = invoice.customer_email
+    if (email) {
+      await resend.emails.send({
+        from: 'Foundations of Reading <prep@foundationsofreading.com>',
+        to: email,
+        subject: 'Payment failed — update your billing info',
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #1a1a1a; padding: 40px 32px;">
+            <p style="font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #7c1c2e; margin: 0 0 8px;">Foundations of Reading</p>
+            <h1 style="font-family: Georgia, serif; font-size: 22px; margin: 0 0 16px;">Payment failed</h1>
+            <p style="font-size: 15px; line-height: 1.7; color: #333; margin: 0 0 16px;">We were unable to process your subscription payment. Please update your billing information to keep your access active.</p>
+            <a href="${BASE_URL}/api/stripe/portal" style="background: #7c1c2e; color: white; padding: 12px 28px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: 600; display: inline-block;">Update Billing Info</a>
+          </div>
+        `,
+      })
+    }
+  }
+
   return NextResponse.json({ received: true })
 }
-
-export const dynamic = 'force-dynamic'
