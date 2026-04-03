@@ -300,39 +300,10 @@ const SUBAREAS = [
   { id: 4, name: 'Vocabulary, Reading Comprehension, and Reading-Writing Connections', abbr: 'Subarea IV' },
 ]
 
-function getLevel(pct: number): { label: string; color: string; bg: string } {
-  if (pct >= 75) return { label: 'Most objectives', color: '#166534', bg: '#f0fdf4' }
-  if (pct >= 50) return { label: 'Many objectives', color: '#1e40af', bg: '#eff6ff' }
-  if (pct >= 25) return { label: 'Some objectives', color: '#92400e', bg: '#fffbeb' }
-  return { label: 'Few objectives', color: '#991b1b', bg: '#fef2f2' }
-}
-
-function calcScaledScore(mcCorrect: number, crScore: number): number {
-  const mcPct = mcCorrect / QUESTIONS.length
-  const crPct = (crScore - 1) / 3
-  const combined = mcPct * 0.8 + crPct * 0.2
-  return Math.max(100, Math.min(300, Math.round(100 + combined * 200)))
-}
-
 function fmtTime(s: number): string {
   const m = Math.floor(s / 60)
   const sec = s % 60
   return `${m.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`
-}
-
-interface CRResult {
-  score: number
-  performanceLevel: string
-  feedback: string
-  strengths: string[]
-  improvements: string[]
-}
-
-const CR_COLORS: Record<string, string> = {
-  Thorough: '#166534',
-  Adequate: '#1e40af',
-  Limited: '#92400e',
-  Weak: '#991b1b',
 }
 
 // ── Main component ────────────────────────────────────────────────────────────

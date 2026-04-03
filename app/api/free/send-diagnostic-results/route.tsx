@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { Resend } from 'resend'
-import { pdf, Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer'
+import { pdf, Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer'
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
 const resend = new Resend(process.env.RESEND_API_KEY!)
