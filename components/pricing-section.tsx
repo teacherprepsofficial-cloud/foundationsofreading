@@ -11,91 +11,44 @@ function isDiscountActive(): boolean {
   return parseInt(stored, 10) > Date.now()
 }
 
-interface PriceCardProps {
-  examCode: '190' | '890'
-  tier: 'starter' | 'bundle'
-  regularPrice: number
-  discountedPrice: number
-  name: string
-  description: string
-  features: string[]
-  isFeatured?: boolean
-  discountActive: boolean
-  loading: boolean
-  onSelect: (examCode: '190' | '890', tier: 'starter' | 'bundle') => void
-}
+const SF = { fontFamily: 'var(--font-sans)' }
+const SE = { fontFamily: 'var(--font-serif)' }
 
-function PriceCard({
-  examCode, tier, regularPrice, discountedPrice, name, description,
-  features, isFeatured, discountActive, loading, onSelect,
-}: PriceCardProps) {
-  const price = discountActive ? discountedPrice : regularPrice
-
-  return (
-    <div
-      className={`relative flex flex-col rounded-lg border-2 bg-white p-8 ${
-        isFeatured ? 'border-[#7c1c2e]' : 'border-[#e8e0e2]'
-      }`}
-    >
-      {isFeatured && (
-        <span
-          className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-[#7c1c2e] px-4 py-1 text-xs font-bold text-white"
-          style={{ fontFamily: 'var(--font-sans)' }}
-        >
-          MOST POPULAR
-        </span>
-      )}
-      <p className="text-xs font-semibold uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>
-        {name}
-      </p>
-      <div className="mt-3 flex items-baseline gap-2">
-        <span className="text-4xl font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>
-          ${Math.round(price / 100)}
-        </span>
-        {discountActive && (
-          <span className="text-lg text-[#6b6b6b] line-through" style={{ fontFamily: 'var(--font-sans)' }}>
-            ${Math.round(regularPrice / 100)}
-          </span>
-        )}
-      </div>
-      {discountActive && (
-        <p className="mt-1 text-sm font-semibold text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>
-          20% off — limited time
-        </p>
-      )}
-      <p className="mt-2 text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>
-        {description}
-      </p>
-      <ul className="mt-6 flex-1 space-y-2.5">
-        {features.map((f) => (
-          <li key={f} className="flex items-start gap-2.5 text-sm text-[#1a1a1a]" style={{ fontFamily: 'var(--font-sans)' }}>
-            <span className="mt-0.5 text-[#7c1c2e]">✓</span>
-            {f}
-          </li>
-        ))}
-      </ul>
-      <button
-        onClick={() => onSelect(examCode, tier)}
-        disabled={loading}
-        className={`mt-8 w-full rounded py-3.5 text-sm font-semibold transition-colors ${
-          isFeatured
-            ? 'bg-[#7c1c2e] text-white hover:bg-[#5a1220] disabled:opacity-60'
-            : 'border-2 border-[#7c1c2e] text-[#7c1c2e] hover:bg-[#f9f0f2] disabled:opacity-60'
-        }`}
-        style={{ fontFamily: 'var(--font-sans)' }}
-      >
-        {loading ? 'Loading...' : 'Get Instant Access'}
-      </button>
-      <p className="mt-3 text-center text-xs text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>
-        30-day access · One-time payment
-      </p>
-    </div>
-  )
-}
+const CARDS = [
+  {
+    tier: 'starter' as const,
+    name: 'Foundations Prep',
+    regularPrice: 3900,
+    discountedPrice: 3120,
+    description: 'Everything you need to pass.',
+    features: [
+      'Module 1: Test overview',
+      'Diagnostic Practice Test',
+      'Full Study Guide — all 3 subareas, all 11 objectives',
+      '2 Full-Length Practice Tests (100 MC each)',
+      '4 AI-Graded Written Responses',
+      'Flashcards + Vocab Matching (150+ terms)',
+      '30-day access',
+    ],
+    isFeatured: false,
+  },
+  {
+    tier: 'bundle' as const,
+    name: 'FoRT Bundle',
+    regularPrice: 4900,
+    discountedPrice: 3920,
+    description: 'Maximum practice, maximum confidence.',
+    features: [
+      'Everything in Foundations Prep, plus:',
+      '2 additional full-length practice tests (4 total)',
+      '4 more AI-graded constructed response prompts (8 total)',
+    ],
+    isFeatured: true,
+  },
+]
 
 export function PricingSection() {
   const [discountActive, setDiscountActive] = useState(false)
-  const [selectedExam, setSelectedExam] = useState<'190' | '890'>('190')
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -106,104 +59,113 @@ export function PricingSection() {
     return () => clearInterval(interval)
   }, [])
 
-  async function handleSelect(examCode: '190' | '890', tier: 'starter' | 'bundle') {
+  async function handleSelect(tier: 'starter' | 'bundle') {
     setLoading(true)
     try {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ examCode, tier, discounted: discountActive }),
+        body: JSON.stringify({ examCode: '190', tier, discounted: discountActive }),
       })
       const data = await res.json()
-      if (data.url) {
-        window.location.href = data.url
-      }
+      if (data.url) window.location.href = data.url
     } catch {
       setLoading(false)
     }
   }
 
-  const CARDS = [
-    {
-      tier: 'starter' as const,
-      name: `NES ${selectedExam} Starter`,
-      regularPrice: 4900,
-      discountedPrice: 3920,
-      description: 'Everything you need to pass.',
-      features: [
-        'Module 1: Test overview',
-        'Diagnostic Practice Test',
-        'Full Study Guide',
-        '2 Full-Length Practice Tests',
-        '4 AI-Graded Written Responses',
-        'Flashcards + Vocab Matching',
-        '30-day access',
-      ],
-      isFeatured: false,
-    },
-    {
-      tier: 'bundle' as const,
-      name: `NES ${selectedExam} Complete Bundle`,
-      regularPrice: 5900,
-      discountedPrice: 4720,
-      description: 'Maximum practice, maximum confidence.',
-      features: [
-        'Everything in Starter',
-        '4 Full-Length Practice Tests',
-        '8 AI-Graded Written Responses',
-        'Flashcards + Vocab Matching',
-        '30-day access',
-      ],
-      isFeatured: true,
-    },
-  ]
-
   return (
     <section id="pricing" className="border-y border-[#e8e0e2] bg-[#faf8f5] py-16 sm:py-24">
       <div className="mx-auto max-w-5xl px-6">
-        <p className="text-center text-xs font-semibold uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>
+        <p className="text-center text-xs font-semibold uppercase tracking-widest text-[#7c1c2e]" style={SF}>
           Get Started
         </p>
-        <h2 className="mt-3 text-center text-3xl font-bold text-[#1a1a1a] sm:text-4xl" style={{ fontFamily: 'var(--font-serif)' }}>
-          Choose your exam
+        <h2 className="mt-3 text-center text-3xl font-bold text-[#1a1a1a] sm:text-4xl" style={SE}>
+          Complete prep for NES 190 &amp; 890.
         </h2>
-
-        {/* Exam toggle */}
-        <div className="mt-8 flex justify-center">
-          <div className="flex rounded-lg border border-[#e8e0e2] bg-white p-1" style={{ fontFamily: 'var(--font-sans)' }}>
-            {(['190', '890'] as const).map((code) => (
-              <button
-                key={code}
-                onClick={() => setSelectedExam(code)}
-                className={`rounded px-8 py-2.5 text-sm font-semibold transition-colors ${
-                  selectedExam === code
-                    ? 'bg-[#7c1c2e] text-white'
-                    : 'text-[#6b6b6b] hover:text-[#1a1a1a]'
-                }`}
-              >
-                NES {code}
-              </button>
-            ))}
-          </div>
-        </div>
+        <p className="mt-2 text-center text-sm text-[#6b6b6b]" style={SF}>
+          One program. Covers both exam editions.
+        </p>
 
         {discountActive && (
-          <p className="mt-4 text-center text-sm font-semibold text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>
+          <p className="mt-4 text-center text-sm font-semibold text-[#7c1c2e]" style={SF}>
             20% discount active — expires soon
           </p>
         )}
 
         <div className="mt-10 grid gap-8 md:grid-cols-2">
-          {CARDS.map((card) => (
-            <PriceCard
-              key={card.tier}
-              examCode={selectedExam}
-              {...card}
-              discountActive={discountActive}
-              loading={loading}
-              onSelect={handleSelect}
-            />
-          ))}
+          {CARDS.map((card) => {
+            const price = discountActive ? card.discountedPrice : card.regularPrice
+            return (
+              <div
+                key={card.tier}
+                className={`relative flex flex-col rounded-lg border-2 bg-white p-8 ${
+                  card.isFeatured ? 'border-[#7c1c2e]' : 'border-[#e8e0e2]'
+                }`}
+              >
+                {card.isFeatured && (
+                  <span
+                    className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-[#7c1c2e] px-4 py-1 text-xs font-bold text-white"
+                    style={SF}
+                  >
+                    MOST POPULAR
+                  </span>
+                )}
+                <p className="text-xs font-semibold uppercase tracking-widest text-[#7c1c2e]" style={SF}>
+                  {card.name}
+                </p>
+                <div className="mt-3 flex items-baseline gap-2">
+                  <span className="text-4xl font-bold text-[#1a1a1a]" style={SE}>
+                    ${Math.round(price / 100)}
+                  </span>
+                  {discountActive && (
+                    <span className="text-lg text-[#6b6b6b] line-through" style={SF}>
+                      ${Math.round(card.regularPrice / 100)}
+                    </span>
+                  )}
+                </div>
+                {discountActive && (
+                  <p className="mt-1 text-sm font-semibold text-[#7c1c2e]" style={SF}>
+                    20% off — limited time
+                  </p>
+                )}
+                <p className="mt-2 text-sm text-[#6b6b6b]" style={SF}>
+                  {card.description}
+                </p>
+                <ul className="mt-6 flex-1 space-y-2.5">
+                  {card.features.map((f, i) => (
+                    <li
+                      key={i}
+                      className={`flex items-start gap-2.5 text-sm ${
+                        i === 0 && card.isFeatured ? 'font-semibold text-[#1a1a1a]' : 'text-[#1a1a1a]'
+                      }`}
+                      style={SF}
+                    >
+                      <span className="mt-0.5 shrink-0 text-[#7c1c2e]">
+                        {i === 0 && card.isFeatured ? '' : '✓'}
+                      </span>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  onClick={() => handleSelect(card.tier)}
+                  disabled={loading}
+                  className={`mt-8 w-full rounded py-3.5 text-sm font-semibold transition-colors ${
+                    card.isFeatured
+                      ? 'bg-[#7c1c2e] text-white hover:bg-[#5a1220] disabled:opacity-60'
+                      : 'border-2 border-[#7c1c2e] text-[#7c1c2e] hover:bg-[#f9f0f2] disabled:opacity-60'
+                  }`}
+                  style={SF}
+                >
+                  {loading ? 'Loading...' : 'Get Instant Access'}
+                </button>
+                <p className="mt-3 text-center text-xs text-[#6b6b6b]" style={SF}>
+                  30-day access · One-time payment
+                </p>
+              </div>
+            )
+          })}
         </div>
       </div>
     </section>
