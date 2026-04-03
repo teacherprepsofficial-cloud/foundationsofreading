@@ -298,7 +298,6 @@ export default function FlashcardsPage() {
           <option value="I">Subarea I</option>
           <option value="II">Subarea II</option>
           <option value="III">Subarea III</option>
-          <option value="IV">Subarea IV</option>
         </select>
 
         <span style={{ fontSize: 13, fontFamily: 'var(--font-sans)', color: '#6b6b6b' }}>
