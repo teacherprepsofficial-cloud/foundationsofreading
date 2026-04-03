@@ -192,7 +192,7 @@ Rate each of the four characteristics (PURPOSE, SUBJECT KNOWLEDGE, SUPPORT, RATI
       throw new Error('Failed to parse grading response')
     }
 
-    const score = Math.max(1, Math.min(4, parsed.score)) as CRScore
+    const score = Math.max(1, Math.min(4, parseInt(String(parsed.score), 10))) as CRScore
     const performanceLevel = scoreToPerformance(score)
 
     const attempt = await UserCRAttempt.create({

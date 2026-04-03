@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
       : { examCode, isPublished: true, bundleOnly: false }
 
     const crs = await ConstructedResponse.find(query)
-      .select('crNumber crType prompt scenarioContext bundleOnly')
+      .select('crNumber crType prompt bundleOnly')
       .sort({ crNumber: 1 })
 
     return NextResponse.json({ crs })

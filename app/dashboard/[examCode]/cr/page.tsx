@@ -302,6 +302,7 @@ export default function CRPage() {
     setError('')
     const res = await fetch(`/api/cr/${cr._id}`)
     const data = await res.json()
+    if (data.cr) setSelected(data.cr)
     setAttempts(data.attempts || [])
   }
 
@@ -413,7 +414,7 @@ export default function CRPage() {
                   Practice writing like the real exam.
                 </h2>
                 <p className="text-sm text-[#5a5a5a] leading-relaxed mb-8" style={SF}>
-                  Each prompt gives you a real student scenario — a running record, phonics assessment, or comprehension observation — then asks you to analyze it in writing. Your response is scored 0–2 by AI using the same rubric as the NES exam.
+                  Each prompt gives you a real student scenario — a running record, phonics assessment, or comprehension observation — then asks you to analyze it in writing. Your response is scored 1–4 by AI using the official NES rubric.
                 </p>
 
                 {/* How it works */}

@@ -334,7 +334,6 @@ Be sure to cite specific evidence from the information provided to support all p
 EXHIBIT 1 — DEVELOPMENTAL SPELLING INVENTORY
 ──────────────────────────────────────────────
 Word Administered        Caleb's Spelling   Feature Assessed
-─────────────────────────────────────────────────────────────
 1.  mat                  mat         ✓      Short vowel — CVC
 2.  ship                 ship        ✓      Consonant digraph SH
 3.  when                 wen         ✗      Consonant digraph WH → omitted H
