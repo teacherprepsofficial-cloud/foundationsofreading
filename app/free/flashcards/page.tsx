@@ -1,12 +1,11 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 
 const SF = { fontFamily: 'var(--font-sans)' }
-const SE = { fontFamily: 'var(--font-serif)' }
 
 interface Card { term: string; definition: string; example: string; obj: number }
 
@@ -60,6 +59,8 @@ const CARDS: Card[] = [
   { term: 'WCPM (words correct per minute)', definition: 'The standard metric for oral reading fluency — the number of words read correctly during a timed one-minute oral reading. Errors reduce the count. WCPM is compared to grade-level benchmarks to identify students below benchmark.', example: 'A student reads a 100-word passage in one minute with 6 errors; WCPM = 94.', obj: 4 },
 ]
 
+const ROUND_SIZE = 15
+
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr]
   for (let i = a.length - 1; i > 0; i--) {
@@ -69,86 +70,134 @@ function shuffle<T>(arr: T[]): T[] {
   return a
 }
 
-function buildMatch(cards: Card[]) {
-  const pool = shuffle(cards).slice(0, 15)
+interface MatchQ { card: Card; options: Card[] }
+interface MatchResult { card: Card; selectedTerm: string; correct: boolean }
+
+function buildMatchQuestions(cards: Card[]): MatchQ[] {
+  if (cards.length < 4) return []
+  const pool = shuffle(cards).slice(0, ROUND_SIZE)
   return pool.map((card) => {
     const others = shuffle(cards.filter((c) => c.term !== card.term)).slice(0, 3)
     return { card, options: shuffle([card, ...others]) }
   })
 }
 
-type Mode = 'flashcard' | 'matching' | 'glossary'
+const OBJ_LABELS: Record<number, string> = {
+  1: 'Phonological & Phonemic Awareness, Concepts of Print',
+  2: 'Phonics, High-Frequency Words & Spelling',
+  3: 'Word Analysis, Syllabication & Morphemic Analysis',
+  4: 'Reading Fluency',
+}
 
 export default function FreeFlashcardsPage() {
   const router = useRouter()
-  const [mode, setMode] = useState<Mode>('flashcard')
 
   // Flashcard state
   const [index, setIndex] = useState(0)
-  const [flipped, setFlipped] = useState(false)
-  const [seen, setSeen] = useState<Set<number>>(new Set([0]))
+  const [isFlipped, setIsFlipped] = useState(false)
+  const [knownSet, setKnownSet] = useState<Set<number>>(new Set())
+  const [reviewedSet, setReviewedSet] = useState<Set<number>>(new Set([0]))
 
   // Matching state
-  const [matchRound, setMatchRound] = useState(() => buildMatch(CARDS))
-  const [matchIdx, setMatchIdx] = useState(0)
-  const [selected, setSelected] = useState<string | null>(null)
-  const [matchCorrect, setMatchCorrect] = useState(0)
-  const [matchDone, setMatchDone] = useState(false)
+  const [matchQuestions, setMatchQuestions] = useState<MatchQ[]>(() => buildMatchQuestions(CARDS))
+  const [matchIndex, setMatchIndex] = useState(0)
+  const [matchSelected, setMatchSelected] = useState<string | null>(null)
+  const [matchResults, setMatchResults] = useState<MatchResult[]>([])
+  const [matchPhase, setMatchPhase] = useState<'playing' | 'results'>('playing')
+  const matchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  const total = CARDS.length
   const card = CARDS[index]
+  const progressPct = Math.round((reviewedSet.size / total) * 100)
 
-  function goCard(dir: 1 | -1) {
-    const next = (index + dir + CARDS.length) % CARDS.length
-    setIndex(next)
-    setFlipped(false)
-    setSeen((prev) => new Set(Array.from(prev).concat(next)))
+  function goTo(delta: number) {
+    const next = index + delta
+    if (next < 0 || next >= total) return
+    setIsFlipped(false)
+    setTimeout(() => {
+      setIndex(next)
+      setReviewedSet((s) => { const n = new Set(s); n.add(next); return n })
+    }, 150)
   }
 
-  function jumpCard(i: number) {
-    setIndex(i)
-    setFlipped(false)
-    setSeen((prev) => new Set(Array.from(prev).concat(i)))
+  function jumpTo(i: number) {
+    setIsFlipped(false)
+    setTimeout(() => {
+      setIndex(i)
+      setReviewedSet((s) => { const n = new Set(s); n.add(i); return n })
+    }, 150)
   }
 
-  const handleSubarea = useCallback((sa: string) => {
+  function handleShuffle() {
+    const shuffled = shuffle(CARDS.map((_, i) => i))
+    setIndex(shuffled[0])
+    setIsFlipped(false)
+    setReviewedSet(new Set([shuffled[0]]))
+  }
+
+  function handleMarkKnown() {
+    setKnownSet((prev) => {
+      const next = new Set(prev)
+      if (next.has(index)) next.delete(index)
+      else next.add(index)
+      return next
+    })
+  }
+
+  // Matching handlers
+  function handleMatchSelect(term: string) {
+    if (matchSelected !== null) return
+    const current = matchQuestions[matchIndex]
+    if (!current) return
+    const correct = term === current.card.term
+    setMatchSelected(term)
+    const result: MatchResult = { card: current.card, selectedTerm: term, correct }
+    if (matchTimerRef.current) clearTimeout(matchTimerRef.current)
+    matchTimerRef.current = setTimeout(() => {
+      const newResults = [...matchResults, result]
+      if (matchIndex + 1 >= matchQuestions.length) {
+        setMatchResults(newResults)
+        setMatchPhase('results')
+      } else {
+        setMatchResults(newResults)
+        setMatchIndex((i) => i + 1)
+        setMatchSelected(null)
+      }
+    }, 750)
+  }
+
+  function handleRestartMatch() {
+    setMatchQuestions(buildMatchQuestions(CARDS))
+    setMatchIndex(0)
+    setMatchSelected(null)
+    setMatchResults([])
+    setMatchPhase('playing')
+  }
+
+  // Keyboard nav
+  const goToRef = useRef(goTo)
+  goToRef.current = goTo
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') goToRef.current(-1)
+      if (e.key === 'ArrowRight') goToRef.current(1)
+      if (e.key === ' ') { e.preventDefault(); setIsFlipped((f) => !f) }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [])
+
+  const handleSubareaClick = useCallback((sa: string) => {
     if (sa === 'II' || sa === 'III') router.push('/#pricing')
   }, [router])
 
-  function pickMatch(term: string) {
-    if (selected !== null) return
-    setSelected(term)
-    const q = matchRound[matchIdx]
-    const correct = term === q.card.term
-    if (correct) setMatchCorrect((n) => n + 1)
-    setTimeout(() => {
-      if (matchIdx + 1 >= matchRound.length) {
-        setMatchDone(true)
-      } else {
-        setMatchIdx((n) => n + 1)
-        setSelected(null)
-      }
-    }, 800)
-  }
-
-  function restartMatch() {
-    setMatchRound(buildMatch(CARDS))
-    setMatchIdx(0)
-    setSelected(null)
-    setMatchCorrect(0)
-    setMatchDone(false)
-  }
-
-  const objLabels: Record<number, string> = {
-    1: 'Phonological & Phonemic Awareness, Concepts of Print',
-    2: 'Phonics, High-Frequency Words & Spelling',
-    3: 'Word Analysis, Syllabication & Morphemic Analysis',
-    4: 'Reading Fluency',
-  }
+  const currentMatch = matchQuestions[matchIndex]
 
   return (
     <>
       <SiteHeader />
       <main className="min-h-screen bg-[#faf8f5]">
+
         {/* Top banner */}
         <div className="border-b border-[#e8e0e2] bg-white px-6 py-3 text-center">
           <p className="text-sm text-[#6b6b6b]" style={SF}>
@@ -157,212 +206,245 @@ export default function FreeFlashcardsPage() {
           </p>
         </div>
 
-        <div className="mx-auto max-w-5xl px-6 py-10">
+        {/* Controls bar */}
+        <div style={{ background: 'white', borderBottom: '1px solid #e8e0e2', padding: '12px 24px', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
+          <button
+            onClick={handleShuffle}
+            style={{ background: '#f9f0f2', border: '1px solid #e8e0e2', borderRadius: 6, padding: '7px 16px', fontSize: 13, ...SF, fontWeight: 600, color: '#7c1c2e', cursor: 'pointer' }}
+          >
+            ⇌ Shuffle
+          </button>
+          <div style={{ display: 'flex', gap: 6 }}>
+            {(['I', 'II', 'III'] as const).map((sa) => (
+              <button
+                key={sa}
+                onClick={() => handleSubareaClick(sa)}
+                style={{
+                  background: sa === 'I' ? '#7c1c2e' : 'white',
+                  color: sa === 'I' ? 'white' : '#6b6b6b',
+                  border: `1px solid ${sa === 'I' ? '#7c1c2e' : '#e8e0e2'}`,
+                  borderRadius: 6,
+                  padding: '7px 14px',
+                  fontSize: 13,
+                  ...SF,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+              >
+                Subarea {sa}{sa !== 'I' && ' 🔒'}
+              </button>
+            ))}
+          </div>
+          <span style={{ fontSize: 13, ...SF, color: '#6b6b6b' }}>
+            {knownSet.size} known · {total - knownSet.size} remaining
+          </span>
+        </div>
 
-          {/* Header + subarea selector */}
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-[#7c1c2e]" style={SF}>Free · Subarea I · 43 Terms</p>
-              <h1 className="mt-1 text-3xl font-bold text-[#1a1a1a]" style={SE}>Flashcards</h1>
+        {/* Progress bar */}
+        <div style={{ height: 4, background: '#e8e0e2' }}>
+          <div style={{ height: '100%', width: `${progressPct}%`, background: '#7c1c2e', transition: 'width 0.3s ease' }} />
+        </div>
+
+        {/* ── Flashcard area ── */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '48px 24px 32px' }}>
+          <span style={{ ...SF, fontSize: 13, color: '#6b6b6b', marginBottom: 16 }}>
+            Card {index + 1} of {total} · {reviewedSet.size} reviewed
+          </span>
+
+          {/* Flip card */}
+          <div onClick={() => setIsFlipped((f) => !f)} style={{ width: '100%', maxWidth: 600, height: 400, cursor: 'pointer', perspective: '1000px' }}>
+            <div style={{ position: 'relative', width: '100%', height: '100%', transformStyle: 'preserve-3d', transition: 'transform 0.45s ease', transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)' }}>
+              {/* Front — Term */}
+              <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', background: 'white', border: '1px solid #e8e0e2', borderRadius: 16, boxShadow: '0 4px 24px rgba(0,0,0,0.08)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 48px', textAlign: 'center' }}>
+                <p style={{ ...SF, fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#6b6b6b', marginBottom: 8 }}>TERM</p>
+                <p style={{ ...SF, fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#9b9b9b', marginBottom: 20 }}>Obj {card.obj} — {OBJ_LABELS[card.obj]}</p>
+                <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 32, fontWeight: 700, color: '#1a1a1a', lineHeight: 1.2, marginBottom: 0 }}>{card.term}</h2>
+                <p style={{ marginTop: 28, fontSize: 12, ...SF, color: '#6b6b6b' }}>Click to flip · Space bar to flip</p>
+              </div>
+              {/* Back — Definition */}
+              <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'rotateY(180deg)', background: '#5a1220', borderRadius: 16, boxShadow: '0 4px 24px rgba(0,0,0,0.12)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 48px', textAlign: 'center' }}>
+                <p style={{ ...SF, fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#e8b4bc', marginBottom: 20 }}>DEFINITION</p>
+                <p style={{ ...SF, fontSize: 16, color: 'white', lineHeight: 1.65, marginBottom: card.example ? 20 : 0 }}>{card.definition}</p>
+                {card.example && <p style={{ ...SF, fontSize: 13, color: '#e8b4bc', fontStyle: 'italic', lineHeight: 1.5 }}>{card.example}</p>}
+              </div>
             </div>
-            <div className="flex gap-2">
-              {(['I', 'II', 'III'] as const).map((sa) => (
+          </div>
+
+          {/* Navigation */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 32, flexWrap: 'wrap', justifyContent: 'center' }}>
+            <button
+              onClick={() => goTo(-1)}
+              disabled={index === 0}
+              style={{ background: 'white', border: '1px solid #e8e0e2', borderRadius: 8, padding: '10px 24px', fontSize: 14, ...SF, fontWeight: 600, color: index === 0 ? '#c0b4b8' : '#1a1a1a', cursor: index === 0 ? 'not-allowed' : 'pointer' }}
+            >
+              ← Previous
+            </button>
+            <button
+              onClick={handleMarkKnown}
+              style={{ background: knownSet.has(index) ? '#7c1c2e' : 'white', border: `1px solid ${knownSet.has(index) ? '#7c1c2e' : '#e8e0e2'}`, borderRadius: 8, padding: '10px 24px', fontSize: 14, ...SF, fontWeight: 600, color: knownSet.has(index) ? 'white' : '#1a1a1a', cursor: 'pointer' }}
+            >
+              {knownSet.has(index) ? '✓ Known' : 'Mark as Known'}
+            </button>
+            <button
+              onClick={() => goTo(1)}
+              style={{ background: '#7c1c2e', border: 'none', borderRadius: 8, padding: '10px 24px', fontSize: 14, ...SF, fontWeight: 600, color: 'white', cursor: 'pointer' }}
+            >
+              Next →
+            </button>
+          </div>
+          <p style={{ marginTop: 16, fontSize: 12, ...SF, color: '#6b6b6b' }}>← → arrow keys to navigate</p>
+
+          {/* Term chips */}
+          <div style={{ width: '100%', maxWidth: 680, marginTop: 32, background: 'white', border: '1px solid #e8e0e2', borderRadius: 12, padding: '20px 24px' }}>
+            <p style={{ ...SF, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#6b6b6b', marginBottom: 12 }}>All 43 terms — jump to any</p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              {CARDS.map((c, i) => (
                 <button
-                  key={sa}
-                  onClick={() => handleSubarea(sa)}
-                  className={`rounded-lg border px-4 py-2 text-sm font-semibold transition-colors ${
-                    sa === 'I'
-                      ? 'border-[#7c1c2e] bg-[#7c1c2e] text-white'
-                      : 'border-[#e8e0e2] text-[#6b6b6b] hover:border-[#7c1c2e] hover:text-[#7c1c2e]'
-                  }`}
-                  style={SF}
+                  key={i}
+                  onClick={() => jumpTo(i)}
+                  style={{
+                    borderRadius: 20,
+                    border: `1px solid ${i === index ? '#7c1c2e' : reviewedSet.has(i) ? '#7c1c2e' : '#e8e0e2'}`,
+                    background: i === index ? '#7c1c2e' : 'transparent',
+                    color: i === index ? 'white' : reviewedSet.has(i) ? '#7c1c2e' : '#6b6b6b',
+                    padding: '4px 12px',
+                    fontSize: 12,
+                    ...SF,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                  }}
                 >
-                  Subarea {sa}{sa !== 'I' && ' 🔒'}
+                  {c.term}
                 </button>
               ))}
             </div>
           </div>
+        </div>
 
-          {/* Mode tabs */}
-          <div className="mt-6 flex gap-1 rounded-lg border border-[#e8e0e2] bg-white p-1">
-            {(['flashcard', 'matching', 'glossary'] as Mode[]).map((m) => (
-              <button
-                key={m}
-                onClick={() => setMode(m)}
-                className={`flex-1 rounded-md py-2 text-sm font-semibold capitalize transition-colors ${
-                  mode === m ? 'bg-[#7c1c2e] text-white' : 'text-[#6b6b6b] hover:text-[#1a1a1a]'
-                }`}
-                style={SF}
-              >
-                {m === 'flashcard' ? 'Flashcards' : m === 'matching' ? 'Matching' : 'Glossary'}
-              </button>
-            ))}
+        {/* ── Matching Activity ── */}
+        <div style={{ borderTop: '2px solid #e8e0e2', background: '#faf8f5', padding: '48px 24px 64px' }}>
+          <div style={{ maxWidth: 680, margin: '0 auto' }}>
+            <div style={{ textAlign: 'center', marginBottom: 36 }}>
+              <p style={{ ...SF, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#7c1c2e', marginBottom: 8 }}>Matching Activity</p>
+              <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: 24, fontWeight: 700, color: '#1a1a1a', margin: 0 }}>Match the definition to the correct term</h3>
+            </div>
+
+            {matchPhase === 'playing' && currentMatch ? (
+              <>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                  <span style={{ ...SF, fontSize: 13, color: '#6b6b6b' }}>Question {matchIndex + 1} of {matchQuestions.length}</span>
+                  <span style={{ ...SF, fontSize: 13, color: '#6b6b6b' }}>{matchResults.filter(r => r.correct).length} correct so far</span>
+                </div>
+                <div style={{ height: 4, background: '#e8e0e2', borderRadius: 2, marginBottom: 28 }}>
+                  <div style={{ height: '100%', width: `${(matchIndex / matchQuestions.length) * 100}%`, background: '#7c1c2e', borderRadius: 2, transition: 'width 0.3s ease' }} />
+                </div>
+
+                {/* Definition card */}
+                <div style={{ background: 'white', border: '1px solid #e8e0e2', borderRadius: 12, padding: '28px 32px', marginBottom: 24, boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+                  <p style={{ ...SF, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#7c1c2e', marginBottom: 12 }}>Definition</p>
+                  <p style={{ ...SF, fontSize: 17, color: '#1a1a1a', lineHeight: 1.65, margin: 0 }}>{currentMatch.card.definition}</p>
+                  {currentMatch.card.example && (
+                    <p style={{ ...SF, fontSize: 14, color: '#6b6b6b', fontStyle: 'italic', marginTop: 12, marginBottom: 0, lineHeight: 1.5 }}>{currentMatch.card.example}</p>
+                  )}
+                </div>
+
+                {/* Term options */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  {currentMatch.options.map((opt) => {
+                    const isSelected = matchSelected === opt.term
+                    const isCorrectOpt = opt.term === currentMatch.card.term
+                    let bg = 'white', border = '1px solid #e8e0e2', color = '#1a1a1a'
+                    if (matchSelected !== null) {
+                      if (isCorrectOpt) { bg = '#f0fdf4'; border = '1px solid #86efac'; color = '#166534' }
+                      else if (isSelected) { bg = '#fff1f2'; border = '1px solid #fca5a5'; color = '#991b1b' }
+                    }
+                    return (
+                      <button
+                        key={opt.term}
+                        onClick={() => handleMatchSelect(opt.term)}
+                        disabled={matchSelected !== null}
+                        style={{ background: bg, border, borderRadius: 10, padding: '16px 20px', fontSize: 15, ...SF, fontWeight: 600, color, cursor: matchSelected !== null ? 'default' : 'pointer', textAlign: 'center', transition: 'background 0.2s, border 0.2s', lineHeight: 1.3 }}
+                      >
+                        {opt.term}
+                      </button>
+                    )
+                  })}
+                </div>
+              </>
+            ) : matchPhase === 'results' ? (
+              <>
+                <div style={{ textAlign: 'center', marginBottom: 32 }}>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 80, height: 80, borderRadius: '50%', background: '#f9f0f2', marginBottom: 16 }}>
+                    <span style={{ fontSize: 36 }}>{matchResults.filter(r => r.correct).length === matchResults.length ? '🎉' : '📝'}</span>
+                  </div>
+                  <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: 26, fontWeight: 700, color: '#1a1a1a', margin: '0 0 8px' }}>
+                    {matchResults.filter(r => r.correct).length} of {matchResults.length} correct
+                  </h4>
+                  <p style={{ ...SF, fontSize: 15, color: '#6b6b6b', margin: '0 0 24px' }}>
+                    {matchResults.filter(r => r.correct).length === matchResults.length
+                      ? 'Perfect score — you know your terms!'
+                      : 'Review the items below and try again.'}
+                  </p>
+                  <button onClick={handleRestartMatch} style={{ background: '#7c1c2e', color: 'white', border: 'none', borderRadius: 8, padding: '10px 28px', fontSize: 14, ...SF, fontWeight: 600, cursor: 'pointer' }}>
+                    Try Again
+                  </button>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {matchResults.map((r, i) => (
+                    <div key={i} style={{ background: r.correct ? '#f0fdf4' : '#fff1f2', border: `1px solid ${r.correct ? '#86efac' : '#fca5a5'}`, borderRadius: 10, padding: '14px 18px', display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                      <span style={{ fontSize: 16, marginTop: 1, flexShrink: 0 }}>{r.correct ? '✓' : '✗'}</span>
+                      <div>
+                        <p style={{ ...SF, fontSize: 14, fontWeight: 700, color: r.correct ? '#166534' : '#991b1b', margin: '0 0 4px' }}>{r.card.term}</p>
+                        <p style={{ ...SF, fontSize: 13, color: '#374151', margin: 0, lineHeight: 1.5 }}>{r.card.definition}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
           </div>
+        </div>
 
-          {/* ── FLASHCARD MODE ── */}
-          {mode === 'flashcard' && (
-            <div className="mt-6">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-xs text-[#6b6b6b]" style={SF}>{seen.size} / {CARDS.length} seen</p>
-                <p className="text-xs text-[#6b6b6b]" style={SF}>{index + 1} of {CARDS.length}</p>
-              </div>
-              <div className="h-1.5 rounded-full bg-[#e8e0e2] mb-6">
-                <div className="h-1.5 rounded-full bg-[#7c1c2e] transition-all" style={{ width: `${(seen.size / CARDS.length) * 100}%` }} />
-              </div>
-
-              {/* Objective label */}
-              <p className="text-[10px] font-bold uppercase tracking-widest text-[#9b9b9b] mb-2" style={SF}>
-                Objective {card.obj} — {objLabels[card.obj]}
-              </p>
-
-              {/* Card */}
-              <button
-                onClick={() => setFlipped(!flipped)}
-                className="w-full min-h-[240px] rounded-xl border-2 border-[#e8e0e2] bg-white p-8 text-left hover:border-[#7c1c2e] hover:shadow-md transition-all active:scale-[0.99]"
-              >
-                {!flipped ? (
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#7c1c2e] mb-4" style={SF}>Term</p>
-                    <p className="text-2xl font-bold text-[#1a1a1a]" style={SE}>{card.term}</p>
-                    <p className="mt-8 text-xs text-[#9b9b9b]" style={SF}>Click to reveal definition →</p>
-                  </div>
-                ) : (
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#7c1c2e] mb-4" style={SF}>Definition</p>
-                    <p className="text-base leading-relaxed text-[#1a1a1a]" style={SF}>{card.definition}</p>
-                    {card.example && (
-                      <p className="mt-4 text-sm text-[#6b6b6b] italic border-l-2 border-[#e8e0e2] pl-3" style={SF}>
-                        Example: {card.example}
-                      </p>
-                    )}
-                    <p className="mt-6 text-xs text-[#9b9b9b]" style={SF}>Click to see term →</p>
-                  </div>
-                )}
-              </button>
-
-              {/* Nav */}
-              <div className="mt-4 flex items-center justify-between">
-                <button onClick={() => goCard(-1)} className="rounded border border-[#e8e0e2] px-5 py-2.5 text-sm font-semibold text-[#6b6b6b] hover:border-[#7c1c2e] hover:text-[#7c1c2e]" style={SF}>← Prev</button>
-                <button onClick={() => setFlipped(!flipped)} className="rounded border border-[#7c1c2e] px-5 py-2.5 text-sm font-semibold text-[#7c1c2e] hover:bg-[#7c1c2e] hover:text-white transition-colors" style={SF}>Flip</button>
-                <button onClick={() => goCard(1)} className="rounded border border-[#e8e0e2] px-5 py-2.5 text-sm font-semibold text-[#6b6b6b] hover:border-[#7c1c2e] hover:text-[#7c1c2e]" style={SF}>Next →</button>
-              </div>
-
-              {/* Term chips */}
-              <div className="mt-8 rounded-xl border border-[#e8e0e2] bg-white p-5">
-                <p className="text-xs font-bold uppercase tracking-widest text-[#6b6b6b] mb-3" style={SF}>All 43 terms — jump to any</p>
-                <div className="flex flex-wrap gap-2">
-                  {CARDS.map((c, i) => (
-                    <button
-                      key={i}
-                      onClick={() => jumpCard(i)}
-                      className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${
-                        i === index ? 'border-[#7c1c2e] bg-[#7c1c2e] text-white'
-                        : seen.has(i) ? 'border-[#7c1c2e] text-[#7c1c2e]'
-                        : 'border-[#e8e0e2] text-[#6b6b6b]'
-                      }`}
-                      style={SF}
-                    >
-                      {c.term}
-                    </button>
+        {/* ── Full Glossary ── */}
+        <div style={{ borderTop: '2px solid #e8e0e2', background: 'white', padding: '48px 24px 64px' }}>
+          <div style={{ maxWidth: 680, margin: '0 auto' }}>
+            <div style={{ textAlign: 'center', marginBottom: 32 }}>
+              <p style={{ ...SF, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#7c1c2e', marginBottom: 8 }}>Study Reference</p>
+              <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: 24, fontWeight: 700, color: '#1a1a1a', margin: 0 }}>Full Glossary</h3>
+            </div>
+            {[1, 2, 3, 4].map((obj) => (
+              <div key={obj} style={{ marginBottom: 32 }}>
+                <div style={{ background: '#faf8f5', border: '1px solid #e8e0e2', borderRadius: '8px 8px 0 0', padding: '10px 18px', borderBottom: 'none' }}>
+                  <p style={{ ...SF, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#7c1c2e', margin: '0 0 2px' }}>Objective {obj}</p>
+                  <p style={{ fontFamily: 'var(--font-serif)', fontSize: 14, fontWeight: 700, color: '#1a1a1a', margin: 0 }}>{OBJ_LABELS[obj]}</p>
+                </div>
+                <div style={{ border: '1px solid #e8e0e2', borderRadius: '0 0 8px 8px', overflow: 'hidden' }}>
+                  {CARDS.filter((c) => c.obj === obj).map((c, i, arr) => (
+                    <div key={c.term} style={{ padding: '16px 18px', borderBottom: i < arr.length - 1 ? '1px solid #f0eaec' : 'none' }}>
+                      <p style={{ ...SF, fontSize: 14, fontWeight: 700, color: '#1a1a1a', margin: '0 0 4px' }}>{c.term}</p>
+                      <p style={{ ...SF, fontSize: 13, color: '#444', lineHeight: 1.6, margin: 0 }}>{c.definition}</p>
+                      {c.example && (
+                        <p style={{ ...SF, fontSize: 12, color: '#6b6b6b', fontStyle: 'italic', marginTop: 6, marginBottom: 0, lineHeight: 1.5, borderLeft: '2px solid #e8e0e2', paddingLeft: 10 }}>{c.example}</p>
+                      )}
+                    </div>
                   ))}
                 </div>
               </div>
-            </div>
-          )}
+            ))}
+          </div>
+        </div>
 
-          {/* ── MATCHING MODE ── */}
-          {mode === 'matching' && (
-            <div className="mt-6">
-              {matchDone ? (
-                <div className="rounded-xl border border-[#e8e0e2] bg-white p-10 text-center">
-                  <p className="text-4xl font-bold text-[#7c1c2e]" style={SE}>{matchCorrect} / {matchRound.length}</p>
-                  <p className="mt-2 text-sm text-[#6b6b6b]" style={SF}>
-                    {matchCorrect === matchRound.length ? 'Perfect score!' : matchCorrect >= matchRound.length * 0.8 ? 'Great work!' : 'Keep practicing!'}
-                  </p>
-                  <button
-                    onClick={restartMatch}
-                    className="mt-6 rounded bg-[#7c1c2e] px-8 py-3 text-sm font-semibold text-white hover:bg-[#5a1220]"
-                    style={SF}
-                  >
-                    Play Again (new set)
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <div className="flex items-center justify-between mb-4">
-                    <p className="text-sm text-[#6b6b6b]" style={SF}>Question {matchIdx + 1} of {matchRound.length}</p>
-                    <p className="text-sm font-semibold text-[#7c1c2e]" style={SF}>{matchCorrect} correct</p>
-                  </div>
-                  <div className="h-1.5 rounded-full bg-[#e8e0e2] mb-6">
-                    <div className="h-1.5 rounded-full bg-[#7c1c2e] transition-all" style={{ width: `${(matchIdx / matchRound.length) * 100}%` }} />
-                  </div>
-
-                  {/* Definition prompt */}
-                  <div className="rounded-xl border-2 border-[#7c1c2e] bg-white p-6 mb-5">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#7c1c2e] mb-3" style={SF}>Match this definition to the correct term:</p>
-                    <p className="text-base leading-relaxed text-[#1a1a1a]" style={SF}>{matchRound[matchIdx].card.definition}</p>
-                  </div>
-
-                  {/* Options */}
-                  <div className="grid grid-cols-1 gap-3">
-                    {matchRound[matchIdx].options.map((opt) => {
-                      const isCorrect = opt.term === matchRound[matchIdx].card.term
-                      const isSelected = selected === opt.term
-                      let cls = 'w-full rounded-lg border-2 px-5 py-4 text-left text-sm font-semibold transition-colors '
-                      if (selected === null) cls += 'border-[#e8e0e2] text-[#1a1a1a] hover:border-[#7c1c2e]'
-                      else if (isCorrect) cls += 'border-green-500 bg-green-50 text-green-800'
-                      else if (isSelected) cls += 'border-red-400 bg-red-50 text-red-800'
-                      else cls += 'border-[#e8e0e2] text-[#9b9b9b]'
-                      return (
-                        <button key={opt.term} onClick={() => pickMatch(opt.term)} className={cls} style={SF}>
-                          {opt.term}
-                        </button>
-                      )
-                    })}
-                  </div>
-                </>
-              )}
-            </div>
-          )}
-
-          {/* ── GLOSSARY MODE ── */}
-          {mode === 'glossary' && (
-            <div className="mt-6 space-y-3">
-              <p className="text-xs text-[#6b6b6b]" style={SF}>43 terms — Subarea I: Foundations of Reading Development</p>
-              {[1, 2, 3, 4].map((obj) => (
-                <div key={obj} className="rounded-xl border border-[#e8e0e2] bg-white overflow-hidden">
-                  <div className="bg-[#faf8f5] border-b border-[#e8e0e2] px-5 py-3">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#7c1c2e]" style={SF}>Objective {obj}</p>
-                    <p className="text-sm font-semibold text-[#1a1a1a]" style={SE}>{objLabels[obj]}</p>
-                  </div>
-                  <div className="divide-y divide-[#e8e0e2]">
-                    {CARDS.filter((c) => c.obj === obj).map((c) => (
-                      <div key={c.term} className="px-5 py-4">
-                        <p className="text-sm font-bold text-[#1a1a1a]" style={SF}>{c.term}</p>
-                        <p className="mt-1 text-sm leading-relaxed text-[#444]" style={SF}>{c.definition}</p>
-                        {c.example && (
-                          <p className="mt-2 text-xs text-[#6b6b6b] italic border-l-2 border-[#e8e0e2] pl-3" style={SF}>
-                            {c.example}
-                          </p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* CTA */}
-          <div className="mt-10 rounded-xl border-2 border-[#7c1c2e] bg-white p-6 text-center">
-            <p className="font-bold text-[#1a1a1a]" style={SE}>Get Subareas II & III + full prep access</p>
-            <p className="mt-1 text-sm text-[#6b6b6b]" style={SF}>150+ terms across all subareas, practice tests, study guide, and AI-graded written responses.</p>
-            <a href="/#pricing" className="mt-4 inline-block rounded-lg bg-[#7c1c2e] px-10 py-3.5 text-sm font-semibold text-white hover:bg-[#5a1220] transition-colors" style={SF}>
+        {/* CTA */}
+        <div style={{ background: '#faf8f5', borderTop: '2px solid #e8e0e2', padding: '48px 24px' }}>
+          <div style={{ maxWidth: 560, margin: '0 auto', textAlign: 'center', background: 'white', border: '2px solid #7c1c2e', borderRadius: 16, padding: '32px 40px' }}>
+            <p style={{ fontFamily: 'var(--font-serif)', fontSize: 20, fontWeight: 700, color: '#1a1a1a', margin: '0 0 8px' }}>Get Subareas II & III + full prep</p>
+            <p style={{ ...SF, fontSize: 14, color: '#6b6b6b', margin: '0 0 20px', lineHeight: 1.6 }}>150+ terms across all subareas, practice tests, study guide, and AI-graded written responses.</p>
+            <a href="/#pricing" style={{ display: 'inline-block', background: '#7c1c2e', color: 'white', borderRadius: 8, padding: '12px 36px', fontSize: 14, ...SF, fontWeight: 600, textDecoration: 'none' }}>
               Get Full Access →
             </a>
           </div>
-
         </div>
+
       </main>
       <SiteFooter />
     </>
