@@ -442,27 +442,35 @@ export default function FlashcardsPage() {
                   ))}
                 </div>
 
-                {/* Full glossary */}
-                <div style={{ borderTop: '2px solid #e8e0e2', paddingTop: 40 }}>
-                  <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: 20, fontWeight: 700, color: '#1a1a1a', marginBottom: 24 }}>Full Glossary</h4>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                    {vocab
-                      .filter((v) => subareaFilter === 'all' || v.subarea === subareaFilter)
-                      .sort((a, b) => a.objectiveNumber - b.objectiveNumber || a.term.localeCompare(b.term))
-                      .map((v) => (
-                        <div key={v._id}>
-                          <p style={{ ...SF, fontSize: 15, color: '#1a1a1a', margin: '0 0 4px', lineHeight: 1.5 }}>
-                            <strong>{v.term}:</strong> {v.definition}
-                          </p>
-                          {v.example && (
-                            <p style={{ ...SF, fontSize: 13, color: '#6b6b6b', fontStyle: 'italic', margin: 0, lineHeight: 1.5 }}>{v.example}</p>
-                          )}
-                        </div>
-                      ))}
-                  </div>
-                </div>
               </>
             ) : null}
+          </div>
+        </div>
+      )}
+
+      {/* ── Full Glossary (always visible) ───────────────────────── */}
+      {vocab.filter((v) => subareaFilter === 'all' || v.subarea === subareaFilter).length > 0 && (
+        <div style={{ borderTop: '2px solid #e8e0e2', background: 'white', padding: '48px 24px 64px' }}>
+          <div style={{ maxWidth: 680, margin: '0 auto' }}>
+            <div style={{ textAlign: 'center', marginBottom: 32 }}>
+              <p style={{ ...SF, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#7c1c2e', marginBottom: 8 }}>Study Reference</p>
+              <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: 24, fontWeight: 700, color: '#1a1a1a', margin: 0 }}>Full Glossary</h3>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+              {vocab
+                .filter((v) => subareaFilter === 'all' || v.subarea === subareaFilter)
+                .sort((a, b) => a.objectiveNumber - b.objectiveNumber || a.term.localeCompare(b.term))
+                .map((v) => (
+                  <div key={v._id} style={{ borderBottom: '1px solid #f0eaec', paddingBottom: 18 }}>
+                    <p style={{ ...SF, fontSize: 15, color: '#1a1a1a', margin: '0 0 4px', lineHeight: 1.6 }}>
+                      <strong>{v.term}:</strong> {v.definition}
+                    </p>
+                    {v.example && (
+                      <p style={{ ...SF, fontSize: 13, color: '#6b6b6b', fontStyle: 'italic', margin: 0, lineHeight: 1.5 }}>{v.example}</p>
+                    )}
+                  </div>
+                ))}
+            </div>
           </div>
         </div>
       )}
