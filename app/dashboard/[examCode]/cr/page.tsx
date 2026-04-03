@@ -462,27 +462,27 @@ export default function CRPage() {
             </div>
           )}
           {!selected ? (
-            <div className="flex h-full items-center justify-center px-8">
-              <div className="max-w-lg w-full">
-                {/* Header */}
-                <p className="text-[10px] font-bold uppercase tracking-widest text-[#7c1c2e] mb-3" style={SF}>Written Response Practice</p>
-                <h2 className="text-2xl font-bold text-[#1a1a1a] leading-snug mb-3" style={SE}>
-                  Practice writing like the real exam.
-                </h2>
-                <p className="text-sm text-[#5a5a5a] leading-relaxed mb-8" style={SF}>
-                  Each prompt gives you a real student scenario — a running record, phonics assessment, or comprehension observation — then asks you to analyze it in writing. Your response is scored 1–4 using the rubric below.
-                </p>
+            <div className="px-10 py-10">
+              {/* Header */}
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[#7c1c2e] mb-3" style={SF}>Written Response Practice</p>
+              <h2 className="text-3xl font-bold text-[#1a1a1a] leading-snug mb-3" style={SE}>
+                Practice writing like the real exam.
+              </h2>
+              <p className="text-base text-[#5a5a5a] leading-relaxed mb-8 max-w-3xl" style={SF}>
+                Each prompt gives you a real student scenario — a running record, phonics assessment, or comprehension observation — then asks you to analyze it in writing. Your response is scored 1–4 using the rubric below.
+              </p>
 
-                {/* Scoring rubric */}
-                <div className="mb-8 rounded-xl border border-[#e8e0e2] overflow-hidden bg-white text-sm" style={SF}>
-                  <div className="bg-[#f9f0f2] px-5 py-2.5 border-b border-[#e8e0e2]">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#7c1c2e]" style={SF}>Scoring Rubric</p>
-                  </div>
+              {/* Scoring rubric — 2-column grid */}
+              <div className="mb-8">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-[#7c1c2e] mb-3" style={SF}>Scoring Rubric</p>
+                <div className="grid grid-cols-2 gap-4">
                   {[
                     {
                       score: '4',
                       label: 'Thorough',
                       color: '#16a34a',
+                      bg: '#f0fdf4',
+                      border: '#86efac',
                       summary: 'Shows thorough knowledge and understanding of the subject matter.',
                       bullets: [
                         'The purpose of the assignment is fully achieved.',
@@ -495,6 +495,8 @@ export default function CRPage() {
                       score: '3',
                       label: 'Adequate',
                       color: '#2563eb',
+                      bg: '#eff6ff',
+                      border: '#93c5fd',
                       summary: 'Shows adequate knowledge and understanding of the subject matter.',
                       bullets: [
                         'The purpose of the assignment is largely achieved.',
@@ -507,6 +509,8 @@ export default function CRPage() {
                       score: '2',
                       label: 'Limited',
                       color: '#d97706',
+                      bg: '#fffbeb',
+                      border: '#fcd34d',
                       summary: 'Shows limited knowledge and understanding of the subject matter.',
                       bullets: [
                         'The purpose of the assignment is only partially achieved.',
@@ -519,6 +523,8 @@ export default function CRPage() {
                       score: '1',
                       label: 'Weak',
                       color: '#dc2626',
+                      bg: '#fef2f2',
+                      border: '#fca5a5',
                       summary: 'Shows weak knowledge and understanding of the subject matter.',
                       bullets: [
                         'The purpose of the assignment is not achieved.',
@@ -527,40 +533,38 @@ export default function CRPage() {
                         'The response reflects little or no reasoning or understanding of the topic.',
                       ],
                     },
-                  ].map((row, i, arr) => (
-                    <div key={row.score} className={`flex gap-0 ${i < arr.length - 1 ? 'border-b border-[#e8e0e2]' : ''}`}>
-                      <div className="flex-shrink-0 w-14 flex flex-col items-center justify-start pt-4 border-r border-[#e8e0e2]">
-                        <span className="text-xl font-bold" style={{ color: row.color }}>{row.score}</span>
-                        <span className="text-[9px] font-semibold uppercase tracking-wide mt-0.5" style={{ color: row.color }}>{row.label}</span>
+                  ].map((row) => (
+                    <div key={row.score} className="rounded-xl border p-5" style={{ background: row.bg, borderColor: row.border }}>
+                      <div className="flex items-center gap-3 mb-3">
+                        <span className="text-3xl font-bold" style={{ color: row.color }}>{row.score}</span>
+                        <span className="text-sm font-bold uppercase tracking-wide" style={{ color: row.color }}>{row.label}</span>
                       </div>
-                      <div className="px-5 py-4 flex-1">
-                        <p className="text-[13px] font-semibold text-[#1a1a1a] mb-2" style={SF}>{row.summary}</p>
-                        <ul className="space-y-1">
-                          {row.bullets.map((b, j) => (
-                            <li key={j} className="flex items-start gap-2 text-xs text-[#5a5a5a] leading-relaxed" style={SF}>
-                              <span className="mt-1 flex-shrink-0 h-1 w-1 rounded-full bg-[#9b9b9b]" />
-                              {b}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+                      <p className="text-sm font-semibold text-[#1a1a1a] mb-2" style={SF}>{row.summary}</p>
+                      <ul className="space-y-1.5">
+                        {row.bullets.map((b, j) => (
+                          <li key={j} className="flex items-start gap-2 text-xs text-[#4a4a4a] leading-relaxed" style={SF}>
+                            <span className="mt-1.5 flex-shrink-0 h-1 w-1 rounded-full bg-[#9b9b9b]" />
+                            {b}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   ))}
                 </div>
-
-                {/* CTA */}
-                <button
-                  onClick={() => crs[0] && selectCR(crs[0])}
-                  disabled={crs.length === 0}
-                  className="w-full rounded-lg bg-[#7c1c2e] py-3 text-sm font-semibold text-white hover:bg-[#5a1220] transition-colors disabled:opacity-40"
-                  style={SF}
-                >
-                  Start with Response 1 →
-                </button>
               </div>
+
+              {/* CTA */}
+              <button
+                onClick={() => crs[0] && selectCR(crs[0])}
+                disabled={crs.length === 0}
+                className="rounded-lg bg-[#7c1c2e] px-8 py-3 text-sm font-semibold text-white hover:bg-[#5a1220] transition-colors disabled:opacity-40"
+                style={SF}
+              >
+                Start with Response 1 →
+              </button>
             </div>
           ) : (
-            <div className="max-w-3xl mx-auto px-8 py-8 space-y-5">
+            <div className="px-10 py-8 space-y-5">
 
               {/* Prompt label */}
               <div>
