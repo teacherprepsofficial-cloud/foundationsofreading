@@ -333,7 +333,7 @@ export default function CRPage() {
       const fetchedAttempts = data.attempts || []
       setAttempts(fetchedAttempts)
       if (fetchedAttempts.length > 0) {
-        setAttemptedIds((prev) => new Set([...prev, cr._id]))
+        setAttemptedIds((prev) => new Set(Array.from(prev).concat(cr._id)))
       }
     } finally {
       setLoadingCR(false)
