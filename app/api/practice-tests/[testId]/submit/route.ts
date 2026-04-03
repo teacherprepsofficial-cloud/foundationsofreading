@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import connectDB from '@/lib/mongodb'
 import PracticeTest from '@/models/PracticeTest'
+import type { ICRPrompt } from '@/models/PracticeTest'
 import Question from '@/models/Question'
 import UserTestAttempt from '@/models/UserTestAttempt'
 import UserProgress from '@/models/UserProgress'
@@ -22,8 +23,7 @@ function crScoreToLevel(score: number): 'Thorough' | 'Adequate' | 'Limited' | 'W
 }
 
 // Build a text summary of exhibit data to include in grading context
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function buildExhibitContext(cr: any): string {
+function buildExhibitContext(cr: ICRPrompt | undefined): string {
   if (!cr) return ''
   const lines: string[] = []
   lines.push(`Objective: ${cr.objective}`)
@@ -47,7 +47,7 @@ function buildExhibitContext(cr: any): string {
       if (errors.length) lines.push(`Reading errors: ${errors.join('; ')}`)
     } else if (exhibit.exhibitType === 'fluency_rubric') {
       lines.push(exhibit.context)
-      lines.push(`Scores — ${(exhibit.rows || []).filter((r: any) => r.score).map((r: any) => `${r.label}: ${r.score}`).join(', ')}`)
+      lines.push(`Scores — ${exhibit.rows.filter(r => r.score).map(r => `${r.label}: ${r.score}`).join(', ')}`)
       lines.push(`Benchmark: ${exhibit.benchmark}`)
     } else if (exhibit.exhibitType === 'anecdotal') {
       lines.push(exhibit.context)
@@ -55,9 +55,9 @@ function buildExhibitContext(cr: any): string {
     } else if (exhibit.exhibitType === 'word_list') {
       lines.push(exhibit.context)
       for (const group of (exhibit.groups || [])) {
-        const correct = group.rows.filter((r: any) => r.correct).length
+        const correct = group.rows.filter(r => r.correct).length
         lines.push(`${group.groupLabel}: ${correct}/${group.rows.length} correct`)
-        const errs = group.rows.filter((r: any) => !r.correct).map((r: any) => `"${r.word}" → "${r.response}"`)
+        const errs = group.rows.filter(r => !r.correct).map(r => `"${r.word}" -> "${r.response}"`)
         if (errs.length) lines.push(`  Errors: ${errs.join(', ')}`)
       }
     } else if (exhibit.exhibitType === 'passage') {
@@ -188,10 +188,8 @@ export async function POST(
     let cr1Feedback = '', cr2Feedback = ''
 
     // Build exhibit contexts from the test's crPrompts
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const cr1Prompt = (test.crPrompts || []).find((p: any) => p.promptNumber === 1)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const cr2Prompt = (test.crPrompts || []).find((p: any) => p.promptNumber === 2)
+    const cr1Prompt = (test.crPrompts || []).find(p => p.promptNumber === 1)
+    const cr2Prompt = (test.crPrompts || []).find(p => p.promptNumber === 2)
     const cr1Context = buildExhibitContext(cr1Prompt)
     const cr2Context = buildExhibitContext(cr2Prompt)
 

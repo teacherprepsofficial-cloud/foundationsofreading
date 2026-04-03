@@ -238,7 +238,7 @@ function WrittenResponseExhibit({ exhibit }: { exhibit: Extract<IExhibit, { exhi
         {exhibit.items.map((item, i) => (
           <div key={i} className="rounded border border-[#e8e0e2] bg-white p-4">
             <p className="text-xs font-bold text-[#6b6b6b] mb-1" style={SF}>{item.question}</p>
-            <p className="text-sm text-[#1a1a1a] leading-relaxed italic" style={SF}>"{item.response}"</p>
+            <p className="text-sm text-[#1a1a1a] leading-relaxed italic" style={SF}>&ldquo;{item.response}&rdquo;</p>
             {item.correct !== undefined && (
               <p className={`mt-1 text-xs font-bold ${item.correct ? 'text-green-600' : 'text-[#6b6b6b]'}`} style={SF}>
                 {item.correct ? '✓ Addresses the question' : '— Partial or surface-level response'}
