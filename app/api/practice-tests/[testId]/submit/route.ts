@@ -133,8 +133,8 @@ export async function POST(
     let crPerformanceLevel: 'Thorough' | 'Adequate' | 'Limited' | 'Weak' | 'No Response' = 'No Response'
     let crFeedback = ''
     let cr1Score = 0, cr2Score = 0
-    let cr1PerformanceLevel: typeof crPerformanceLevel = 'No Response'
-    let cr2PerformanceLevel: typeof crPerformanceLevel = 'No Response'
+    let cr1PerformanceLevel: 'Thorough' | 'Adequate' | 'Limited' | 'Weak' | 'No Response' = 'No Response'
+    let cr2PerformanceLevel: 'Thorough' | 'Adequate' | 'Limited' | 'Weak' | 'No Response' = 'No Response'
     let cr1Feedback = '', cr2Feedback = ''
 
     // Practice test: 2 CR responses (each 10% weight)
