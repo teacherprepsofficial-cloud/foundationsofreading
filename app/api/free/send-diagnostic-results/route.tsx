@@ -347,7 +347,7 @@ export async function POST(request: NextRequest) {
     })
 
     const { error: resendError } = await resend.emails.send({
-      from: 'Foundations of Reading <support@teacherpreps.com>',
+      from: 'Foundations of Reading <support@foundationsofreading.com>',
       to: email.trim(),
       subject: `${firstName.trim()}, your FoRT Diagnostic Results are ready`,
       attachments: [{ filename: 'FoRT-Diagnostic-Results.pdf', content: pdfBuffer }],
