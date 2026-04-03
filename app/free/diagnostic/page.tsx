@@ -464,7 +464,6 @@ export default function FreeDiagnosticPage() {
             >
               Start Diagnostic Test →
             </button>
-            <p className="mt-3 text-center text-xs text-[#9b9b9b]" style={SF}>No login required. Free.</p>
           </div>
         </main>
         <SiteFooter />
