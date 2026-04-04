@@ -6,12 +6,14 @@ export function SiteFooter() {
       <div className="mx-auto max-w-5xl px-6 py-12">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <p className="text-lg font-bold text-white" style={{ fontFamily: 'var(--font-serif)' }}>
-              Foundations of Reading
-            </p>
-            <p className="mt-1 text-[10px] font-medium uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>
-              Test Preparation
-            </p>
+            <Link href="/" className="inline-block">
+              <p className="text-lg font-bold text-white hover:text-gray-200" style={{ fontFamily: 'var(--font-serif)' }}>
+                Foundations of Reading
+              </p>
+              <p className="mt-1 text-[10px] font-medium uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>
+                Test Preparation
+              </p>
+            </Link>
             <p className="mt-4 text-sm leading-relaxed text-[#9b9b9b]" style={{ fontFamily: 'var(--font-sans)' }}>
               Complete online prep for the NES Foundations of Reading test (190 &amp; 890).
             </p>
