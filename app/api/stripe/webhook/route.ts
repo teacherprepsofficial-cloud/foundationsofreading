@@ -8,6 +8,7 @@ import UserAccess from '@/models/UserAccess'
 import type { ExamCode, AccessTier } from '@/models/UserAccess'
 import { Resend } from 'resend'
 import Stripe from 'stripe'
+import crypto from 'crypto'
 
 const resend = new Resend(process.env.RESEND_API_KEY!)
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://foundationsofreading.com'
@@ -86,7 +87,7 @@ export async function POST(request: NextRequest) {
     })
 
     // Send welcome email with password reset link
-    const token = require('crypto').randomBytes(32).toString('hex')
+    const token = crypto.randomBytes(32).toString('hex')
     user.resetPasswordToken = token
     user.resetPasswordExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
     await user.save()
