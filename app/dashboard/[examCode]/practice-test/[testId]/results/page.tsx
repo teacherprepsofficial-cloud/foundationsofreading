@@ -208,7 +208,7 @@ export default function ResultsPage() {
                   Your Score
                 </td>
                 <td className="px-6 py-3 text-sm text-[#1a1a1a]" style={{ fontFamily: 'var(--font-sans)' }}>
-                  {results.passed ? '—' : results.scaledScore}
+                  {results.scaledScore}
                 </td>
               </tr>
               <tr className="border-b border-[#e8e0e2]">

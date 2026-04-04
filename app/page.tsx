@@ -19,7 +19,7 @@ const FAQS = [
   },
   {
     q: 'How long does my access last?',
-    a: '30 days from the date of purchase. That gives you plenty of time to complete the diagnostic, work through the study guide, and take all your practice tests.',
+    a: 'As long as your subscription is active. Cancel anytime from your account — no contracts, no commitment. Most students pass within 30–60 days.',
   },
   {
     q: "What's the AI-graded written response?",
@@ -31,11 +31,11 @@ const FAQS = [
   },
   {
     q: 'Is this a subscription?',
-    a: 'No. One payment, 30-day access. No recurring charges ever.',
+    a: 'Yes — billed monthly, cancel anytime. You keep full access as long as your subscription is active. Cancel before your next billing date and you won\'t be charged again.',
   },
   {
     q: 'When can I start after purchasing?',
-    a: 'Immediately. You get login credentials by email within seconds of checkout. Your 30-day timer starts from that moment.',
+    a: 'Immediately. You\'ll receive an email within seconds of checkout with a link to set your password and access your dashboard.',
   },
 ]
 
@@ -211,7 +211,7 @@ export default function HomePage() {
         <section className="bg-[#7c1c2e] py-20 sm:py-28">
           <div className="mx-auto max-w-3xl px-6 text-center">
             <h2 className="text-3xl font-bold text-white sm:text-4xl" style={{ fontFamily: 'var(--font-serif)' }}>Start preparing today.</h2>
-            <p className="mx-auto mt-4 max-w-md text-lg text-[#f0d0d5]" style={{ fontFamily: 'var(--font-sans)' }}>30-day access. Everything included. One payment.</p>
+            <p className="mx-auto mt-4 max-w-md text-lg text-[#f0d0d5]" style={{ fontFamily: 'var(--font-sans)' }}>Monthly subscription. Cancel anytime. Everything included.</p>
             <a
               href="#pricing"
               className="mt-10 inline-flex items-center justify-center rounded bg-white px-10 py-4 text-sm font-semibold text-[#7c1c2e] transition-colors hover:bg-[#f9f0f2]"
@@ -219,7 +219,7 @@ export default function HomePage() {
             >
               Get Instant Access
             </a>
-            <p className="mt-4 text-sm text-[#e8b4bc]" style={{ fontFamily: 'var(--font-sans)' }}>One-time payment · No subscription · Instant access</p>
+            <p className="mt-4 text-sm text-[#e8b4bc]" style={{ fontFamily: 'var(--font-sans)' }}>Monthly subscription · Cancel anytime · Instant access</p>
           </div>
         </section>
       </main>

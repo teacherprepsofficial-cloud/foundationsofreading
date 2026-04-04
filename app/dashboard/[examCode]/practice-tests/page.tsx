@@ -159,7 +159,7 @@ export default async function PracticeTestsPage({
                   </Link>
                 ) : slot.locked ? (
                   <Link
-                    href={`/dashboard/${examCode}/upgrade`}
+                    href={`/#pricing`}
                     className="flex-shrink-0 rounded border border-[#7c1c2e] px-6 py-2.5 text-sm font-semibold text-[#7c1c2e] hover:bg-[#f9f0f2] transition-colors"
                     style={{ fontFamily: 'var(--font-sans)' }}
                   >
@@ -181,7 +181,7 @@ export default async function PracticeTestsPage({
               Upgrade to the Complete Bundle to unlock Practice Tests 3 and 4, plus 8 AI-graded written response prompts.
             </p>
             <Link
-              href={`/dashboard/${examCode}/upgrade`}
+              href={`/#pricing`}
               className="mt-4 inline-block rounded bg-[#7c1c2e] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#5a1220] transition-colors"
               style={{ fontFamily: 'var(--font-sans)' }}
             >

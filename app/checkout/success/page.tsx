@@ -61,11 +61,10 @@ function SuccessContent() {
           You&apos;re in.
         </h1>
         <p className="mt-3 text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>
-          Your {tier === 'bundle' ? 'Complete Bundle' : 'Starter'} access for NES {examCode} is active.
-          Check your email for your login details.
+          Your {tier === 'bundle' ? 'Foundations of Reading Prep Plus' : 'Foundations of Reading Prep'} subscription is active.
         </p>
         <p className="mt-2 text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>
-          30 days of full access — starting now.
+          Check your email — we sent a link to set your password.
         </p>
         <div className="mt-8">
           {hasAccess ? (

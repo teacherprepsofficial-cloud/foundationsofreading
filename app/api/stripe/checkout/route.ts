@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
         tier,
         userId: auth?.userId || '',
       },
-      success_url: `${BASE_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${BASE_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}&exam=190&tier=${tier}`,
       cancel_url: BASE_URL,
       allow_promotion_codes: true,
     })
