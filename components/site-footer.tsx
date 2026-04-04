@@ -37,7 +37,7 @@ export function SiteFooter() {
             <ul className="mt-4 space-y-2.5">
               {[
                 { href: '/blog', label: 'Blog' },
-                { href: '#what-you-get', label: 'What\'s Included' },
+                { href: '/#what-you-get', label: 'What\'s Included' },
               ].map((l) => (
                 <li key={l.label}>
                   <a href={l.href} className="text-sm text-[#9b9b9b] hover:text-white">{l.label}</a>
