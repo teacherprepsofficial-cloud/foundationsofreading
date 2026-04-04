@@ -71,11 +71,13 @@ export async function POST(request: NextRequest) {
       params.customer_email = customerEmail
     }
 
+    console.log('Stripe params:', JSON.stringify(params))
     const session = await stripePost('/v1/checkout/sessions', params)
+    console.log('Stripe response:', JSON.stringify(session))
 
     if (session.error) {
       console.error('Stripe error:', session.error)
-      return NextResponse.json({ error: 'Stripe error', detail: (session.error as Record<string, string>).message }, { status: 500 })
+      return NextResponse.json({ error: 'Stripe error', detail: (session.error as Record<string, string>).message, params }, { status: 500 })
     }
 
     return NextResponse.json({ url: session.url })
