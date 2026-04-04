@@ -5,7 +5,7 @@ import { getCurrentUser } from '@/lib/auth'
 import connectDB from '@/lib/mongodb'
 import User from '@/models/User'
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://foundationsofreading.com'
+const BASE_URL = (process.env.NEXT_PUBLIC_BASE_URL || 'https://foundationsofreading.com').trim()
 
 // Use raw fetch to Stripe API — the Stripe SDK Node http client fails on Vercel serverless
 // but native fetch works fine (confirmed via /api/stripe/test endpoint)
@@ -71,12 +71,11 @@ export async function POST(request: NextRequest) {
       params.customer_email = customerEmail
     }
 
-    console.log('Stripe params:', JSON.stringify(params))
     const session = await stripePost('/v1/checkout/sessions', params)
-    console.log('Stripe response:', JSON.stringify(session))
 
     if (session.error) {
-      return NextResponse.json({ stripeError: session.error, successUrl: params.success_url, cancelUrl: params.cancel_url }, { status: 500 })
+      console.error('Stripe error:', session.error)
+      return NextResponse.json({ error: 'Failed to create checkout session' }, { status: 500 })
     }
 
     return NextResponse.json({ url: session.url })

@@ -11,7 +11,7 @@ import Stripe from 'stripe'
 import crypto from 'crypto'
 
 const resend = new Resend(process.env.RESEND_API_KEY!)
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://foundationsofreading.com'
+const BASE_URL = (process.env.NEXT_PUBLIC_BASE_URL || 'https://foundationsofreading.com').trim()
 
 // For subscriptions, access is controlled by isActive — not a fixed expiry date.
 // Set expiresAt far in the future while subscription is active.
