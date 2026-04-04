@@ -48,7 +48,7 @@ const CARDS = [
 
 export function PricingSection() {
   const [discountActive, setDiscountActive] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [loadingTier, setLoadingTier] = useState<'starter' | 'bundle' | null>(null)
 
   useEffect(() => {
     setDiscountActive(isDiscountActive())
@@ -59,17 +59,21 @@ export function PricingSection() {
   }, [])
 
   async function handleSelect(tier: 'starter' | 'bundle') {
-    setLoading(true)
+    setLoadingTier(tier)
     try {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ examCode: '190', tier, discounted: discountActive }),
+        body: JSON.stringify({ tier, discounted: discountActive }),
       })
       const data = await res.json()
-      if (data.url) window.location.href = data.url
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        setLoadingTier(null)
+      }
     } catch {
-      setLoading(false)
+      setLoadingTier(null)
     }
   }
 
@@ -150,7 +154,7 @@ export function PricingSection() {
                 </ul>
                 <button
                   onClick={() => handleSelect(card.tier)}
-                  disabled={loading}
+                  disabled={loadingTier === card.tier}
                   className={`mt-8 w-full rounded py-3.5 text-sm font-semibold transition-colors ${
                     card.isFeatured
                       ? 'bg-[#7c1c2e] text-white hover:bg-[#5a1220] disabled:opacity-60'
@@ -158,7 +162,7 @@ export function PricingSection() {
                   }`}
                   style={SF}
                 >
-                  {loading ? 'Loading...' : 'Get Instant Access'}
+                  {loadingTier === card.tier ? 'Loading...' : 'Get Instant Access'}
                 </button>
                 <p className="mt-3 text-center text-xs text-[#6b6b6b]" style={SF}>
                   Monthly Subscription · Cancel anytime
