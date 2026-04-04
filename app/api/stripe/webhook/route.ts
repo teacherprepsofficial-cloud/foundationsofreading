@@ -13,6 +13,12 @@ import crypto from 'crypto'
 const resend = new Resend(process.env.RESEND_API_KEY!)
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://foundationsofreading.com'
 
+// For subscriptions, access is controlled by isActive — not a fixed expiry date.
+// Set expiresAt far in the future while subscription is active.
+function activeExpiresAt() {
+  return new Date(Date.now() + 10 * 365 * 24 * 60 * 60 * 1000)
+}
+
 function tierFromPriceId(priceId: string): AccessTier {
   if (priceId === process.env.STRIPE_PRICE_BUNDLE) return 'bundle'
   return 'starter'
@@ -30,7 +36,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }
 
-  const stripe = getStripe()
   await connectDB()
 
   // ── checkout.session.completed ────────────────────────────────────────────
@@ -48,10 +53,6 @@ export async function POST(request: NextRequest) {
       console.error('Webhook missing email or subscription', session.id)
       return NextResponse.json({ received: true })
     }
-
-    // Get subscription period end
-    const subscription = await stripe.subscriptions.retrieve(subscriptionId) as Stripe.Subscription
-    const expiresAt = new Date(subscription.current_period_end * 1000)
 
     // Find or create user
     let user = await User.findOne({ email: customerEmail.toLowerCase() })
@@ -73,23 +74,23 @@ export async function POST(request: NextRequest) {
       { isActive: false }
     )
 
-    // Create new subscription access
+    // Create new subscription access — active until cancelled
     await UserAccess.create({
       userId: user._id,
       examCode,
       tier,
       purchaseDate: new Date(),
-      expiresAt,
+      expiresAt: activeExpiresAt(),
       stripeSessionId: session.id,
       stripeSubscriptionId: subscriptionId,
       stripeCustomerId: customerId,
       isActive: true,
     })
 
-    // Send welcome email with password reset link
+    // Send welcome email with set-password link (7-day token)
     const token = crypto.randomBytes(32).toString('hex')
     user.resetPasswordToken = token
-    user.resetPasswordExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+    user.resetPasswordExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
     await user.save()
 
     const setPasswordUrl = `${BASE_URL}/reset-password?token=${token}`
@@ -122,16 +123,13 @@ export async function POST(request: NextRequest) {
 
   // ── invoice.paid — monthly renewal ───────────────────────────────────────
   if (event.type === 'invoice.paid') {
-    const invoice = event.data.object as Stripe.Invoice
-    const subscriptionId = invoice.subscription as string
+    const invoice = event.data.object as Stripe.Invoice & { subscription?: string }
+    const subscriptionId = invoice.subscription
     if (!subscriptionId) return NextResponse.json({ received: true })
-
-    const subscription = await stripe.subscriptions.retrieve(subscriptionId) as Stripe.Subscription
-    const expiresAt = new Date(subscription.current_period_end * 1000)
 
     await UserAccess.findOneAndUpdate(
       { stripeSubscriptionId: subscriptionId },
-      { isActive: true, expiresAt }
+      { isActive: true, expiresAt: activeExpiresAt() }
     )
   }
 
@@ -171,17 +169,17 @@ export async function POST(request: NextRequest) {
     if (!priceId) return NextResponse.json({ received: true })
 
     const newTier = tierFromPriceId(priceId)
-    const expiresAt = new Date(subscription.current_period_end * 1000)
+    const isActive = subscription.status === 'active'
 
     await UserAccess.findOneAndUpdate(
       { stripeSubscriptionId: subscription.id },
-      { tier: newTier, expiresAt, isActive: subscription.status === 'active' }
+      { tier: newTier, isActive, expiresAt: isActive ? activeExpiresAt() : new Date() }
     )
   }
 
   // ── invoice.payment_failed — warn user ───────────────────────────────────
   if (event.type === 'invoice.payment_failed') {
-    const invoice = event.data.object as Stripe.Invoice
+    const invoice = event.data.object as Stripe.Invoice & { customer_email?: string }
     const email = invoice.customer_email
     if (email) {
       await resend.emails.send({
