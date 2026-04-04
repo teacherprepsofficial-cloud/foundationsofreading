@@ -113,14 +113,25 @@ export default function HomePage() {
             <div className="grid items-center gap-12 lg:grid-cols-2">
               <div>
                 <p className="text-sm font-medium uppercase tracking-widest text-[#e8b4bc]" style={{ fontFamily: 'var(--font-sans)' }}>
-                  NES Foundations of Reading 190 &amp; 890
+                  Foundations of Reading Exam Preparation
                 </p>
                 <h1 className="mt-4 text-4xl font-bold leading-tight sm:text-5xl" style={{ fontFamily: 'var(--font-serif)' }}>
-                  Pass the Foundations of Reading Test.
+                  Passing the Foundations of Reading Test Made Simple.
                 </h1>
-                <p className="mt-6 text-lg leading-relaxed text-[#f0d0d5]" style={{ fontFamily: 'var(--font-sans)' }}>
-                  Our exam preparation program includes a diagnostic test, comprehensive study guide, timed practice tests, AI-graded constructed responses, and flashcards. Everything in one place.
-                </p>
+                <ul className="mt-6 space-y-2.5">
+                  {[
+                    'Diagnostic practice test',
+                    'Full study guide — all 4 subareas',
+                    'Timed full-length practice tests',
+                    'AI-graded constructed responses',
+                    'Flashcards + vocab matching',
+                  ].map((item) => (
+                    <li key={item} className="flex items-center gap-3 text-base text-[#f0d0d5]" style={{ fontFamily: 'var(--font-sans)' }}>
+                      <span className="text-[#39ff14] font-bold text-lg leading-none">✓</span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
                 <div className="mt-10 flex flex-col gap-4 sm:flex-row">
                   <a href="#pricing" className="inline-flex items-center justify-center rounded bg-white px-8 py-4 text-sm font-semibold text-[#7c1c2e] transition-colors hover:bg-[#f9f0f2]" style={{ fontFamily: 'var(--font-sans)' }}>
                     Get Instant Access

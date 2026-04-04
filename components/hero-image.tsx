@@ -3,7 +3,7 @@
 export function HeroImage() {
   return (
     <div className="hidden lg:flex lg:justify-end">
-      <div className="relative h-[420px] w-[340px] overflow-hidden rounded-2xl bg-[#5a1220] ring-1 ring-white/20 shadow-2xl">
+      <div className="relative h-[520px] w-[420px] overflow-hidden rounded-2xl bg-[#5a1220] ring-1 ring-white/20 shadow-2xl">
         {/* Drop a vertical/square photo at /public/images/teacher-hero.jpg */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
