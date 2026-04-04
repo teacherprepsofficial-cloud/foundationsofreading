@@ -16,7 +16,7 @@ async function stripePost(path: string, params: Record<string, string>): Promise
     headers: {
       Authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}`,
       'Content-Type': 'application/x-www-form-urlencoded',
-      'Stripe-Version': '2025-08-27',
+      'Stripe-Version': '2024-06-20',
     },
     body,
   })
