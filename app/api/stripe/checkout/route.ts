@@ -6,19 +6,19 @@ import { getCurrentUser } from '@/lib/auth'
 import connectDB from '@/lib/mongodb'
 import User from '@/models/User'
 
-const PRICE_IDS = {
-  starter: process.env.STRIPE_PRICE_STARTER!,
-  bundle: process.env.STRIPE_PRICE_BUNDLE!,
-}
-
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://foundationsofreading.com'
-
 export async function POST(request: NextRequest) {
   try {
     const { tier } = await request.json()
-    const priceId = PRICE_IDS[tier as 'starter' | 'bundle']
+
+    const PRICE_IDS: Record<string, string | undefined> = {
+      starter: process.env.STRIPE_PRICE_STARTER,
+      bundle: process.env.STRIPE_PRICE_BUNDLE,
+    }
+    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://foundationsofreading.com'
+
+    const priceId = PRICE_IDS[tier as string]
     if (!priceId) {
-      return NextResponse.json({ error: 'Invalid plan' }, { status: 400 })
+      return NextResponse.json({ error: `Invalid plan or missing price ID for tier: ${tier}` }, { status: 400 })
     }
 
     const stripe = getStripe()
