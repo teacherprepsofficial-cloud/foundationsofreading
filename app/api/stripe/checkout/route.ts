@@ -76,8 +76,7 @@ export async function POST(request: NextRequest) {
     console.log('Stripe response:', JSON.stringify(session))
 
     if (session.error) {
-      console.error('Stripe error:', session.error)
-      return NextResponse.json({ error: 'Stripe error', detail: (session.error as Record<string, string>).message, params }, { status: 500 })
+      return NextResponse.json({ stripeError: session.error, successUrl: params.success_url, cancelUrl: params.cancel_url }, { status: 500 })
     }
 
     return NextResponse.json({ url: session.url })
