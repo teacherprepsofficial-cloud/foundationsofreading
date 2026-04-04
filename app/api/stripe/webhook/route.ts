@@ -123,8 +123,8 @@ export async function POST(request: NextRequest) {
 
   // ── invoice.paid — monthly renewal ───────────────────────────────────────
   if (event.type === 'invoice.paid') {
-    const invoice = event.data.object as Stripe.Invoice & { subscription?: string }
-    const subscriptionId = invoice.subscription
+    const invoice = event.data.object as Stripe.Invoice & { subscription?: string | null }
+    const subscriptionId = typeof invoice.subscription === 'string' ? invoice.subscription : null
     if (!subscriptionId) return NextResponse.json({ received: true })
 
     await UserAccess.findOneAndUpdate(
@@ -179,8 +179,8 @@ export async function POST(request: NextRequest) {
 
   // ── invoice.payment_failed — warn user ───────────────────────────────────
   if (event.type === 'invoice.payment_failed') {
-    const invoice = event.data.object as Stripe.Invoice & { customer_email?: string }
-    const email = invoice.customer_email
+    const invoice = event.data.object as Stripe.Invoice
+    const email = typeof invoice.customer_email === 'string' ? invoice.customer_email : null
     if (email) {
       await resend.emails.send({
         from: 'Foundations of Reading <prep@foundationsofreading.com>',
