@@ -1,10 +1,27 @@
 export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
-import { getStripe } from '@/lib/stripe'
 import { getCurrentUser } from '@/lib/auth'
 import connectDB from '@/lib/mongodb'
 import User from '@/models/User'
+
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://foundationsofreading.com'
+
+// Use raw fetch to Stripe API — the Stripe SDK Node http client fails on Vercel serverless
+// but native fetch works fine (confirmed via /api/stripe/test endpoint)
+async function stripePost(path: string, params: Record<string, string>): Promise<Record<string, unknown>> {
+  const body = new URLSearchParams(params).toString()
+  const res = await fetch(`https://api.stripe.com${path}`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Stripe-Version': '2025-08-27',
+    },
+    body,
+  })
+  return res.json() as Promise<Record<string, unknown>>
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,14 +31,12 @@ export async function POST(request: NextRequest) {
       starter: process.env.STRIPE_PRICE_STARTER,
       bundle: process.env.STRIPE_PRICE_BUNDLE,
     }
-    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://foundationsofreading.com'
 
     const priceId = PRICE_IDS[tier as string]
     if (!priceId) {
       return NextResponse.json({ error: `Invalid plan or missing price ID for tier: ${tier}` }, { status: 400 })
     }
 
-    const stripe = getStripe()
     const auth = await getCurrentUser()
 
     let stripeCustomerId: string | undefined
@@ -31,30 +46,37 @@ export async function POST(request: NextRequest) {
       await connectDB()
       const user = await User.findById(auth.userId)
       if (user?.stripeCustomerId) stripeCustomerId = user.stripeCustomerId
-      customerEmail = user?.email
+      if (user?.email) customerEmail = user.email
     }
 
-    const session = await stripe.checkout.sessions.create({
+    const params: Record<string, string> = {
       mode: 'subscription',
-      ...(stripeCustomerId ? { customer: stripeCustomerId } : customerEmail ? { customer_email: customerEmail } : {}),
-      payment_method_types: ['card'],
-      line_items: [{ price: priceId, quantity: 1 }],
-      subscription_data: {
-        metadata: {
-          examCode: '190',
-          tier,
-          userId: auth?.userId || '',
-        },
-      },
-      metadata: {
-        examCode: '190',
-        tier,
-        userId: auth?.userId || '',
-      },
+      'payment_method_types[]': 'card',
+      'line_items[0][price]': priceId,
+      'line_items[0][quantity]': '1',
+      'subscription_data[metadata][examCode]': '190',
+      'subscription_data[metadata][tier]': tier,
+      'subscription_data[metadata][userId]': auth?.userId || '',
+      'metadata[examCode]': '190',
+      'metadata[tier]': tier,
+      'metadata[userId]': auth?.userId || '',
       success_url: `${BASE_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}&exam=190&tier=${tier}`,
       cancel_url: BASE_URL,
-      allow_promotion_codes: true,
-    })
+      allow_promotion_codes: 'true',
+    }
+
+    if (stripeCustomerId) {
+      params.customer = stripeCustomerId
+    } else if (customerEmail) {
+      params.customer_email = customerEmail
+    }
+
+    const session = await stripePost('/v1/checkout/sessions', params)
+
+    if (session.error) {
+      console.error('Stripe error:', session.error)
+      return NextResponse.json({ error: 'Stripe error', detail: (session.error as Record<string, string>).message }, { status: 500 })
+    }
 
     return NextResponse.json({ url: session.url })
   } catch (err: unknown) {
