@@ -14,7 +14,7 @@ async function stripePost(path: string, params: Record<string, string>): Promise
   const res = await fetch(`https://api.stripe.com${path}`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}`,
+      Authorization: `Bearer ${process.env.STRIPE_SECRET_KEY?.trim()}`,
       'Content-Type': 'application/x-www-form-urlencoded',
       'Stripe-Version': '2024-06-20',
     },
@@ -28,8 +28,8 @@ export async function POST(request: NextRequest) {
     const { tier } = await request.json()
 
     const PRICE_IDS: Record<string, string | undefined> = {
-      starter: process.env.STRIPE_PRICE_STARTER,
-      bundle: process.env.STRIPE_PRICE_BUNDLE,
+      starter: process.env.STRIPE_PRICE_STARTER?.trim(),
+      bundle: process.env.STRIPE_PRICE_BUNDLE?.trim(),
     }
 
     const priceId = PRICE_IDS[tier as string]
@@ -74,7 +74,8 @@ export async function POST(request: NextRequest) {
     const session = await stripePost('/v1/checkout/sessions', params)
 
     if (session.error) {
-      return NextResponse.json({ stripeError: session.error }, { status: 500 })
+      console.error('Stripe error:', session.error)
+      return NextResponse.json({ error: 'Failed to create checkout session' }, { status: 500 })
     }
 
     return NextResponse.json({ url: session.url })

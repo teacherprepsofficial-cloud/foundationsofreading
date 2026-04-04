@@ -20,7 +20,7 @@ function activeExpiresAt() {
 }
 
 function tierFromPriceId(priceId: string): AccessTier {
-  if (priceId === process.env.STRIPE_PRICE_BUNDLE) return 'bundle'
+  if (priceId === process.env.STRIPE_PRICE_BUNDLE?.trim()) return 'bundle'
   return 'starter'
 }
 
