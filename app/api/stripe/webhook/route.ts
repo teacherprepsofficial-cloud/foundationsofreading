@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get subscription period end
-    const subscription = await stripe.subscriptions.retrieve(subscriptionId)
+    const subscription = await stripe.subscriptions.retrieve(subscriptionId) as Stripe.Subscription
     const expiresAt = new Date(subscription.current_period_end * 1000)
 
     // Find or create user
@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
     const subscriptionId = invoice.subscription as string
     if (!subscriptionId) return NextResponse.json({ received: true })
 
-    const subscription = await stripe.subscriptions.retrieve(subscriptionId)
+    const subscription = await stripe.subscriptions.retrieve(subscriptionId) as Stripe.Subscription
     const expiresAt = new Date(subscription.current_period_end * 1000)
 
     await UserAccess.findOneAndUpdate(
