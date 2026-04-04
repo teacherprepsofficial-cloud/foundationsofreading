@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { BLOG_POSTS } from '@/data/blog-posts'
+import { SiteHeader } from '@/components/site-header'
+import { SiteFooter } from '@/components/site-footer'
 
 export const metadata: Metadata = {
   title: 'Blog',
@@ -11,6 +13,8 @@ export const metadata: Metadata = {
 
 export default function BlogPage() {
   return (
+    <>
+    <SiteHeader />
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 sm:py-16">
       <section className="text-center">
         <h1 className="font-serif text-3xl font-bold text-gray-900 sm:text-4xl">Blog</h1>
@@ -41,5 +45,7 @@ export default function BlogPage() {
         ))}
       </div>
     </div>
+    <SiteFooter />
+    </>
   )
 }
