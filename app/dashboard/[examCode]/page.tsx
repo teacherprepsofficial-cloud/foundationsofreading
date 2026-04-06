@@ -6,6 +6,7 @@ import UserAccess from '@/models/UserAccess'
 import UserProgress from '@/models/UserProgress'
 import UserTestAttempt from '@/models/UserTestAttempt'
 import User from '@/models/User'
+import mongoose from 'mongoose'
 
 export default async function ExamDashboardPage({
   params,
@@ -21,14 +22,16 @@ export default async function ExamDashboardPage({
   await connectDB()
   const now = new Date()
 
+  const uid = new mongoose.Types.ObjectId(auth.userId)
+
   const [access, user] = await Promise.all([
-    UserAccess.findOne({ userId: auth.userId, examCode, isActive: true, expiresAt: { $gt: now } }),
-    User.findById(auth.userId).select('name email'),
+    UserAccess.findOne({ userId: uid, examCode, isActive: true, expiresAt: { $gt: now } }),
+    User.findById(uid).select('name email'),
   ])
 
   if (!access) redirect('/dashboard')
 
-  const progress = await UserProgress.findOne({ userId: auth.userId, examCode })
+  const progress = await UserProgress.findOne({ userId: uid, examCode })
 
   // Diagnostic score
   let diagnosticScore: { scaledScore: number; passed: boolean; subareaScores: { subarea: string; subareaName: string; percentage: number }[] } | null = null
@@ -45,7 +48,7 @@ export default async function ExamDashboardPage({
 
   // All completed practice test attempts (non-diagnostic)
   const practiceAttempts = await UserTestAttempt.find({
-    userId: auth.userId,
+    userId: uid,
     examCode,
     isDiagnostic: false,
     status: 'completed',

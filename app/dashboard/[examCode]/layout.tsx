@@ -4,6 +4,7 @@ import connectDB from '@/lib/mongodb'
 import UserAccess from '@/models/UserAccess'
 import UserProgress from '@/models/UserProgress'
 import DashboardSidebar from '@/components/dashboard-sidebar'
+import mongoose from 'mongoose'
 
 export default async function ExamDashboardLayout({
   children,
@@ -20,9 +21,11 @@ export default async function ExamDashboardLayout({
   await connectDB()
   const now = new Date()
 
+  const uid = new mongoose.Types.ObjectId(auth.userId)
+
   const [access, progress] = await Promise.all([
-    UserAccess.findOne({ userId: auth.userId, examCode, isActive: true, expiresAt: { $gt: now } }),
-    UserProgress.findOne({ userId: auth.userId, examCode }),
+    UserAccess.findOne({ userId: uid, examCode, isActive: true, expiresAt: { $gt: now } }),
+    UserProgress.findOne({ userId: uid, examCode }),
   ])
 
   if (!access) redirect('/dashboard')

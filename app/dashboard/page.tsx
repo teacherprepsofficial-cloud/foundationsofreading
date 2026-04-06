@@ -3,6 +3,7 @@ import { getCurrentUser } from '@/lib/auth'
 import connectDB from '@/lib/mongodb'
 import UserAccess from '@/models/UserAccess'
 import Link from 'next/link'
+import mongoose from 'mongoose'
 
 export default async function DashboardPage() {
   const auth = await getCurrentUser()
@@ -11,7 +12,7 @@ export default async function DashboardPage() {
   await connectDB()
   const now = new Date()
   const accesses = await UserAccess.find({
-    userId: auth.userId,
+    userId: new mongoose.Types.ObjectId(auth.userId),
     isActive: true,
     expiresAt: { $gt: now },
   })
