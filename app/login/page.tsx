@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { SiteHeader } from '@/components/site-header'
+import { SiteFooter } from '@/components/site-footer'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -38,19 +40,10 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#faf8f5] px-4">
+    <div className="flex min-h-screen flex-col bg-[#faf8f5]">
+      <SiteHeader />
+      <div className="flex flex-1 items-center justify-center px-4 py-16">
       <div className="w-full max-w-sm">
-        <div className="mb-8 text-center">
-          <Link href="/" className="inline-block">
-            <p className="text-xl font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>
-              Foundations of Reading
-            </p>
-            <p className="text-[10px] font-medium uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>
-              Test Preparation
-            </p>
-          </Link>
-        </div>
-
         <div className="rounded-lg border border-[#e8e0e2] bg-white p-8">
           <h1 className="text-2xl font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>
             Log in
@@ -119,6 +112,8 @@ export default function LoginPage() {
           </p>
         </div>
       </div>
+      </div>
+      <SiteFooter />
     </div>
   )
 }
