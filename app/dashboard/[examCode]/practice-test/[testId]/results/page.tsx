@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
+import QuestionStemRenderer from '@/components/question-stem-renderer'
 
 interface Option {
   label: 'A' | 'B' | 'C' | 'D'
@@ -421,12 +422,11 @@ export default function ResultsPage() {
                       />
                     )}
                     {/* Question */}
-                    <p
-                      className="text-sm leading-relaxed text-[#1a1a1a] mb-4"
+                    <QuestionStemRenderer
+                      text={q.questionText}
+                      className="text-sm mb-4"
                       style={{ fontFamily: 'var(--font-sans)' }}
-                    >
-                      {q.questionText}
-                    </p>
+                    />
 
                     {/* Options */}
                     <div className="space-y-2 mb-4">

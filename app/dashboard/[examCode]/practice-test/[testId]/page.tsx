@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import QuestionStemRenderer from '@/components/question-stem-renderer'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -733,9 +734,10 @@ export default function PracticeTestPage() {
           {currentQuestion.stimulus && (
             <div className="mb-5 rounded border border-[#c8c0c4] bg-[#fdfcfb] p-4 text-sm text-[#1a1a1a]" style={SF} dangerouslySetInnerHTML={{ __html: currentQuestion.stimulus }} />
           )}
-          <p className="leading-relaxed text-[#1a1a1a]" style={{ ...SF, fontSize: '15px' }}>
-            {currentQuestion.questionText}
-          </p>
+          <QuestionStemRenderer
+            text={currentQuestion.questionText}
+            style={{ ...SF, fontSize: '15px' }}
+          />
           <div className="mt-6 space-y-3">
             {currentQuestion.options.map(opt => {
               const isSelected = currentResponse === opt.label

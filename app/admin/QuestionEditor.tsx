@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import QuestionStemRenderer from '@/components/question-stem-renderer'
 
 interface QuestionOption { label: string; text: string }
 interface Question {
@@ -192,11 +193,17 @@ export default function QuestionEditor() {
                     <div>
                       <p className="text-xs font-bold text-[#6b6b6b] uppercase tracking-wide mb-1">Stem</p>
                       <EditableField
-                        rows={3}
+                        rows={edit.questionText.includes('|') ? 6 : 3}
                         value={edit.questionText}
                         onChange={v => updateField(q._id, 'questionText', v)}
                         className="font-medium"
                       />
+                      {edit.questionText.includes('|') && (
+                        <div className="mt-2 rounded border border-[#c8c0c4] bg-[#fdfcfb] p-3">
+                          <p className="text-xs font-bold text-[#6b6b6b] uppercase tracking-wide mb-2">Table Preview</p>
+                          <QuestionStemRenderer text={edit.questionText} style={SF} className="text-sm" />
+                        </div>
+                      )}
                     </div>
 
                     {/* Options */}
