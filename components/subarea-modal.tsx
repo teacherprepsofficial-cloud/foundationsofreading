@@ -116,28 +116,36 @@ export function SubareaGrid() {
 
   return (
     <>
-      <div className="mt-10 grid gap-4 sm:grid-cols-2">
-        {SUBAREAS.map((s) => (
+      <div className="mt-10 overflow-hidden rounded-lg border border-[#e8e0e2] bg-white shadow-sm">
+        {/* Table header */}
+        <div className="grid grid-cols-[2.5rem_1fr_auto_auto] items-center gap-x-6 border-b border-[#e8e0e2] bg-[#faf8f5] px-6 py-3">
+          <span className="text-xs font-semibold uppercase tracking-widest text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>Key</span>
+          <span className="text-xs font-semibold uppercase tracking-widest text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>Content Subarea</span>
+          <span className="text-xs font-semibold uppercase tracking-widest text-[#6b6b6b] text-right" style={{ fontFamily: 'var(--font-sans)' }}>Questions</span>
+          <span className="text-xs font-semibold uppercase tracking-widest text-[#6b6b6b] text-right" style={{ fontFamily: 'var(--font-sans)' }}>% of Exam</span>
+        </div>
+
+        {/* Table rows */}
+        {SUBAREAS.map((s, i) => (
           <button
             key={s.roman}
             onClick={() => setOpen(s)}
-            className="flex items-start gap-4 rounded-lg border border-[#e8e0e2] bg-white p-6 text-left transition-all hover:border-[#7c1c2e] hover:shadow-sm"
+            className={`w-full grid grid-cols-[2.5rem_1fr_auto_auto] items-center gap-x-6 px-6 py-5 text-left transition-colors hover:bg-[#faf8f5] ${i < SUBAREAS.length - 1 ? 'border-b border-[#e8e0e2]' : ''}`}
           >
             <span
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded text-sm font-bold text-white"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded text-xs font-bold text-white"
               style={{ backgroundColor: s.color, fontFamily: 'var(--font-sans)' }}
             >
               {s.roman}
             </span>
             <div>
               <p className="font-semibold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>{s.name}</p>
-              <p className="mt-1 text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>
-                {s.weight} &middot; {s.questions}
-              </p>
-              <p className="mt-1 text-xs text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>
+              <p className="mt-0.5 text-xs text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>
                 {s.objectives.length} objectives — click to explore
               </p>
             </div>
+            <span className="text-sm text-[#6b6b6b] text-right whitespace-nowrap" style={{ fontFamily: 'var(--font-sans)' }}>{s.questions}</span>
+            <span className="text-sm font-semibold text-[#1a1a1a] text-right" style={{ fontFamily: 'var(--font-sans)' }}>{s.weight}</span>
           </button>
         ))}
       </div>

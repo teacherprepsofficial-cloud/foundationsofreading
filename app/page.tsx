@@ -146,7 +146,7 @@ export default function HomePage() {
         <section className="py-16 sm:py-24">
           <div className="mx-auto max-w-5xl px-6">
             <p className="text-xs font-semibold uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>Exam Structure</p>
-            <h2 className="mt-3 text-3xl font-bold text-[#1a1a1a] sm:text-4xl" style={{ fontFamily: 'var(--font-serif)' }}>4 Subareas. 11 Objectives.</h2>
+            <h2 className="mt-3 text-3xl font-bold text-[#1a1a1a] sm:text-4xl" style={{ fontFamily: 'var(--font-serif)' }}>Our Prep Aligns Exactly To Your Exam.</h2>
             <p className="mt-2 text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>Click any subarea to explore the objectives it covers.</p>
             <SubareaGrid />
           </div>
