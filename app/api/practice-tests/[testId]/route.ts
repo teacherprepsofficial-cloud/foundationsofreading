@@ -28,7 +28,6 @@ function shuffleOptions(options: RawOption[], correctAnswer: string, explanation
     return { label: labels[i], text: opt.text }
   })
   const newCorrect = oldToNew[correctAnswer]
-  // Rewrite explanation letter references to match new labels
   const newExplanation = explanation
     .replace(/Correct Response:\s*([A-D])/g, (_, l) => 'Correct Response: ' + (oldToNew[l] || l))
     .replace(/Option ([A-D])\b/g, (_, l) => 'Option ' + (oldToNew[l] || l))
@@ -59,12 +58,9 @@ export async function GET(
     })
     if (!access) return NextResponse.json({ error: 'Access required' }, { status: 403 })
 
-    // Check if bundle test (3 or 4) and user has starter
     if (test.testNumber > 2 && access.tier === 'starter') {
       return NextResponse.json({ error: 'Bundle access required' }, { status: 403 })
     }
-
-    await connectDB()
 
     // Check for in-progress attempt
     const inProgress = await UserTestAttempt.findOne({
@@ -74,29 +70,33 @@ export async function GET(
     })
 
     if (inProgress) {
-      // Resume: use stored shuffled question data if available, else fall back to DB
-      let questions
+      // Resume: restore the exact shuffled order the student originally saw
       if (inProgress.questionData?.length) {
-        questions = inProgress.questionData.map((d: { questionId: unknown; options: RawOption[]; correctAnswer: string; explanation: string }) => ({
-          _id: d.questionId,
-          options: d.options,
-          // Don't expose correctAnswer or explanation to client during test
-        }))
-        // We need the rest of the question fields (text, stimulus, subarea, etc.)
         const dbQuestions = await Question.find({ _id: { $in: test.questionIds } })
           .select('questionText stimulus subarea subareaName objectiveNumber difficulty')
           .lean()
         const dbMap = Object.fromEntries(dbQuestions.map(q => [String(q._id), q]))
-        questions = inProgress.questionData.map((d: { questionId: unknown; options: RawOption[] }) => ({
+        // Preserve the original shuffled question order from questionData
+        const questions = inProgress.questionData.map((d: { questionId: unknown; options: RawOption[] }) => ({
           ...dbMap[String(d.questionId)],
           _id: d.questionId,
           options: d.options,
         }))
-      } else {
-        questions = await Question.find({ _id: { $in: test.questionIds } })
-          .select('questionText options subarea subareaName objectiveNumber difficulty stimulus')
+        return NextResponse.json({
+          test: { _id: test._id, name: test.name, timeLimitMinutes: test.timeLimitMinutes, isDiagnostic: test.isDiagnostic, crPrompts: test.crPrompts ?? [] },
+          questions,
+          attempt: {
+            _id: inProgress._id,
+            responses: inProgress.responses,
+            startedAt: inProgress.startedAt,
+            timeSpentSeconds: inProgress.timeSpentSeconds,
+          },
+          resumed: true,
+        })
       }
-
+      // Fallback for old attempts without questionData
+      const questions = await Question.find({ _id: { $in: test.questionIds } })
+        .select('questionText options subarea subareaName objectiveNumber difficulty stimulus')
       return NextResponse.json({
         test: { _id: test._id, name: test.name, timeLimitMinutes: test.timeLimitMinutes, isDiagnostic: test.isDiagnostic, crPrompts: test.crPrompts ?? [] },
         questions,
@@ -110,12 +110,11 @@ export async function GET(
       })
     }
 
-    // Fetch questions for new attempt
+    // New attempt: fetch questions, shuffle order, shuffle options within each question
     const questions = await Question.find({ _id: { $in: test.questionIds } })
       .select('questionText options correctAnswer explanation subarea subareaName objectiveNumber difficulty stimulus')
       .lean()
 
-    // Shuffle question order, then shuffle options within each question
     const shuffledQuestions = shuffle(questions)
     const questionData = shuffledQuestions.map(q => {
       const { options, correctAnswer, explanation } = shuffleOptions(
@@ -126,7 +125,6 @@ export async function GET(
       return { questionId: q._id, options, correctAnswer, explanation }
     })
 
-    // Create new attempt with shuffled data stored
     const attempt = await UserTestAttempt.create({
       userId: auth.userId,
       testId,
@@ -140,7 +138,7 @@ export async function GET(
       questionData,
     })
 
-    // Return questions with shuffled options (no correctAnswer/explanation during test)
+    // Return to client: shuffled options, no correctAnswer/explanation during test
     const clientQuestions = shuffledQuestions.map((q, i) => ({
       _id: q._id,
       questionText: q.questionText,

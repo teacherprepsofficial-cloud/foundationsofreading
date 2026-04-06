@@ -324,9 +324,14 @@ export async function POST(
       { upsert: true }
     )
 
-    // Return results with shuffled options/correctAnswer/explanation (matching what student saw)
-    const questionsWithAnswers = questions.map((q) => {
-      const id = q._id.toString()
+    // Return results in the shuffled order the student saw (using questionData order if available)
+    const orderedIds: string[] = attempt.questionData?.length
+      ? attempt.questionData.map((d: { questionId: { toString(): string } }) => d.questionId.toString())
+      : questions.map((q) => q._id.toString())
+
+    const questionsWithAnswers = orderedIds.map((id) => {
+      const q = questionMap.get(id)
+      if (!q) return null
       return {
         _id: q._id,
         questionText: q.questionText,
@@ -337,7 +342,7 @@ export async function POST(
         subarea: q.subarea,
         subareaName: q.subareaName,
       }
-    })
+    }).filter(Boolean)
 
     return NextResponse.json({
       success: true,
