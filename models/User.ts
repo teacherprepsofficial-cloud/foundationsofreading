@@ -6,6 +6,7 @@ export interface IUser extends Document {
   name: string
   email: string
   password: string
+  isAdmin?: boolean
   stripeCustomerId?: string
   resetPasswordToken?: string
   resetPasswordExpires?: Date
@@ -26,6 +27,7 @@ const UserSchema = new Schema<IUser>(
       match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email'],
     },
     password: { type: String, required: true, minlength: 8, select: false },
+    isAdmin: { type: Boolean, default: false },
     stripeCustomerId: { type: String, sparse: true },
     resetPasswordToken: { type: String },
     resetPasswordExpires: { type: Date },
