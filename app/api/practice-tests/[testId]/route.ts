@@ -8,6 +8,15 @@ import UserAccess from '@/models/UserAccess'
 import UserTestAttempt from '@/models/UserTestAttempt'
 import { getCurrentUserFromRequest } from '@/lib/auth'
 
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
+
 // GET /api/practice-tests/[testId] — start or resume a test
 export async function GET(
   request: NextRequest,
@@ -63,6 +72,9 @@ export async function GET(
       })
     }
 
+    // Shuffle question order for new attempts
+    const shuffledQuestions = shuffle(questions)
+
     // Create new attempt
     const attempt = await UserTestAttempt.create({
       userId: auth.userId,
@@ -78,7 +90,7 @@ export async function GET(
 
     return NextResponse.json({
       test: { _id: test._id, name: test.name, timeLimitMinutes: test.timeLimitMinutes, isDiagnostic: test.isDiagnostic, crPrompts: test.crPrompts ?? [] },
-      questions,
+      questions: shuffledQuestions,
       attempt: { _id: attempt._id, responses: [], startedAt: attempt.startedAt, timeSpentSeconds: 0 },
       resumed: false,
     })
