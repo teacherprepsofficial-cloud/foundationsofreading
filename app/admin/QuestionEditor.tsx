@@ -1,12 +1,8 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 
-interface QuestionOption {
-  label: string
-  text: string
-}
-
+interface QuestionOption { label: string; text: string }
 interface Question {
   _id: string
   questionText: string
@@ -15,65 +11,87 @@ interface Question {
   explanation: string
   subarea: string
   objectiveNumber: number
-  isPublished: boolean
-  isDiagnostic: boolean
+  stimulus?: string
 }
-
-interface SearchResults {
-  questions: Question[]
-  total: number
-  page: number
-  pages: number
+interface PracticeTest {
+  _id: string
+  name: string
+  testNumber: number
+  isDiagnostic: boolean
+  questionIds: string[]
 }
 
 const SF = { fontFamily: 'var(--font-sans)' }
 
+function EditableField({
+  value,
+  onChange,
+  rows = 2,
+  className = '',
+}: {
+  value: string
+  onChange: (v: string) => void
+  rows?: number
+  className?: string
+}) {
+  return (
+    <textarea
+      rows={rows}
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      className={`w-full rounded border border-transparent px-2 py-1 text-sm text-[#1a1a1a] bg-transparent hover:border-[#e8e0e2] focus:border-[#7c1c2e] focus:bg-white focus:outline-none resize-none transition-colors ${className}`}
+    />
+  )
+}
+
 export default function QuestionEditor() {
-  const [query, setQuery] = useState('')
-  const [subarea, setSubarea] = useState('')
-  const [results, setResults] = useState<SearchResults | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [expandedId, setExpandedId] = useState<string | null>(null)
-  const [editState, setEditState] = useState<Record<string, Question>>({})
+  const [tests, setTests] = useState<PracticeTest[]>([])
+  const [selectedTest, setSelectedTest] = useState<PracticeTest | null>(null)
+  const [questions, setQuestions] = useState<Question[]>([])
+  const [edits, setEdits] = useState<Record<string, Question>>({})
   const [saving, setSaving] = useState<string | null>(null)
-  const [saved, setSaved] = useState<string | null>(null)
+  const [saved, setSaved] = useState<Record<string, boolean>>({})
+  const [loadingTest, setLoadingTest] = useState(false)
 
-  const search = useCallback(async (page = 1) => {
-    setLoading(true)
-    const params = new URLSearchParams({ page: String(page) })
-    if (query) params.set('q', query)
-    if (subarea) params.set('subarea', subarea)
-    const res = await fetch(`/api/admin/questions?${params}`)
+  useEffect(() => {
+    fetch('/api/admin/practice-tests')
+      .then(r => r.json())
+      .then(d => setTests(d.tests || []))
+  }, [])
+
+  async function loadTest(test: PracticeTest) {
+    setSelectedTest(test)
+    setLoadingTest(true)
+    setEdits({})
+    setSaved({})
+    const res = await fetch(`/api/admin/practice-tests/${test._id}`)
     const data = await res.json()
-    setResults(data)
-    setLoading(false)
-  }, [query, subarea])
-
-  function startEdit(q: Question) {
-    setExpandedId(q._id)
-    setEditState(prev => ({
-      ...prev,
-      [q._id]: JSON.parse(JSON.stringify(q)),
-    }))
+    const qs: Question[] = data.questions || []
+    setQuestions(qs)
+    // Initialize edits with current values
+    const initial: Record<string, Question> = {}
+    qs.forEach(q => { initial[q._id] = JSON.parse(JSON.stringify(q)) })
+    setEdits(initial)
+    setLoadingTest(false)
   }
 
-  function updateOption(id: string, index: number, text: string) {
-    setEditState(prev => {
-      const q = { ...prev[id] }
-      q.options = q.options.map((o, i) => i === index ? { ...o, text } : o)
-      return { ...prev, [id]: q }
+  function updateOption(qId: string, index: number, text: string) {
+    setEdits(prev => {
+      const q = { ...prev[qId], options: [...prev[qId].options] }
+      q.options[index] = { ...q.options[index], text }
+      return { ...prev, [qId]: q }
     })
   }
 
-  function updateField(id: string, field: keyof Question, value: string) {
-    setEditState(prev => ({ ...prev, [id]: { ...prev[id], [field]: value } }))
+  function updateField(qId: string, field: keyof Question, value: string) {
+    setEdits(prev => ({ ...prev, [qId]: { ...prev[qId], [field]: value } }))
   }
 
-  async function save(id: string) {
-    const q = editState[id]
+  async function saveQuestion(qId: string) {
+    const q = edits[qId]
     if (!q) return
-    setSaving(id)
-    const res = await fetch(`/api/admin/questions/${id}`, {
+    setSaving(qId)
+    const res = await fetch(`/api/admin/questions/${qId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -85,190 +103,154 @@ export default function QuestionEditor() {
     })
     setSaving(null)
     if (res.ok) {
-      const { question } = await res.json()
-      setResults(prev => prev ? {
-        ...prev,
-        questions: prev.questions.map(existing => existing._id === id ? question : existing),
-      } : null)
-      setSaved(id)
-      setTimeout(() => setSaved(null), 2000)
-      setExpandedId(null)
+      setSaved(prev => ({ ...prev, [qId]: true }))
+      setTimeout(() => setSaved(prev => { const n = { ...prev }; delete n[qId]; return n }), 3000)
     } else {
-      alert('Failed to save. Check console.')
+      alert('Save failed.')
     }
   }
 
+  const diagnosticTest = tests.find(t => t.isDiagnostic)
+  const practicetests = tests.filter(t => !t.isDiagnostic)
+
   return (
     <div style={SF}>
-      {/* Search bar */}
-      <div className="flex gap-3 mb-6">
-        <input
-          type="text"
-          placeholder="Search question text..."
-          value={query}
-          onChange={e => setQuery(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && search()}
-          className="flex-1 rounded border border-[#e8e0e2] px-3 py-2 text-sm focus:outline-none focus:border-[#7c1c2e]"
-        />
-        <select
-          value={subarea}
-          onChange={e => setSubarea(e.target.value)}
-          className="rounded border border-[#e8e0e2] px-3 py-2 text-sm focus:outline-none focus:border-[#7c1c2e]"
-        >
-          <option value="">All Subareas</option>
-          <option value="I">Subarea I</option>
-          <option value="II">Subarea II</option>
-          <option value="III">Subarea III</option>
-        </select>
-        <button
-          onClick={() => search()}
-          disabled={loading}
-          className="rounded bg-[#7c1c2e] px-5 py-2 text-sm font-semibold text-white hover:bg-[#5a1220] disabled:opacity-50"
-        >
-          {loading ? 'Searching...' : 'Search'}
-        </button>
+      {/* Test selector */}
+      <div className="mb-8">
+        <p className="text-xs font-bold uppercase tracking-widest text-[#6b6b6b] mb-3">Select a Practice Test</p>
+        <div className="flex flex-wrap gap-3">
+          {diagnosticTest && (
+            <button
+              onClick={() => loadTest(diagnosticTest)}
+              className={`rounded-lg border px-5 py-3 text-sm font-semibold transition-colors ${selectedTest?._id === diagnosticTest._id ? 'bg-[#7c1c2e] border-[#7c1c2e] text-white' : 'bg-white border-[#e8e0e2] text-[#1a1a1a] hover:border-[#7c1c2e]'}`}
+            >
+              Diagnostic Test
+              <span className="ml-2 text-xs opacity-70">{diagnosticTest.questionIds.length}q</span>
+            </button>
+          )}
+          {practicetests.map(t => (
+            <button
+              key={t._id}
+              onClick={() => loadTest(t)}
+              className={`rounded-lg border px-5 py-3 text-sm font-semibold transition-colors ${selectedTest?._id === t._id ? 'bg-[#7c1c2e] border-[#7c1c2e] text-white' : 'bg-white border-[#e8e0e2] text-[#1a1a1a] hover:border-[#7c1c2e]'}`}
+            >
+              Practice Test {t.testNumber}
+              <span className="ml-2 text-xs opacity-70">{t.questionIds.length}q</span>
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* Results */}
-      {results && (
-        <div>
-          <p className="text-xs text-[#6b6b6b] mb-3">
-            {results.total} question{results.total !== 1 ? 's' : ''} found
-            {results.pages > 1 && ` — page ${results.page} of ${results.pages}`}
-          </p>
+      {/* Loading */}
+      {loadingTest && (
+        <div className="text-center py-16 text-[#6b6b6b] text-sm">Loading questions...</div>
+      )}
 
-          <div className="space-y-2">
-            {results.questions.map(q => {
-              const isExpanded = expandedId === q._id
-              const edit = editState[q._id] || q
+      {/* Question list */}
+      {!loadingTest && selectedTest && questions.length > 0 && (
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-sm font-semibold text-[#1a1a1a]">
+              {selectedTest.isDiagnostic ? 'Diagnostic Test' : `Practice Test ${selectedTest.testNumber}`}
+              <span className="ml-2 text-xs text-[#6b6b6b] font-normal">{questions.length} questions</span>
+            </p>
+            <p className="text-xs text-[#6b6b6b]">Click any field to edit, then save.</p>
+          </div>
+
+          <div className="space-y-4">
+            {questions.map((q, idx) => {
+              const edit = edits[q._id] || q
               const isSaving = saving === q._id
-              const wasSaved = saved === q._id
+              const wasSaved = saved[q._id]
 
               return (
                 <div key={q._id} className="rounded-xl border border-[#e8e0e2] bg-white overflow-hidden">
-                  {/* Header row */}
-                  <div
-                    className="flex items-start justify-between gap-4 p-4 cursor-pointer hover:bg-[#faf8f5]"
-                    onClick={() => isExpanded ? setExpandedId(null) : startEdit(q)}
-                  >
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs font-bold text-[#7c1c2e] uppercase tracking-wide">
-                          Subarea {q.subarea} · Obj {q.objectiveNumber}
-                        </span>
-                        {q.isDiagnostic && (
-                          <span className="rounded bg-blue-100 px-2 py-0.5 text-xs text-blue-700 font-semibold">Diagnostic</span>
-                        )}
-                        {!q.isPublished && (
-                          <span className="rounded bg-yellow-100 px-2 py-0.5 text-xs text-yellow-700 font-semibold">Draft</span>
-                        )}
-                      </div>
-                      <p className="text-sm text-[#1a1a1a] line-clamp-2">{q.questionText}</p>
-                      <p className="text-xs text-[#6b6b6b] mt-1">Correct: <strong>{q.correctAnswer}</strong></p>
-                    </div>
-                    <span className="text-[#6b6b6b] text-lg mt-0.5 flex-shrink-0">{isExpanded ? '▲' : '▼'}</span>
+                  {/* Question header */}
+                  <div className="flex items-center justify-between px-4 pt-4 pb-2">
+                    <span className="text-xs font-bold text-[#7c1c2e] uppercase tracking-wide">
+                      Q{idx + 1} &nbsp;·&nbsp; Subarea {q.subarea} · Obj {q.objectiveNumber}
+                    </span>
+                    <button
+                      onClick={() => saveQuestion(q._id)}
+                      disabled={isSaving}
+                      className={`rounded px-4 py-1.5 text-xs font-semibold text-white transition-colors disabled:opacity-50 ${wasSaved ? 'bg-green-600' : 'bg-[#7c1c2e] hover:bg-[#5a1220]'}`}
+                    >
+                      {isSaving ? 'Saving…' : wasSaved ? 'Saved ✓' : 'Save'}
+                    </button>
                   </div>
 
-                  {/* Edit form */}
-                  {isExpanded && (
-                    <div className="border-t border-[#e8e0e2] p-4 space-y-4 bg-[#fdfcfb]">
-                      {/* Question text */}
-                      <div>
-                        <label className="text-xs font-bold uppercase tracking-wide text-[#6b6b6b] block mb-1">Question Text</label>
-                        <textarea
-                          rows={3}
-                          value={edit.questionText}
-                          onChange={e => updateField(q._id, 'questionText', e.target.value)}
-                          className="w-full rounded border border-[#e8e0e2] px-3 py-2 text-sm focus:outline-none focus:border-[#7c1c2e] resize-y"
-                        />
+                  <div className="px-4 pb-4 space-y-3">
+                    {/* Stimulus (if any) */}
+                    {q.stimulus && (
+                      <div className="rounded bg-[#faf8f5] border border-[#e8e0e2] p-3">
+                        <p className="text-xs font-bold text-[#6b6b6b] uppercase tracking-wide mb-1">Stimulus (read-only)</p>
+                        <p className="text-xs text-[#6b6b6b]">This question has a stimulus passage.</p>
                       </div>
+                    )}
 
-                      {/* Options */}
-                      <div>
-                        <label className="text-xs font-bold uppercase tracking-wide text-[#6b6b6b] block mb-2">Answer Options</label>
-                        <div className="space-y-2">
-                          {edit.options.map((opt, i) => (
-                            <div key={opt.label} className="flex items-start gap-2">
-                              <span className={`mt-2 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold ${edit.correctAnswer === opt.label ? 'bg-green-600 text-white' : 'bg-[#e8e0e2] text-[#6b6b6b]'}`}>
-                                {opt.label}
-                              </span>
-                              <textarea
-                                rows={2}
-                                value={opt.text}
-                                onChange={e => updateOption(q._id, i, e.target.value)}
-                                className="flex-1 rounded border border-[#e8e0e2] px-3 py-2 text-sm focus:outline-none focus:border-[#7c1c2e] resize-y"
-                              />
-                            </div>
-                          ))}
-                        </div>
-                        <div className="mt-2 flex items-center gap-2">
-                          <label className="text-xs text-[#6b6b6b]">Correct answer:</label>
-                          {edit.options.map(opt => (
-                            <button
-                              key={opt.label}
-                              onClick={() => updateField(q._id, 'correctAnswer', opt.label)}
-                              className={`h-7 w-7 rounded-full text-xs font-bold transition-colors ${edit.correctAnswer === opt.label ? 'bg-green-600 text-white' : 'bg-[#e8e0e2] text-[#6b6b6b] hover:bg-[#d0c8ca]'}`}
-                            >
+                    {/* Stem */}
+                    <div>
+                      <p className="text-xs font-bold text-[#6b6b6b] uppercase tracking-wide mb-1">Stem</p>
+                      <EditableField
+                        rows={3}
+                        value={edit.questionText}
+                        onChange={v => updateField(q._id, 'questionText', v)}
+                        className="font-medium"
+                      />
+                    </div>
+
+                    {/* Options */}
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <p className="text-xs font-bold text-[#6b6b6b] uppercase tracking-wide">Answer Options</p>
+                        <span className="text-xs text-[#6b6b6b]">— correct answer:</span>
+                        {edit.options.map(opt => (
+                          <button
+                            key={opt.label}
+                            onClick={() => updateField(q._id, 'correctAnswer', opt.label)}
+                            className={`h-6 w-6 rounded-full text-xs font-bold transition-colors ${edit.correctAnswer === opt.label ? 'bg-green-600 text-white' : 'bg-[#e8e0e2] text-[#6b6b6b] hover:bg-[#d0c8ca]'}`}
+                          >
+                            {opt.label}
+                          </button>
+                        ))}
+                      </div>
+                      <div className="space-y-1">
+                        {edit.options.map((opt, i) => (
+                          <div key={opt.label} className="flex items-start gap-2">
+                            <span className={`mt-1.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold ${edit.correctAnswer === opt.label ? 'bg-green-600 text-white' : 'bg-[#e8e0e2] text-[#6b6b6b]'}`}>
                               {opt.label}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Explanation */}
-                      <div>
-                        <label className="text-xs font-bold uppercase tracking-wide text-[#6b6b6b] block mb-1">Explanation</label>
-                        <textarea
-                          rows={4}
-                          value={edit.explanation}
-                          onChange={e => updateField(q._id, 'explanation', e.target.value)}
-                          className="w-full rounded border border-[#e8e0e2] px-3 py-2 text-sm focus:outline-none focus:border-[#7c1c2e] resize-y"
-                        />
-                      </div>
-
-                      {/* Actions */}
-                      <div className="flex items-center justify-between">
-                        <button
-                          onClick={() => setExpandedId(null)}
-                          className="rounded border border-[#e8e0e2] px-4 py-2 text-sm text-[#6b6b6b] hover:bg-[#faf8f5]"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          onClick={() => save(q._id)}
-                          disabled={isSaving}
-                          className={`rounded px-5 py-2 text-sm font-semibold text-white transition-colors ${wasSaved ? 'bg-green-600' : 'bg-[#7c1c2e] hover:bg-[#5a1220]'} disabled:opacity-50`}
-                        >
-                          {isSaving ? 'Saving...' : wasSaved ? 'Saved ✓' : 'Save Changes'}
-                        </button>
+                            </span>
+                            <EditableField
+                              rows={2}
+                              value={opt.text}
+                              onChange={v => updateOption(q._id, i, v)}
+                            />
+                          </div>
+                        ))}
                       </div>
                     </div>
-                  )}
+
+                    {/* Explanation */}
+                    <div>
+                      <p className="text-xs font-bold text-[#6b6b6b] uppercase tracking-wide mb-1">Explanation</p>
+                      <EditableField
+                        rows={3}
+                        value={edit.explanation}
+                        onChange={v => updateField(q._id, 'explanation', v)}
+                        className="text-[#444]"
+                      />
+                    </div>
+                  </div>
                 </div>
               )
             })}
           </div>
-
-          {/* Pagination */}
-          {results.pages > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-6">
-              {Array.from({ length: results.pages }, (_, i) => i + 1).map(p => (
-                <button
-                  key={p}
-                  onClick={() => search(p)}
-                  className={`h-8 w-8 rounded text-sm font-semibold ${p === results.page ? 'bg-[#7c1c2e] text-white' : 'border border-[#e8e0e2] text-[#6b6b6b] hover:bg-[#faf8f5]'}`}
-                >
-                  {p}
-                </button>
-              ))}
-            </div>
-          )}
         </div>
       )}
 
-      {!results && (
+      {!loadingTest && !selectedTest && (
         <div className="text-center py-16 text-[#6b6b6b] text-sm">
-          Search for a question above, or click Search to browse all.
+          Select a practice test above to view and edit its questions.
         </div>
       )}
     </div>
