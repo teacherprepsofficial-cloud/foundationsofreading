@@ -26,6 +26,9 @@ export default async function DashboardPage() {
         <p className="mt-3 text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>
           Your access may have expired, or you haven&apos;t purchased yet.
         </p>
+        <p className="mt-1 text-sm text-[#9b9b9b]" style={{ fontFamily: 'var(--font-sans)' }}>
+          Logged in as: {auth.email}
+        </p>
         <Link
           href="/#pricing"
           className="mt-6 rounded bg-[#7c1c2e] px-8 py-3 text-sm font-semibold text-white"
@@ -33,6 +36,15 @@ export default async function DashboardPage() {
         >
           Get Access
         </Link>
+        <form action="/api/auth/logout" method="POST" className="mt-3">
+          <button
+            type="submit"
+            className="text-sm text-[#6b6b6b] underline hover:text-[#1a1a1a]"
+            style={{ fontFamily: 'var(--font-sans)' }}
+          >
+            Log out and switch accounts
+          </button>
+        </form>
       </div>
     )
   }
