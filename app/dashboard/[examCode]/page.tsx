@@ -72,7 +72,7 @@ export default async function ExamDashboardPage({
               {user?.email}
             </p>
             <h1 className="text-xl font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>
-              Welcome back, {firstName}.
+              Welcome, {firstName}.
             </h1>
           </div>
         </div>
