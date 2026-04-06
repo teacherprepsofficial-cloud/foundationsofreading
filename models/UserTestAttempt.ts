@@ -18,6 +18,13 @@ export interface ISubareaScore {
   performanceLevel: 'most' | 'many' | 'some' | 'few'
 }
 
+export interface IShuffledQuestionData {
+  questionId: mongoose.Types.ObjectId
+  options: Array<{ label: string; text: string }>
+  correctAnswer: string
+  explanation: string
+}
+
 export interface IUserTestAttempt extends Document {
   _id: mongoose.Types.ObjectId
   userId: mongoose.Types.ObjectId
@@ -50,6 +57,7 @@ export interface IUserTestAttempt extends Document {
   cr2Score?: number
   cr2PerformanceLevel?: 'Thorough' | 'Adequate' | 'Limited' | 'Weak' | 'No Response'
   cr2Feedback?: string
+  questionData?: IShuffledQuestionData[]
   startedAt: Date
   completedAt?: Date
   status: 'in_progress' | 'completed' | 'abandoned'
@@ -110,6 +118,7 @@ const UserTestAttemptSchema = new Schema<IUserTestAttempt>(
     cr2Score: { type: Number },
     cr2PerformanceLevel: { type: String, enum: ['Thorough', 'Adequate', 'Limited', 'Weak', 'No Response'] },
     cr2Feedback: { type: String },
+    questionData: { type: [Schema.Types.Mixed], default: undefined },
     startedAt: { type: Date, required: true },
     completedAt: { type: Date },
     status: { type: String, enum: ['in_progress', 'completed', 'abandoned'], default: 'in_progress' },

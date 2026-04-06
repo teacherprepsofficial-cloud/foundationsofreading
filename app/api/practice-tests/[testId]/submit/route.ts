@@ -160,6 +160,20 @@ export async function POST(
     const questions = await Question.find({ _id: { $in: test.questionIds } })
     const questionMap = new Map(questions.map((q) => [q._id.toString(), q]))
 
+    // Build shuffled correct answer map from stored questionData (if available)
+    // This ensures scoring uses the same option order the student saw
+    const shuffledCorrectMap = new Map<string, string>()
+    const shuffledExplanationMap = new Map<string, string>()
+    const shuffledOptionsMap = new Map<string, Array<{ label: string; text: string }>>()
+    if (attempt.questionData?.length) {
+      for (const d of attempt.questionData) {
+        const id = d.questionId.toString()
+        shuffledCorrectMap.set(id, d.correctAnswer)
+        shuffledExplanationMap.set(id, d.explanation)
+        shuffledOptionsMap.set(id, d.options)
+      }
+    }
+
     // Grade responses
     let totalCorrect = 0
     let totalIncorrect = 0
@@ -168,7 +182,9 @@ export async function POST(
     const gradedResponses = responses.map((r: { questionId: string; selectedAnswer: string | null; timeSpent: number; isMarked: boolean }) => {
       const q = questionMap.get(r.questionId)
       if (!q) return r
-      const isCorrect = r.selectedAnswer === q.correctAnswer
+      // Use shuffled correct answer if available, fall back to DB value
+      const correctAnswer = shuffledCorrectMap.get(r.questionId) ?? q.correctAnswer
+      const isCorrect = r.selectedAnswer === correctAnswer
       if (!r.selectedAnswer) totalSkipped++
       else if (isCorrect) totalCorrect++
       else totalIncorrect++
@@ -308,17 +324,20 @@ export async function POST(
       { upsert: true }
     )
 
-    // Return results with full explanations
-    const questionsWithAnswers = questions.map((q) => ({
-      _id: q._id,
-      questionText: q.questionText,
-      stimulus: q.stimulus,
-      options: q.options,
-      correctAnswer: q.correctAnswer,
-      explanation: q.explanation,
-      subarea: q.subarea,
-      subareaName: q.subareaName,
-    }))
+    // Return results with shuffled options/correctAnswer/explanation (matching what student saw)
+    const questionsWithAnswers = questions.map((q) => {
+      const id = q._id.toString()
+      return {
+        _id: q._id,
+        questionText: q.questionText,
+        stimulus: q.stimulus,
+        options: shuffledOptionsMap.get(id) ?? q.options,
+        correctAnswer: shuffledCorrectMap.get(id) ?? q.correctAnswer,
+        explanation: shuffledExplanationMap.get(id) ?? q.explanation,
+        subarea: q.subarea,
+        subareaName: q.subareaName,
+      }
+    })
 
     return NextResponse.json({
       success: true,
