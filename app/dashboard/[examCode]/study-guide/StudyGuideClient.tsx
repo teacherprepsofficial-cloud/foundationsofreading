@@ -196,7 +196,7 @@ export default function StudyGuideClient({
       <div
         ref={mainRef}
         className="flex-1 min-h-screen"
-        style={{ marginLeft: sidebarOpen ? SIDEBAR_W : 0, transition: 'margin-left 0.2s' }}
+        style={{ marginLeft: sidebarOpen ? SIDEBAR_W : 0, transition: 'margin-left 0.2s', userSelect: 'none', WebkitUserSelect: 'none' }}
       >
         {/* Section header — clean white */}
         <div className="bg-white border-b border-[#e5e7eb] px-8 py-6">
@@ -220,7 +220,7 @@ export default function StudyGuideClient({
           </div>
         </div>
 
-        <div className="px-8 py-8 max-w-none">
+        <div className="px-8 py-8">
 
           {/* Learning Outcomes */}
           <div className="rounded-lg border border-[#e5e7eb] bg-white p-5 mb-8">
