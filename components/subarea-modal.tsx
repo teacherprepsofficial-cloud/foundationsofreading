@@ -99,12 +99,12 @@ const SUBAREAS: Subarea[] = [
     objectives: [
       {
         num: 10,
-        title: 'Constructed Response 1 — Case Study Analysis',
+        title: 'Foundational Reading Skills',
         description: 'Analyze a reading case study or student work sample. Apply knowledge from all subareas to identify instructional implications and explain evidence-based responses.',
       },
       {
         num: 11,
-        title: 'Constructed Response 2 — Instructional Planning',
+        title: 'Reading Comprehension',
         description: 'Synthesize foundational reading knowledge to develop or evaluate an instructional plan. Demonstrate deep understanding of reading theory and practice.',
       },
     ],

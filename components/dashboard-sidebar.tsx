@@ -118,16 +118,16 @@ export default function DashboardSidebar({ nav }: DashboardSidebarProps) {
 
       {/* Footer */}
       <div style={{ padding: '16px 20px', borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <a
-          href="/api/stripe/portal"
+        <Link
+          href="/account"
           style={{
             fontFamily: 'var(--font-sans)', fontSize: 13,
             color: 'rgba(255,255,255,0.4)',
             textDecoration: 'none',
           }}
         >
-          Manage Subscription
-        </a>
+          My Account
+        </Link>
         <button
           onClick={handleLogout}
           style={{
