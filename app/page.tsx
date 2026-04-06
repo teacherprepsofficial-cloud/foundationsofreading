@@ -39,67 +39,14 @@ const FAQS = [
   },
 ]
 
-// Clean SVG icons
-function IconClipboard() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c1c2e" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" />
-      <rect x="9" y="3" width="6" height="4" rx="1" />
-      <path d="m9 12 2 2 4-4" />
-    </svg>
-  )
-}
-function IconBook() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c1c2e" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-      <line x1="9" y1="7" x2="15" y2="7" />
-      <line x1="9" y1="11" x2="15" y2="11" />
-    </svg>
-  )
-}
-function IconPencil() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c1c2e" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-    </svg>
-  )
-}
-function IconSparkle() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c1c2e" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />
-    </svg>
-  )
-}
-function IconCards() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c1c2e" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="7" width="16" height="13" rx="2" />
-      <path d="M6 7V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2h-2" />
-    </svg>
-  )
-}
-function IconChart() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c1c2e" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="18" y1="20" x2="18" y2="10" />
-      <line x1="12" y1="20" x2="12" y2="4" />
-      <line x1="6" y1="20" x2="6" y2="14" />
-      <line x1="2" y1="20" x2="22" y2="20" />
-    </svg>
-  )
-}
 
 const FEATURES = [
-  { Icon: IconClipboard, title: 'Diagnostic Practice Test', desc: '25 MC + 1 written response across all 4 subareas. See exactly where you stand before you start studying.', href: '/free/diagnostic', cta: 'Try free sample →' },
-  { Icon: IconBook, title: 'Complete Study Guide', desc: 'All 4 subareas, all 11 objectives covered in depth. Written specifically for this exam.', href: '/free/study-guide', cta: 'Read free preview →' },
-  { Icon: IconPencil, title: '2–4 Full-Length Practice Tests', desc: '100 MC per test, timed, scored on the real 100–300 NES scale. Results mirror your actual score report.', href: '/free/practice-test', cta: 'Try 10-question sample →' },
-  { Icon: IconSparkle, title: 'AI-Graded Written Responses', desc: 'Type your response. Get scored 0–2 with individualized feedback — same rubric as the real exam.', href: '/free/written-response', cta: 'Try one free →' },
-  { Icon: IconCards, title: 'Flashcards + Vocab Matching', desc: '150+ terms across all objectives. Study with cards or the interactive matching game.', href: '/free/flashcards', cta: 'Try 10 sample cards →' },
-  { Icon: IconChart, title: 'Real Exam Results Format', desc: 'Pass/Not Pass, scaled score, and subarea performance — identical to what you see on test day.', href: '/free/results-demo', cta: 'See example results →' },
+  { img: '/features/diagnostic.jpg', title: 'Diagnostic Practice Test', desc: '25 MC + 1 written response across all 4 subareas. See exactly where you stand before you start studying.', href: '/free/diagnostic', cta: 'Try free sample →' },
+  { img: '/features/study-guide.jpg', title: 'Complete Study Guide', desc: 'All 4 subareas, all 11 objectives covered in depth. Written specifically for this exam.', href: '/free/study-guide', cta: 'Read free preview →' },
+  { img: '/features/practice-tests.jpg', title: '2–4 Full-Length Practice Tests', desc: '100 MC per test, timed, scored on the real 100–300 NES scale. Results mirror your actual score report.', href: '/free/practice-test', cta: 'Try 10-question sample →' },
+  { img: '/features/written-response.jpg', title: 'AI-Graded Written Responses', desc: 'Type your response. Get scored 0–2 with individualized feedback — same rubric as the real exam.', href: '/free/written-response', cta: 'Try one free →' },
+  { img: '/features/flashcards.jpg', title: 'Flashcards + Vocab Matching', desc: '150+ terms across all objectives. Study with cards or the interactive matching game.', href: '/free/flashcards', cta: 'Try 10 sample cards →' },
+  { img: '/features/exam-results.jpg', title: 'Real Exam Results Format', desc: 'Pass/Not Pass, scaled score, and subarea performance — identical to what you see on test day.', href: '/free/results-demo', cta: 'See example results →' },
 ]
 
 export default function HomePage() {
@@ -169,21 +116,27 @@ export default function HomePage() {
 
         {/* Features */}
         <section id="what-you-get" className="bg-[#faf8f5] py-16 sm:py-24">
-          <div className="mx-auto max-w-5xl px-6">
+          <div className="mx-auto max-w-6xl px-6">
             <p className="text-xs font-semibold uppercase tracking-widest text-[#7c1c2e]" style={{ fontFamily: 'var(--font-sans)' }}>What&apos;s Included</p>
-            <h2 className="mt-3 text-3xl font-bold text-[#1a1a1a] sm:text-4xl" style={{ fontFamily: 'var(--font-serif)' }}>A complete study system — not just notes.</h2>
-            <div className="mt-12 grid gap-6 md:grid-cols-2">
-              {FEATURES.map(({ Icon, title, desc, href, cta }) => (
-                <a key={title} href={href} className="group flex gap-5 rounded-lg border border-[#e8e0e2] bg-white p-6 transition-all hover:border-[#7c1c2e] hover:shadow-sm">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#f3eef0]">
-                    <Icon />
+            <h2 className="mt-3 text-3xl font-bold text-[#1a1a1a] sm:text-4xl" style={{ fontFamily: 'var(--font-serif)' }}>Everything You Need To Pass in One Place.</h2>
+            <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {FEATURES.map(({ img, title, desc, href, cta }) => (
+                <div key={title} className="flex flex-col overflow-hidden rounded-lg border border-[#e8e0e2] bg-white shadow-sm">
+                  <div className="h-48 w-full overflow-hidden">
+                    <img src={img} alt={title} className="h-full w-full object-cover" />
                   </div>
-                  <div>
+                  <div className="flex flex-1 flex-col p-6">
                     <h3 className="font-bold text-[#1a1a1a]" style={{ fontFamily: 'var(--font-serif)' }}>{title}</h3>
-                    <p className="mt-1.5 text-sm leading-relaxed text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>{desc}</p>
-                    <p className="mt-2 text-xs font-semibold text-[#7c1c2e] group-hover:underline" style={{ fontFamily: 'var(--font-sans)' }}>{cta}</p>
+                    <p className="mt-2 flex-1 text-sm leading-relaxed text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>{desc}</p>
+                    <a
+                      href={href}
+                      className="mt-5 inline-flex w-full items-center justify-center rounded bg-[#7c1c2e] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#6a1726]"
+                      style={{ fontFamily: 'var(--font-sans)' }}
+                    >
+                      {cta}
+                    </a>
                   </div>
-                </a>
+                </div>
               ))}
             </div>
           </div>
