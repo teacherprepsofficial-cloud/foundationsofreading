@@ -6,7 +6,7 @@ import { generateNes190GuidePdf } from '@/lib/generate-pdf'
 export async function GET() {
   try {
     const pdfBytes = await generateNes190GuidePdf()
-    return new NextResponse(pdfBytes, {
+    return new NextResponse(Buffer.from(pdfBytes), {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': 'attachment; filename="NES-190-Quick-Reference-Guide.pdf"',
