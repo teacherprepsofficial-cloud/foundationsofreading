@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, ArrowRight, Calendar } from 'lucide-react'
 import { getBlogPostBySlug, BLOG_POSTS } from '@/data/blog-posts'
+import { BlogEmailOptin } from '@/components/blog-email-optin'
 
 interface PageProps {
   params: { slug: string }
@@ -80,6 +81,17 @@ export default function BlogPostPage({ params }: PageProps) {
           </Link>
         </div>
       </section>
+
+      {/* Email opt-in slide-in */}
+      {post.optin && (
+        <BlogEmailOptin
+          postSlug={post.slug}
+          pdfSlug={post.optin.pdfSlug}
+          headline={post.optin.headline}
+          subheadline={post.optin.subheadline}
+          pdfLabel={post.optin.pdfLabel}
+        />
+      )}
 
       {/* Other Posts */}
       <section className="mt-14">

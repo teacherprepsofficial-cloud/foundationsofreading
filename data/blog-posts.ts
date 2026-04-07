@@ -4,9 +4,65 @@ export interface BlogPost {
   metaDescription: string
   publishedAt: string
   sections: { heading: string; content: string }[]
+  optin?: {
+    pdfSlug: string
+    headline: string
+    subheadline: string
+    pdfLabel: string
+  }
 }
 
 export const BLOG_POSTS: BlogPost[] = [
+  {
+    slug: '190-foundations-of-reading',
+    title: '190 Foundations of Reading',
+    metaDescription: 'Everything you need to know about the NES 190 Foundations of Reading test — format, subareas, passing score, and how to prepare for exam day.',
+    publishedAt: '2026-04-07',
+    optin: {
+      pdfSlug: 'nes-190-guide',
+      headline: 'Get the Free NES 190 Quick Reference Guide',
+      subheadline: 'A one-page cheat sheet covering the exam format, all four subareas, key concepts, and open-response strategy. Yours free.',
+      pdfLabel: 'NES 190 Quick Reference Guide (PDF)',
+    },
+    sections: [
+      {
+        heading: 'What Is the NES 190 Foundations of Reading Test?',
+        content: 'The NES 190 Foundations of Reading test is a licensure exam that measures whether aspiring teachers understand the knowledge and skills required to teach reading effectively. Administered by Pearson through the National Evaluation Series (NES) program, it is required for teacher certification in multiple states. The exam assesses your command of evidence-based reading instruction — from the earliest phonological foundations all the way through comprehension, assessment, and classroom application.',
+      },
+      {
+        heading: 'Test Format and Timing',
+        content: 'The exam includes 100 multiple-choice questions and 2 open-response written assignments, for a total of 102 items. You have 4 hours of actual testing time. At a physical testing center, your total appointment is 4 hours and 15 minutes — the extra 15 minutes covers the tutorial and nondisclosure agreement before the clock starts. If you choose online proctoring, your appointment is 4 hours and 30 minutes and includes a 15-minute break between the multiple-choice section (2.5 hours) and the written assignments (1.5 hours). The registration fee is $139, and score reports follow a schedule that varies depending on how you tested.',
+      },
+      {
+        heading: 'Passing Score',
+        content: 'The passing score for the NES 190 in Ohio is 220 on a scale of 100 to 300. Other states that use the same exam typically require a score of 240, though requirements vary — always confirm the passing score with your specific state\'s department of education before you register. If you already hold a passing score from the NES 190 and are seeking certification in a different state, your score is generally transferable, provided it meets that state\'s threshold.',
+      },
+      {
+        heading: 'Subarea I: Foundations of Reading Development (35%)',
+        content: 'This is the largest section of the exam, making up roughly 43 to 45 multiple-choice items. It covers the building blocks of learning to read: phonological and phonemic awareness, print concepts, the alphabetic principle, systematic phonics instruction, high-frequency word recognition, spelling development, word analysis strategies, and reading fluency. Questions in this subarea often ask you to evaluate instructional activities, identify appropriate strategies for specific student needs, or demonstrate understanding of how foundational reading skills develop in sequence.',
+      },
+      {
+        heading: 'Subarea II: Development of Reading Comprehension (27%)',
+        content: 'Approximately 33 to 35 multiple-choice items focus on how students develop the ability to understand what they read. This includes academic language development, vocabulary instruction across the three tiers of word knowledge, comprehension of literary texts (narrative structure, literary devices, inferential thinking), and comprehension of informational texts (text structures, text features, summarization). Understanding how vocabulary connects to comprehension — and how to teach both explicitly — is central to this subarea.',
+      },
+      {
+        heading: 'Subarea III: Reading Assessment and Instruction (18%)',
+        content: 'Roughly 21 to 23 items address how teachers assess reading and use that data to drive instruction. You will need to understand the different purposes of screening, diagnostic, progress monitoring, formative, and summative assessments. This subarea also covers instructional best practices, how to differentiate for English language learners and students with disabilities, and how to support advanced readers. The ability to interpret assessment results and translate them into instructional decisions is a key skill tested here.',
+      },
+      {
+        heading: 'Subarea IV: Integration of Knowledge and Understanding (20%)',
+        content: 'The two open-response written assignments make up this subarea and are worth 20% of your total score. Each prompt presents a classroom scenario — typically including student data such as a running record, writing sample, or assessment results — and asks you to analyze the student\'s performance, identify a specific strength and a specific need with evidence, recommend a targeted instructional strategy, and explain why that strategy fits the student\'s situation. Responses are scored on a 4-point rubric evaluating purpose, subject matter knowledge, use of evidence, and quality of reasoning.',
+      },
+      {
+        heading: 'How to Prepare for the NES 190',
+        content: 'Effective preparation for the NES 190 combines content study with applied practice. Start by reviewing each subarea\'s key concepts — particularly phonemic awareness, phonics instruction, vocabulary frameworks like the three-tier model, and assessment types. Then use practice tests to apply what you know to real exam-style questions. For the open-response section, practice writing structured responses using specific evidence and professional reading terminology. Most test-takers benefit from a 3 to 4 week focused study period. Prioritize Subarea I, which carries the heaviest weight, but do not neglect Subarea IV — the written assignments require a different kind of preparation than multiple-choice review.',
+      },
+      {
+        heading: 'Testing Options: Testing Center vs. Online Proctoring',
+        content: 'The NES 190 is available year-round at Pearson VUE testing centers on a first-come, first-served basis. Online proctored sessions are available remotely — including from home — during monthly designated testing windows. If you choose online proctoring, you will need a private room, a reliable internet connection, a working webcam, and a microphone. Both formats cover the same content and use the same scoring system. Your appointment time differs slightly between the two options, but your 4 hours of actual testing time remains the same.',
+      },
+    ],
+  },
   {
     slug: 'how-to-pass-foundations-of-reading',
     title: 'How to Pass the Foundations of Reading Test: A Complete Guide',
