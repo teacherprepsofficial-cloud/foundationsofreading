@@ -164,7 +164,7 @@ export function BlogEmailOptin({ postSlug, pdfSlug, headline, subheadline, pdfLa
               <p className="text-3xl mb-2">✓</p>
               <h4 className="text-base font-bold text-[#1a1a1a] mb-1" style={SE}>Check your inbox!</h4>
               <p className="text-sm text-[#6b6b6b]" style={SF}>
-                Your free guide is on its way. Check your spam folder if you don't see it within a minute.
+                Your free guide is on its way. Check your spam folder if you don&apos;t see it within a minute.
               </p>
             </div>
           )}

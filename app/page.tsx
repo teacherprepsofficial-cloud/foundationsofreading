@@ -123,6 +123,7 @@ export default function HomePage() {
               {FEATURES.map(({ img, title, desc, href, cta }) => (
                 <div key={title} className="flex flex-col overflow-hidden rounded-lg border border-[#e8e0e2] bg-white shadow-sm">
                   <div className="h-48 w-full overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={img} alt={title} className="h-full w-full object-cover" />
                   </div>
                   <div className="flex flex-1 flex-col p-6">

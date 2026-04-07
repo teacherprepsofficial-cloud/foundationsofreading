@@ -3,7 +3,6 @@ import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 const BURGUNDY = rgb(0.486, 0.110, 0.180) // #7c1c2e
 const DARK = rgb(0.102, 0.102, 0.102)      // #1a1a1a
 const MID = rgb(0.420, 0.420, 0.420)       // #6b6b6b
-const CREAM = rgb(0.980, 0.973, 0.961)     // #faf8f5
 const WHITE = rgb(1, 1, 1)
 
 const PAGE_W = 612  // US Letter
