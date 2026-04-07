@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { Source_Serif_4, Inter } from 'next/font/google'
 import './globals.css'
-import { CountdownBanner } from '@/components/countdown-banner'
 
 const sourceSerif = Source_Serif_4({
   subsets: ['latin'],
@@ -34,7 +33,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${sourceSerif.variable} ${inter.variable}`}>
       <body className="antialiased">
-        <CountdownBanner />
         {children}
       </body>
     </html>

@@ -75,7 +75,7 @@ export function CountdownBanner() {
 
   return (
     <div
-      className={`sticky top-0 z-50 w-full py-2.5 text-center text-sm ${isUrgent ? 'animate-pulse-slow' : ''}`}
+      className={`w-full py-2.5 text-center text-sm ${isUrgent ? 'animate-pulse-slow' : ''}`}
       style={{ fontFamily: 'var(--font-sans)', background: '#0f766e', color: '#fff' }}
     >
       <span className="font-medium">20% off expires in </span>
