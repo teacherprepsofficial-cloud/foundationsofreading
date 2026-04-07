@@ -65,6 +65,13 @@ export async function POST(request: NextRequest) {
       allow_promotion_codes: 'true',
     }
 
+    // Auto-apply 20% promo if configured
+    const promoCode = process.env.STRIPE_PROMO_20?.trim()
+    if (promoCode) {
+      params['discounts[0][promotion_code]'] = promoCode
+      delete params.allow_promotion_codes // can't combine with discounts[]
+    }
+
     if (stripeCustomerId) {
       params.customer = stripeCustomerId
     } else if (customerEmail) {

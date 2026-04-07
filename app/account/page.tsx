@@ -61,19 +61,31 @@ export default async function AccountPage() {
             <p className="text-sm text-[#6b6b6b]" style={SF}>No active access. <Link href="/#pricing" className="text-[#7c1c2e] underline">Get access →</Link></p>
           ) : (
             <div className="space-y-3">
-              {accesses.map((a: { _id: unknown; examCode: string; tier: string; expiresAt: Date }) => (
-                <div key={String(a._id)} className="flex items-center justify-between rounded-lg border border-[#e8e0e2] p-4">
-                  <div>
-                    <p className="text-sm font-semibold text-[#1a1a1a]" style={SF}>
-                      NES {a.examCode} — {a.tier === 'bundle' ? 'Prep Plus (Bundle)' : 'Prep (Starter)'}
-                    </p>
-                    <p className="text-xs text-[#6b6b6b] mt-0.5" style={SF}>
-                      Access expires: {new Date(a.expiresAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-                    </p>
+              {(() => {
+                // Deduplicate: NES 190 and 890 are the same product — show one row per tier
+                const seen = new Map<string, { tier: string; expiresAt: Date }>()
+                for (const a of accesses as { _id: unknown; examCode: string; tier: string; expiresAt: Date }[]) {
+                  const key = a.tier
+                  const existing = seen.get(key)
+                  // Keep the latest expiry
+                  if (!existing || new Date(a.expiresAt) > new Date(existing.expiresAt)) {
+                    seen.set(key, { tier: a.tier, expiresAt: a.expiresAt })
+                  }
+                }
+                return Array.from(seen.values()).map((a) => (
+                  <div key={a.tier} className="flex items-center justify-between rounded-lg border border-[#e8e0e2] p-4">
+                    <div>
+                      <p className="text-sm font-semibold text-[#1a1a1a]" style={SF}>
+                        {a.tier === 'bundle' ? 'Foundations of Reading Prep Plus' : 'Foundations of Reading Prep'}
+                      </p>
+                      <p className="text-xs text-[#6b6b6b] mt-0.5" style={SF}>
+                        Access expires: {new Date(a.expiresAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                      </p>
+                    </div>
+                    <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-800" style={SF}>Active</span>
                   </div>
-                  <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-800" style={SF}>Active</span>
-                </div>
-              ))}
+                ))
+              })()}
             </div>
           )}
         </div>
@@ -87,7 +99,7 @@ export default async function AccountPage() {
               className="block w-full rounded border border-[#e8e0e2] px-4 py-3 text-sm font-semibold text-[#1a1a1a] hover:bg-[#faf8f5] transition-colors text-center"
               style={SF}
             >
-              Manage Subscription / Billing
+              Cancel My Subscription
             </a>
             <form action="/api/auth/logout" method="POST">
               <button

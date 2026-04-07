@@ -1,15 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-
-const STORAGE_KEY = 'for_timer_start'
-
-function isDiscountActive(): boolean {
-  if (typeof window === 'undefined') return false
-  const stored = localStorage.getItem(STORAGE_KEY)
-  if (!stored) return false
-  return parseInt(stored, 10) > Date.now()
-}
+import { useState } from 'react'
 
 const SF = { fontFamily: 'var(--font-sans)' }
 const SE = { fontFamily: 'var(--font-serif)' }
@@ -47,16 +38,8 @@ const CARDS = [
 ]
 
 export function PricingSection() {
-  const [discountActive, setDiscountActive] = useState(false)
   const [loadingTier, setLoadingTier] = useState<'starter' | 'bundle' | null>(null)
-
-  useEffect(() => {
-    setDiscountActive(isDiscountActive())
-    const interval = setInterval(() => {
-      setDiscountActive(isDiscountActive())
-    }, 5000)
-    return () => clearInterval(interval)
-  }, [])
+  const discountActive = true
 
   async function handleSelect(tier: 'starter' | 'bundle') {
     setLoadingTier(tier)

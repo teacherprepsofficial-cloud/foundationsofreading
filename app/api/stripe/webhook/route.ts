@@ -42,7 +42,13 @@ export async function POST(request: NextRequest) {
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object as Stripe.Checkout.Session
 
-    const examCode = (session.metadata?.examCode || '190') as ExamCode
+    // Guard: only process checkouts that originated from FoundationsOfReading
+    // (must have examCode metadata set by our checkout flow)
+    if (!session.metadata?.examCode) {
+      return NextResponse.json({ received: true })
+    }
+
+    const examCode = session.metadata.examCode as ExamCode
     const tier = (session.metadata?.tier || 'starter') as AccessTier
     const customerEmail = session.customer_details?.email
     const customerName = session.customer_details?.name
@@ -162,9 +168,10 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // ── customer.subscription.updated — plan change ───────────────────────────
+  // ── customer.subscription.updated — plan change or cancel_at_period_end ────
   if (event.type === 'customer.subscription.updated') {
     const subscription = event.data.object as Stripe.Subscription
+    const prevAttrs = (event.data.previous_attributes || {}) as Record<string, unknown>
     const priceId = subscription.items.data[0]?.price?.id
     if (!priceId) return NextResponse.json({ received: true })
 
@@ -175,6 +182,46 @@ export async function POST(request: NextRequest) {
       { stripeSubscriptionId: subscription.id },
       { tier: newTier, isActive, expiresAt: isActive ? activeExpiresAt() : new Date() }
     )
+
+    // If this update just set cancel_at_period_end: true, send a cancellation confirmation email
+    // (access stays active until period ends — customer.subscription.deleted fires when it actually ends)
+    const justScheduledCancel =
+      subscription.cancel_at_period_end === true &&
+      prevAttrs.cancel_at_period_end === false
+
+    if (justScheduledCancel && subscription.cancel_at) {
+      const accessRecord = await UserAccess.findOne({ stripeSubscriptionId: subscription.id })
+      const user = accessRecord ? await User.findById(accessRecord.userId) : null
+      const endDate = new Date(subscription.cancel_at * 1000).toLocaleDateString('en-US', {
+        month: 'long', day: 'numeric', year: 'numeric',
+      })
+
+      if (user?.email) {
+        await resend.emails.send({
+          from: 'Foundations of Reading <prep@foundationsofreading.com>',
+          to: user.email,
+          subject: 'Your cancellation is confirmed',
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #1a1a1a;">
+              <div style="background: #7c1c2e; padding: 28px 32px;">
+                <p style="margin: 0; font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #e8b4bc;">Foundations of Reading</p>
+                <h1 style="margin: 6px 0 0; font-size: 22px; color: white; font-family: Georgia, serif;">Cancellation confirmed.</h1>
+              </div>
+              <div style="padding: 36px 32px;">
+                <p style="font-size: 15px; line-height: 1.7; color: #333; margin: 0 0 20px;">
+                  Your subscription has been cancelled. You'll keep full access to your study materials until <strong>${endDate}</strong>, when your current billing period ends.
+                </p>
+                <p style="font-size: 15px; line-height: 1.7; color: #333; margin: 0 0 28px;">
+                  After that date, your account will be deactivated. If you change your mind before ${endDate}, you can re-subscribe and pick up right where you left off.
+                </p>
+                <a href="${BASE_URL}/#pricing" style="background: #7c1c2e; color: white; padding: 12px 28px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: 600; display: inline-block;">Re-subscribe</a>
+                <p style="font-size: 12px; color: #999; margin: 28px 0 0;">This email is your confirmation of cancellation. No further charges will be made.</p>
+              </div>
+            </div>
+          `,
+        })
+      }
+    }
   }
 
   // ── invoice.payment_failed — warn user ───────────────────────────────────

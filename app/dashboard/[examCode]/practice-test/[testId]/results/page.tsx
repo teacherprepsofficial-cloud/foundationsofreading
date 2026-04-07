@@ -450,7 +450,7 @@ export default function ResultsPage() {
                         return (
                           <div
                             key={opt.label}
-                            className={`flex items-start gap-3 rounded-lg border px-4 py-3 ${bg}`}
+                            className={`flex items-start gap-3 rounded-lg border px-4 py-3 select-none ${bg}`}
                           >
                             <span
                               className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border text-xs font-bold ${labelBg}`}

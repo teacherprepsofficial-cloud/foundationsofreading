@@ -2,21 +2,7 @@
 
 import { useEffect, useState } from 'react'
 
-const STORAGE_KEY = 'for_timer_start'
 const DISMISS_KEY = 'for_banner_dismissed'
-const DURATION_MS = 30 * 60 * 1000 // 30 minutes
-
-function getOrCreateEndTime(): number {
-  if (typeof window === 'undefined') return Date.now() + DURATION_MS
-  const stored = localStorage.getItem(STORAGE_KEY)
-  if (stored) {
-    const end = parseInt(stored, 10)
-    if (end > Date.now()) return end
-  }
-  const end = Date.now() + DURATION_MS
-  localStorage.setItem(STORAGE_KEY, end.toString())
-  return end
-}
 
 export function CountdownBanner() {
   const [timeLeft, setTimeLeft] = useState<number | null>(null)
@@ -28,26 +14,48 @@ export function CountdownBanner() {
       setDismissed(true)
       return
     }
-    const endTime = getOrCreateEndTime()
-    const remaining = endTime - Date.now()
-    if (remaining <= 0) {
-      setExpired(true)
-      return
-    }
-    setTimeLeft(remaining)
 
-    const interval = setInterval(() => {
-      const left = endTime - Date.now()
-      if (left <= 0) {
-        setExpired(true)
-        clearInterval(interval)
-        localStorage.removeItem(STORAGE_KEY)
-      } else {
-        setTimeLeft(left)
+    let intervalId: ReturnType<typeof setInterval>
+
+    async function init() {
+      // Get fingerprint
+      let fp: string | undefined
+      try {
+        const FingerprintJS = await import('@fingerprintjs/fingerprintjs')
+        const agent = await FingerprintJS.load()
+        const result = await agent.get()
+        fp = result.visitorId
+      } catch {
+        // fingerprinting failed — proceed without it
       }
-    }, 1000)
 
-    return () => clearInterval(interval)
+      // Fetch deadline from server (cookie + fingerprint + IP)
+      const url = fp ? `/api/deadline?fp=${fp}` : '/api/deadline'
+      const res = await fetch(url)
+      const data = await res.json()
+      const expiresAt: number = data.expiresAt
+
+      const remaining = expiresAt - Date.now()
+      if (remaining <= 0) {
+        setExpired(true)
+        return
+      }
+
+      setTimeLeft(remaining)
+
+      intervalId = setInterval(() => {
+        const left = expiresAt - Date.now()
+        if (left <= 0) {
+          setExpired(true)
+          clearInterval(intervalId)
+        } else {
+          setTimeLeft(left)
+        }
+      }, 1000)
+    }
+
+    init()
+    return () => clearInterval(intervalId)
   }, [])
 
   function handleDismiss() {
@@ -63,6 +71,7 @@ export function CountdownBanner() {
   const isUrgent = totalSeconds < 300
 
   const fmt = (n: number) => n.toString().padStart(2, '0')
+  const SF = { fontFamily: 'var(--font-sans)' }
 
   return (
     <div
@@ -74,7 +83,7 @@ export function CountdownBanner() {
         {fmt(minutes)}:{fmt(seconds)}
       </span>
       <span className="mx-3 opacity-50">|</span>
-      <a href="/#pricing" className="font-semibold underline underline-offset-2 hover:opacity-80">
+      <a href="/#pricing" className="font-semibold underline underline-offset-2 hover:opacity-80" style={SF}>
         Claim discount
       </a>
       <button
