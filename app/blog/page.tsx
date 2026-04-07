@@ -23,7 +23,7 @@ export default function BlogPage() {
         </p>
       </section>
 
-      <div className="mt-10 grid gap-6 sm:grid-cols-2">
+      <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {BLOG_POSTS.map((post) => (
           <Link
             key={post.slug}
