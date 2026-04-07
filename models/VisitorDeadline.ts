@@ -18,6 +18,9 @@ const VisitorDeadlineSchema = new Schema<IVisitorDeadline>(
   { timestamps: true }
 )
 
+// Auto-delete records 7 days after creation
+VisitorDeadlineSchema.index({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 7 })
+
 const VisitorDeadline: Model<IVisitorDeadline> =
   mongoose.models.VisitorDeadline ||
   mongoose.model<IVisitorDeadline>('VisitorDeadline', VisitorDeadlineSchema)
