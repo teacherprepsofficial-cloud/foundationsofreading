@@ -103,6 +103,9 @@ export default function BlogPostPage({ params }: PageProps) {
             headline={post.optin.headline}
             subheadline={post.optin.subheadline}
             pdfLabel={post.optin.pdfLabel}
+            emailSubject={post.optin.emailSubject}
+            emailHeading={post.optin.emailHeading}
+            emailBody={post.optin.emailBody}
           />
         )}
 

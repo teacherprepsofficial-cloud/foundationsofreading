@@ -11,6 +11,9 @@ export interface BlogPost {
     headline: string
     subheadline: string
     pdfLabel: string
+    emailSubject: string
+    emailHeading: string
+    emailBody: string
   }
 }
 
@@ -25,6 +28,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Free Foundations of Reading 890 Reference Guide',
       subheadline: 'Two-page cheat sheet — all five subareas, passing scores by state, key concepts, and the open-response template.',
       pdfLabel: 'FORT 890 Quick Reference Guide (PDF)',
+      emailSubject: 'Your Free FORT 890 Quick Reference Guide',
+      emailHeading: 'Your FORT 890 Quick Reference Guide is Ready',
+      emailBody: 'Here\'s your FORT 890 Quick Reference Guide — a two-page cheat sheet covering all five subareas, passing scores by state, key concepts, and the open-response template.',
     },
     sections: [
       {
@@ -99,6 +105,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Download the Free Starter Study Guide',
       subheadline: 'Covers Subarea I in full — phonological awareness, phonics, fluency, word analysis. The most tested 35% of the exam.',
       pdfLabel: 'NES 190 Starter Study Guide (PDF)',
+      emailSubject: 'Your Free NES 190 Starter Study Guide',
+      emailHeading: 'Your Starter Study Guide is Ready',
+      emailBody: 'Here\'s your NES 190 Starter Study Guide — it covers Subarea I in full, including phonological awareness, phonics, fluency, and word analysis. That\'s the most tested 35% of the exam.',
     },
     sections: [
       {
@@ -163,6 +172,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Free Arkansas FORT Quick Reference Guide',
       subheadline: 'Arkansas-specific passing score, test format, subareas, and open-response strategy — two pages.',
       pdfLabel: 'Arkansas FORT Quick Reference Guide (PDF)',
+      emailSubject: 'Your Free Arkansas FORT Reference Guide',
+      emailHeading: 'Your Arkansas FORT Reference Guide is Ready',
+      emailBody: 'Here\'s your Arkansas Foundations of Reading reference guide — Arkansas-specific passing score (233), test format, all five subareas, and the open-response template.',
     },
     sections: [
       {
@@ -205,6 +217,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Free Alabama FORT Quick Reference Guide',
       subheadline: 'Alabama-specific passing score, test format, subareas, and open-response strategy — all on two pages.',
       pdfLabel: 'Alabama FORT Quick Reference Guide (PDF)',
+      emailSubject: 'Your Free Alabama FORT Reference Guide',
+      emailHeading: 'Your Alabama FORT Reference Guide is Ready',
+      emailBody: 'Here\'s your Alabama Foundations of Reading reference guide — Alabama-specific passing score (233), test format, all five subareas, and the open-response template.',
     },
     sections: [
       {
@@ -253,6 +268,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Get the Free 25-Question Practice Test PDF',
       subheadline: 'All 25 questions with a full answer key and detailed explanations. Print it, study on the go.',
       pdfLabel: '25-Question Practice Test + Answer Key (PDF)',
+      emailSubject: 'Your Free 25-Question Practice Test',
+      emailHeading: 'Your Practice Test is Ready',
+      emailBody: 'Here\'s your free 25-question NES 190 practice test — all 25 questions with a full answer key and detailed explanations, formatted for printing.',
     },
     sections: [
       {
@@ -283,6 +301,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Get the Free Ohio Foundations of Reading Reference Guide',
       subheadline: 'Ohio passing score (220), test format, all four subareas, key concepts, and open-response strategy — printable PDF.',
       pdfLabel: 'Ohio Foundations of Reading Reference Guide (PDF)',
+      emailSubject: 'Your Free Ohio Foundations of Reading Reference Guide',
+      emailHeading: 'Your Ohio FORT Reference Guide is Ready',
+      emailBody: 'Here\'s your Ohio Foundations of Reading reference guide — Ohio passing score (220), test format, all four subareas, key concepts, and open-response strategy.',
     },
     sections: [
       {
@@ -329,6 +350,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Get the Free NES 190 Quick Reference Guide',
       subheadline: 'A one-page cheat sheet covering the exam format, all four subareas, key concepts, and open-response strategy. Yours free.',
       pdfLabel: 'NES 190 Quick Reference Guide (PDF)',
+      emailSubject: 'Your Free NES 190 Quick Reference Guide',
+      emailHeading: 'Your NES 190 Quick Reference Guide is Ready',
+      emailBody: 'Here\'s your NES 190 Quick Reference Guide — a one-page cheat sheet covering the exam format, all four subareas, key concepts, and open-response strategy.',
     },
     sections: [
       {
@@ -379,6 +403,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Get the Free FORT Passing Strategies Guide',
       subheadline: 'Study priorities, time management tips, and content breakdowns for all four subareas — printable one-page PDF.',
       pdfLabel: 'FORT Passing Strategies Guide (PDF)',
+      emailSubject: 'Your Free FORT Passing Strategies Guide',
+      emailHeading: 'Your Passing Strategies Guide is Ready',
+      emailBody: 'Here\'s your FORT Passing Strategies Guide — study priorities, time management tips, and content breakdowns for all four subareas.',
     },
     sections: [
       {
@@ -413,6 +440,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Get the Free Passing Scores by State Sheet',
       subheadline: 'All 13 states, their passing scores, and test codes on one printable reference sheet.',
       pdfLabel: 'FORT Passing Scores by State (PDF)',
+      emailSubject: 'Your Free FORT Passing Scores by State Sheet',
+      emailHeading: 'Your Passing Scores Reference Sheet is Ready',
+      emailBody: 'Here\'s your FORT Passing Scores by State sheet — all 13 states, their passing scores, and test codes on one printable page.',
     },
     sections: [
       {
@@ -443,6 +473,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Get the Free Practice Test PDF',
       subheadline: '25 practice questions with full answer key and detailed explanations — formatted for printing.',
       pdfLabel: 'FORT Practice Test + Answer Key (PDF)',
+      emailSubject: 'Your Free FORT Practice Test + Answer Key',
+      emailHeading: 'Your Practice Test is Ready',
+      emailBody: 'Here\'s your free FORT practice test — 25 questions with a full answer key and detailed explanations, formatted for printing.',
     },
     sections: [
       {
@@ -477,6 +510,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Get the Free Test Format Reference Sheet',
       subheadline: 'Exam structure, subarea weights, timing breakdown, and scoring — one printable page.',
       pdfLabel: 'FORT Test Format Reference Sheet (PDF)',
+      emailSubject: 'Your Free FORT Test Format Reference Sheet',
+      emailHeading: 'Your Test Format Reference Sheet is Ready',
+      emailBody: 'Here\'s your FORT Test Format Reference Sheet — exam structure, subarea weights, timing breakdown, and scoring on one printable page.',
     },
     sections: [
       {
@@ -515,6 +551,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Get the Free 190 vs 890 Comparison Sheet',
       subheadline: 'Side-by-side comparison of test codes, registration portals, and what stayed the same — one printable page.',
       pdfLabel: 'FORT 190 vs 890 Comparison Sheet (PDF)',
+      emailSubject: 'Your Free FORT 190 vs 890 Comparison Sheet',
+      emailHeading: 'Your 190 vs 890 Comparison Sheet is Ready',
+      emailBody: 'Here\'s your FORT 190 vs 890 Comparison Sheet — side-by-side comparison of test codes, registration portals, and what stayed the same.',
     },
     sections: [
       {
@@ -545,6 +584,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Get the Free Constructed Response Template',
       subheadline: 'The 4-step response structure, scoring rubric, and sample response — printable PDF you can use on test day prep.',
       pdfLabel: 'FORT Constructed Response Template (PDF)',
+      emailSubject: 'Your Free FORT Constructed Response Template',
+      emailHeading: 'Your Constructed Response Template is Ready',
+      emailBody: 'Here\'s your FORT Constructed Response Template — the 4-step response structure, scoring rubric, and a sample response you can use to practice before test day.',
     },
     sections: [
       {
@@ -579,6 +621,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Get the Free Registration Checklist',
       subheadline: 'Step-by-step checklist with state portal links, ID requirements, and testing options — printable PDF.',
       pdfLabel: 'FORT Registration Checklist (PDF)',
+      emailSubject: 'Your Free FORT Registration Checklist',
+      emailHeading: 'Your Registration Checklist is Ready',
+      emailBody: 'Here\'s your FORT Registration Checklist — step-by-step checklist with state portal links, ID requirements, and testing options.',
     },
     sections: [
       {
@@ -617,6 +662,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Get the Free Science of Reading Reference Sheet',
       subheadline: 'Key frameworks, research models, and how they map to FORT subareas — one printable page.',
       pdfLabel: 'Science of Reading for FORT Reference Sheet (PDF)',
+      emailSubject: 'Your Free Science of Reading Reference Sheet',
+      emailHeading: 'Your Science of Reading Reference Sheet is Ready',
+      emailBody: 'Here\'s your Science of Reading for FORT reference sheet — key frameworks, research models, and how they map to FORT subareas on one printable page.',
     },
     sections: [
       {
@@ -647,6 +695,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Get the Free FORT Study Guide Starter',
       subheadline: 'Covers Subarea I in full — phonological awareness, phonics, fluency, word analysis. The most tested 35% of the exam.',
       pdfLabel: 'FORT Study Guide Starter (PDF)',
+      emailSubject: 'Your Free FORT Study Guide Starter',
+      emailHeading: 'Your Study Guide Starter is Ready',
+      emailBody: 'Here\'s your FORT Study Guide Starter — covers Subarea I in full, including phonological awareness, phonics, fluency, and word analysis. That\'s the most tested 35% of the exam.',
     },
     sections: [
       {
@@ -681,6 +732,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Get the Free 4-Week Study Plan',
       subheadline: 'Week-by-week prep schedule with subarea priorities, practice test timing, and CR practice slots — printable PDF.',
       pdfLabel: 'FORT 4-Week Study Plan (PDF)',
+      emailSubject: 'Your Free FORT 4-Week Study Plan',
+      emailHeading: 'Your 4-Week Study Plan is Ready',
+      emailBody: 'Here\'s your FORT 4-Week Study Plan — week-by-week prep schedule with subarea priorities, practice test timing, and constructed response practice slots.',
     },
     sections: [
       {
@@ -715,6 +769,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Get the Free 25-Question Practice Test PDF',
       subheadline: 'All 25 questions from this page with answers and explanations — formatted for offline study.',
       pdfLabel: 'Foundations of Reading 890 Practice Test (PDF)',
+      emailSubject: 'Your Free FORT 890 Practice Test',
+      emailHeading: 'Your 890 Practice Test is Ready',
+      emailBody: 'Here\'s your Foundations of Reading 890 practice test — 25 questions with answers and detailed explanations, formatted for printing and offline study.',
     },
     sections: [
       {
@@ -774,6 +831,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Get the Free 890 Study Guide',
       subheadline: 'Condensed study guide covering all five subareas, key concepts, and open-response strategies — printable PDF.',
       pdfLabel: 'Foundations of Reading 890 Study Guide (PDF)',
+      emailSubject: 'Your Free FORT 890 Study Guide',
+      emailHeading: 'Your 890 Study Guide is Ready',
+      emailBody: 'Here\'s your Foundations of Reading 890 Study Guide — covers all five subareas, key concepts, and open-response strategies in a printable format.',
     },
     sections: [
       {
@@ -838,6 +898,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Get the Free CT Foundations of Reading Study Sheet',
       subheadline: 'One-page cheat sheet with all subareas, CT passing score, objectives breakdown, and open-response template.',
       pdfLabel: 'CT Foundations of Reading Study Sheet (PDF)',
+      emailSubject: 'Your Free CT Foundations of Reading Study Sheet',
+      emailHeading: 'Your CT Study Sheet is Ready',
+      emailBody: 'Here\'s your Connecticut Foundations of Reading study sheet — CT passing score (240), all subareas, objectives breakdown, and the open-response template on one printable page.',
     },
     sections: [
       {
@@ -892,6 +955,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Get the Free Mississippi Foundations of Reading Study Sheet',
       subheadline: 'One-page cheat sheet with MS passing score, all five subareas, objectives breakdown, and open-response template.',
       pdfLabel: 'MS Foundations of Reading Study Sheet (PDF)',
+      emailSubject: 'Your Free Mississippi Foundations of Reading Study Sheet',
+      emailHeading: 'Your Mississippi Study Sheet is Ready',
+      emailBody: 'Here\'s your Mississippi Foundations of Reading study sheet — MS passing score (233), all five subareas, objectives breakdown, and the open-response template.',
     },
     sections: [
       {
@@ -951,6 +1017,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Get the Free MTEL Foundations of Reading Study Sheet',
       subheadline: 'Printable one-page guide with all subareas, MA passing score, objectives breakdown, and open-response template.',
       pdfLabel: 'MTEL Foundations of Reading Study Sheet (PDF)',
+      emailSubject: 'Your Free MTEL Foundations of Reading Study Sheet',
+      emailHeading: 'Your MTEL Study Sheet is Ready',
+      emailBody: 'Here\'s your MTEL Foundations of Reading study sheet — MA passing score (240), all subareas, objectives breakdown, and the open-response template.',
     },
     sections: [
       {
@@ -1005,6 +1074,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Get the Free 25-Question MTEL Practice Test PDF',
       subheadline: 'All 25 questions with answers and explanations — formatted for printing and offline study.',
       pdfLabel: 'MTEL Foundations of Reading Practice Test (PDF)',
+      emailSubject: 'Your Free MTEL Practice Test',
+      emailHeading: 'Your MTEL Practice Test is Ready',
+      emailBody: 'Here\'s your MTEL Foundations of Reading practice test — 25 questions with answers and detailed explanations, formatted for printing.',
     },
     sections: [
       {
@@ -1059,6 +1131,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Get the Free MTEL Study Guide PDF',
       subheadline: 'Complete study guide covering all 4 subareas, 11 objectives, key terms, and open-response templates — printable PDF.',
       pdfLabel: 'MTEL Foundations of Reading Study Guide (PDF)',
+      emailSubject: 'Your Free MTEL Study Guide',
+      emailHeading: 'Your MTEL Study Guide is Ready',
+      emailBody: 'Here\'s your MTEL Foundations of Reading Study Guide — covers all 4 subareas, 11 objectives, key terms, and open-response templates.',
     },
     sections: [
       {
@@ -1118,6 +1193,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Get the Free NC Foundations of Reading Study Sheet',
       subheadline: 'All 5 subareas, 11 objectives, NC passing score, key terms, and open-response framework — one printable PDF.',
       pdfLabel: 'NC Foundations of Reading Study Sheet (PDF)',
+      emailSubject: 'Your Free NC Foundations of Reading Study Sheet',
+      emailHeading: 'Your NC Study Sheet is Ready',
+      emailBody: 'Here\'s your North Carolina Foundations of Reading study sheet — NC passing score (233), all 5 subareas, 11 objectives, key terms, and the open-response framework.',
     },
     sections: [
       {
@@ -1177,6 +1255,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Get the Free OAE Foundations of Reading Study Sheet',
       subheadline: 'All 4 subareas, 11 objectives, Ohio passing score, key terms, and open-response framework — one printable PDF.',
       pdfLabel: 'OAE Foundations of Reading Study Sheet (PDF)',
+      emailSubject: 'Your Free OAE Foundations of Reading Study Sheet',
+      emailHeading: 'Your OAE Study Sheet is Ready',
+      emailBody: 'Here\'s your OAE Foundations of Reading study sheet — Ohio passing score (220), all 4 subareas, 11 objectives, key terms, and the open-response framework.',
     },
     sections: [
       {
@@ -1241,6 +1322,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Get the Free Mississippi FORT Test Guide',
       subheadline: 'MS passing score (233), test format, license types, all five subareas, and open-response framework — printable PDF.',
       pdfLabel: 'Mississippi FORT Test Guide (PDF)',
+      emailSubject: 'Your Free Mississippi FORT Test Guide',
+      emailHeading: 'Your Mississippi Test Guide is Ready',
+      emailBody: 'Here\'s your Mississippi FORT Test Guide — MS passing score (233), test format, license types requiring the exam, all five subareas, and the open-response framework.',
     },
     sections: [
       {
@@ -1300,6 +1384,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Get the Free Wisconsin FORT Exam Guide',
       subheadline: 'WI passing score (240), test format, 190 vs 890 transition, all five subareas, and open-response framework — printable PDF.',
       pdfLabel: 'Wisconsin FORT Exam Guide (PDF)',
+      emailSubject: 'Your Free Wisconsin FORT Exam Guide',
+      emailHeading: 'Your Wisconsin Exam Guide is Ready',
+      emailBody: 'Here\'s your Wisconsin FORT Exam Guide — WI passing score (240), test format, 190 vs 890 transition details, all five subareas, and the open-response framework.',
     },
     sections: [
       {
@@ -1364,6 +1451,9 @@ export const BLOG_POSTS: BlogPost[] = [
       headline: 'Get the Free Utah Foundations of Reading Study Guide',
       subheadline: 'Printable PDF with all 4 subareas, 11 objectives, UT passing score, key concept tables, and open-response templates.',
       pdfLabel: 'Utah Foundations of Reading Study Guide (PDF)',
+      emailSubject: 'Your Free Utah Foundations of Reading Study Guide',
+      emailHeading: 'Your Utah Study Guide is Ready',
+      emailBody: 'Here\'s your Utah Foundations of Reading Study Guide — UT passing score (240), all 4 subareas, 11 objectives, key concept tables, and open-response templates.',
     },
     sections: [
       {

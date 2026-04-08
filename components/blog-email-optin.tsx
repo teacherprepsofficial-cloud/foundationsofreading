@@ -11,9 +11,12 @@ interface Props {
   headline: string
   subheadline: string
   pdfLabel: string
+  emailSubject: string
+  emailHeading: string
+  emailBody: string
 }
 
-export function BlogEmailOptin({ postSlug, pdfSlug, headline, subheadline, pdfLabel }: Props) {
+export function BlogEmailOptin({ postSlug, pdfSlug, headline, subheadline, pdfLabel, emailSubject, emailHeading, emailBody }: Props) {
   const [visible, setVisible] = useState(false)
   const [dismissed, setDismissed] = useState(false)
   const [email, setEmail] = useState('')
@@ -67,7 +70,7 @@ export function BlogEmailOptin({ postSlug, pdfSlug, headline, subheadline, pdfLa
       const res = await fetch('/api/leads/for-optin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, source: `blog-${postSlug}`, pdfSlug, pdfLabel, headline }),
+        body: JSON.stringify({ email, source: `blog-${postSlug}`, pdfSlug, emailSubject, emailHeading, emailBody }),
       })
       const data = await res.json()
       if (data.success) {
