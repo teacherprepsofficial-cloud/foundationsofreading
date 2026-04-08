@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { CountdownBanner } from '@/components/countdown-banner'
+// Banner removed — email optin popup replaces it
 
 export function SiteHeader() {
   const [user, setUser] = useState<{ name: string } | null>(null)
@@ -17,7 +17,7 @@ export function SiteHeader() {
 
   return (
     <div className="sticky top-0 z-50">
-    <CountdownBanner />
+    {/* Banner removed — starter kit popup on homepage instead */}
     <header className="border-b border-[#e8e0e2] bg-white/95 backdrop-blur-sm">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
         <Link href="/" className="flex flex-col">

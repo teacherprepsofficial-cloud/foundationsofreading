@@ -4,6 +4,7 @@ import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { SubareaGrid } from '@/components/subarea-modal'
 import { HeroImage } from '@/components/hero-image'
+import { StarterKitPopup } from '@/components/starter-kit-popup'
 
 export const metadata: Metadata = {
   title: 'Pass the NES Foundations of Reading Test | Interactive Online Prep',
@@ -189,6 +190,7 @@ export default function HomePage() {
         </section>
       </main>
       <SiteFooter />
+      <StarterKitPopup />
     </>
   )
 }
