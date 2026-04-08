@@ -21,7 +21,6 @@ export default function StudyGuideClient({
   const [phase, setPhase] = useState<PagePhase>('content')
   const [answers, setAnswers] = useState<Record<string, 'A' | 'B' | 'C' | 'D'>>({})
   const [submitted, setSubmitted] = useState(false)
-  const [sidebarOpen, setSidebarOpen] = useState(true)
   const mainRef = useRef<HTMLDivElement>(null)
 
   const currentSubarea = guide.find((s) => s.id === activeSection)!
@@ -64,139 +63,82 @@ export default function StudyGuideClient({
   const score = submitted ? questions.filter((q) => answers[q.id] === q.correct).length : 0
   const pct = submitted ? Math.round((score / questions.length) * 100) : 0
 
-  const SIDEBAR_W = 248
-
   return (
-    <div className="flex min-h-screen" style={{ background: '#f8f9fa' }}>
+    <div className="min-h-screen" style={{ background: '#f8f9fa' }}>
 
-      {/* ── Fixed Sidebar ── */}
-      <aside
-        className="fixed left-0 top-0 h-screen overflow-y-auto z-20 flex flex-col"
-        style={{
-          width: sidebarOpen ? SIDEBAR_W : 0,
-          minWidth: sidebarOpen ? SIDEBAR_W : 0,
-          transition: 'width 0.2s, min-width 0.2s',
-          background: '#ffffff',
-          borderRight: '1px solid #e5e7eb',
-          overflowX: 'hidden',
-        }}
-      >
-        <div style={{ width: SIDEBAR_W, minWidth: SIDEBAR_W }}>
-          {/* Logo / Back */}
-          <div className="px-4 py-4 border-b border-[#e5e7eb]">
-            <Link
-              href={`/dashboard/${examCode}`}
-              className="text-xs text-[#6b7280] hover:text-[#111827] transition-colors"
-              style={{ fontFamily: 'var(--font-sans)' }}
+      {/* ── Horizontal Table of Contents ── */}
+      <div className="sticky top-0 z-20 bg-white border-b border-[#e5e7eb]">
+        {/* Subarea tabs */}
+        <div className="flex items-center gap-0 px-4 overflow-x-auto" style={{ fontFamily: 'var(--font-sans)' }}>
+          {guide.map((subarea) => {
+            const isActive = activeSection === subarea.id
+            return (
+              <button
+                key={subarea.id}
+                onClick={() => setActiveSection(subarea.id as SectionId)}
+                className="shrink-0 px-4 py-3 text-xs transition-colors"
+                style={{
+                  borderBottom: isActive ? '2px solid #7c1c2e' : '2px solid transparent',
+                  color: isActive ? '#7c1c2e' : '#6b7280',
+                  fontWeight: isActive ? 700 : 500,
+                }}
+              >
+                <span className="font-bold">{subarea.id}</span>
+                <span className="ml-1.5 hidden sm:inline">{subarea.name}</span>
+                <span className="ml-1 text-[10px] opacity-60">{subarea.weight}</span>
+              </button>
+            )
+          })}
+
+          {/* Quiz button */}
+          {activeSection !== 'IV' && (
+            <button
+              onClick={() => {
+                setPhase('quiz')
+                setTimeout(() => {
+                  document.getElementById('quiz-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                }, 50)
+              }}
+              className="shrink-0 ml-auto px-4 py-3 text-xs font-semibold transition-colors"
+              style={{ color: '#7c1c2e', fontFamily: 'var(--font-sans)' }}
             >
-              ← Back to Dashboard
-            </Link>
-            <p className="mt-2 text-sm font-bold text-[#111827]" style={{ fontFamily: 'var(--font-serif)' }}>
-              NES {examCode} Study Guide
-            </p>
-            <p className="mt-0.5 text-xs text-[#9ca3af]" style={{ fontFamily: 'var(--font-sans)' }}>
-              4 subareas · 11 objectives
-            </p>
-          </div>
-
-          {/* Section nav */}
-          <nav className="py-3 px-2">
-            {guide.map((subarea) => {
-              const isActive = activeSection === subarea.id
-              return (
-                <div key={subarea.id} className="mb-1">
-                  <button
-                    onClick={() => setActiveSection(subarea.id as SectionId)}
-                    className="w-full text-left rounded-md px-3 py-2 transition-colors"
-                    style={{
-                      background: isActive ? '#eff6ff' : 'transparent',
-                      fontFamily: 'var(--font-sans)',
-                    }}
-                  >
-                    <span className="block text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#9ca3af' }}>
-                      Subarea {subarea.id} · {subarea.weight}
-                    </span>
-                    <span
-                      className="text-xs leading-tight font-semibold"
-                      style={{ color: isActive ? '#1d4ed8' : '#374151' }}
-                    >
-                      {subarea.name}
-                    </span>
-                  </button>
-
-                  {isActive && (
-                    <div className="mt-0.5 ml-3 space-y-px">
-                      {subarea.sections.map((sec) => (
-                        <button
-                          key={sec.id}
-                          onClick={() => handleObjClick(subarea.id as SectionId, sec.id)}
-                          className="w-full text-left rounded px-2.5 py-1.5 text-xs text-[#6b7280] hover:bg-[#f3f4f6] hover:text-[#111827] transition-colors"
-                          style={{ fontFamily: 'var(--font-sans)' }}
-                        >
-                          {subarea.id !== 'IV' ? `Obj ${sec.objectiveNum}: ` : ''}{sec.title}
-                        </button>
-                      ))}
-                      {activeSection !== 'IV' && (
-                        <button
-                          onClick={() => {
-                            setPhase('quiz')
-                            setTimeout(() => {
-                              document.getElementById('quiz-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                            }, 50)
-                          }}
-                          className="w-full text-left rounded px-2.5 py-1.5 text-xs font-semibold text-[#1d4ed8] hover:bg-[#eff6ff] transition-colors"
-                          style={{ fontFamily: 'var(--font-sans)' }}
-                        >
-                          ✓ Section Quiz (10 questions)
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              )
-            })}
-          </nav>
-
-          {/* Section progress dots */}
-          <div className="px-4 py-3 border-t border-[#e5e7eb]">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[#9ca3af] mb-2" style={{ fontFamily: 'var(--font-sans)' }}>
-              Progress
-            </p>
-            <div className="flex gap-1.5">
-              {SECTION_ORDER.map((id) => (
-                <button
-                  key={id}
-                  onClick={() => setActiveSection(id)}
-                  title={`Subarea ${id}`}
-                  className="flex-1 h-1.5 rounded-full transition-colors"
-                  style={{ background: id === activeSection ? '#3b82f6' : '#e5e7eb' }}
-                />
-              ))}
-            </div>
-          </div>
+              Section Quiz
+            </button>
+          )}
         </div>
-      </aside>
 
-      {/* Sidebar toggle */}
-      <button
-        onClick={() => setSidebarOpen((v) => !v)}
-        className="fixed top-4 z-30 bg-white border border-[#e5e7eb] rounded-r px-1.5 py-2 text-[#6b7280] hover:bg-[#f9fafb] transition-colors shadow-sm"
-        style={{ left: sidebarOpen ? SIDEBAR_W : 0, transition: 'left 0.2s' }}
-        title={sidebarOpen ? 'Hide sidebar' : 'Show sidebar'}
-      >
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-          {sidebarOpen
-            ? <path d="M8 2L4 6L8 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            : <path d="M4 2L8 6L4 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          }
-        </svg>
-      </button>
+        {/* Objective jump links for active subarea */}
+        <div className="flex items-center gap-0 px-4 overflow-x-auto bg-[#fafafa] border-t border-[#f0f0f0]" style={{ fontFamily: 'var(--font-sans)' }}>
+          {currentSubarea.sections.map((sec) => (
+            <button
+              key={sec.id}
+              onClick={() => handleObjClick(activeSection, sec.id)}
+              className="shrink-0 px-3 py-2 text-[11px] text-[#6b7280] hover:text-[#111827] hover:bg-[#f3f4f6] rounded transition-colors whitespace-nowrap"
+            >
+              {currentSubarea.id !== 'IV' ? `Obj ${sec.objectiveNum}: ` : ''}{sec.title}
+            </button>
+          ))}
+        </div>
+
+        {/* Progress bar */}
+        <div className="flex h-1">
+          {SECTION_ORDER.map((id) => (
+            <button
+              key={id}
+              onClick={() => setActiveSection(id)}
+              className="flex-1 transition-colors"
+              style={{ background: id === activeSection ? '#7c1c2e' : '#e5e7eb' }}
+              title={`Subarea ${id}`}
+            />
+          ))}
+        </div>
+      </div>
 
       {/* ── Main Content ── */}
       <div
         ref={mainRef}
-        className="flex-1 min-h-screen"
-        style={{ marginLeft: sidebarOpen ? SIDEBAR_W : 0, transition: 'margin-left 0.2s', userSelect: 'none', WebkitUserSelect: 'none' }}
+        className="min-h-screen"
+        style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
       >
         {/* Section header — clean white */}
         <div className="bg-white border-b border-[#e5e7eb] px-8 py-6">
