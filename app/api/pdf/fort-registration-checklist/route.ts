@@ -110,7 +110,7 @@ export async function GET() {
     const steps = [
       { step: '1', title: 'Find Your State Portal', desc: 'Determine whether your state uses the NES 190 portal or the NES in [State] portal (890). See the state table below.' },
       { step: '2', title: 'Create an Account', desc: 'Go to the appropriate registration portal and create a testing account. You will need your name, email, and mailing address.' },
-      { step: '3', title: 'Select Your Test', desc: 'Choose test code 190 (most states) or 890 (Alabama, Ohio). Massachusetts uses MTEL 90.' },
+      { step: '3', title: 'Select Your Test', desc: 'Choose test code 890 (most states), 190 (Ohio via OAE, Massachusetts via MTEL).' },
       { step: '4', title: 'Choose Testing Format', desc: 'Select either a testing center appointment or online proctored testing. Both have the same content. Testing center gives 4h 15m; online gives 4h 30m.' },
       { step: '5', title: 'Pay the Testing Fee', desc: 'The fee is $139. Payment is required at registration. Accepted methods vary by portal.' },
       { step: '6', title: 'Schedule Your Date', desc: 'Pick a testing date that gives you enough study time. Allow at least 4 weeks of focused preparation.' },
@@ -188,7 +188,7 @@ export async function GET() {
       ['Mississippi', '190', 'NES standard portal'],
       ['New Hampshire', '190', 'NES standard portal'],
       ['North Carolina', '190', 'NES standard portal'],
-      ['Ohio', '890', 'NES in Ohio'],
+      ['Ohio', 'OAE 190', 'oh.nesinc.com'],
       ['Rhode Island', '190', 'NES standard portal'],
       ['Utah', '190', 'NES standard portal'],
       ['Wisconsin', '190', 'NES standard portal'],

@@ -143,10 +143,10 @@ export async function GET() {
     y = sectionBar(page, y, 'Which States Use Which Code?')
     const stateCols = [CONTENT_W / 2, CONTENT_W / 2]
     y = tableRow(page, y, ['NES 190 States', 'NES 890 States'], stateCols, true, false, regular)
-    y = tableRow(page, y, ['Arkansas, Connecticut, Iowa, Mississippi, New Hampshire, North Carolina, Rhode Island, Utah, Wisconsin', 'Alabama, Ohio'], stateCols, false, false, regular)
+    y = tableRow(page, y, ['Ohio (OAE 190), Massachusetts (MTEL 190)', 'Alabama, Arkansas, Connecticut, Iowa, Mississippi, New Hampshire, North Carolina, Rhode Island, Utah, Wisconsin'], stateCols, false, false, regular)
 
     y -= 14
-    y = drawParagraph(page, y, 'Massachusetts uses its own test code (MTEL 90) but the content is the same Foundations of Reading exam. Always check your state education department website to confirm which portal and test code to use.')
+    y = drawParagraph(page, y, 'Ohio uses test code 190 through the OAE program at oh.nesinc.com. Massachusetts uses code 190 through the MTEL program. All other states have transitioned to 890. The content is the same regardless of test code. Always check your state education department website to confirm which portal to use.')
 
     // Footer
     page.drawLine({ start: { x: MARGIN, y: 36 }, end: { x: PAGE_W - MARGIN, y: 36 }, thickness: 0.5, color: BORDER })

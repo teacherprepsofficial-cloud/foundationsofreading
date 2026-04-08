@@ -120,7 +120,7 @@ export async function GET() {
     y = tableRow(page, y, ['Test Code', '190 (NES Foundations of Reading)'], overviewCols, false, false, regular)
     y = tableRow(page, y, ['Format', '100 MC + 2 written assignments'], overviewCols, false, true, regular)
     y = tableRow(page, y, ['Time', '4 hours testing · 4h 15m (center) · 4h 30m (online)'], overviewCols, false, false, regular)
-    y = tableRow(page, y, ['Passing Score', '220 (OH) · 233 (AL, AR) · 240 (most states)'], overviewCols, false, true, regular)
+    y = tableRow(page, y, ['Passing Score', '220 (OH via OAE) · 233 (AL, AR) · 240 (most states)'], overviewCols, false, true, regular)
     y = tableRow(page, y, ['Fee', '$139'], overviewCols, false, false, regular)
     page.drawRectangle({ x: MARGIN, y, width: CONTENT_W, height: 0, borderColor: BORDER, borderWidth: 0.5 })
 

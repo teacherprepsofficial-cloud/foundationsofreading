@@ -87,7 +87,7 @@ export async function GET() {
       ['Format',        '100 multiple-choice questions + 2 open-response written assignments'],
       ['Total Time',    '4 hours  (4h 15m at testing center · 4h 30m with online proctoring)'],
       ['Fee',           '$139'],
-      ['Passing Score', '220 (OH) · 233 (AL, AR) · 240 (most states — national benchmark)'],
+      ['Passing Score', '233 (AL, AR) · 240 (most states — national benchmark)'],
       ['Score Scale',   '100–300'],
       ['Retake Policy', '30-day minimum wait · No limit on number of attempts'],
       ['Registration',  'Check your state portal — varies by state (e.g., ct.nesinc.com, nc.nesinc.com)'],
@@ -194,7 +194,7 @@ export async function GET() {
 
     y2R = sectionBar(p2, y2R, 'Test Day Tips — FORT 890', COL_W, COL2_X)
     const tips = [
-      'Passing scores vary by state: 220 (OH), 233 (AL, AR), 240 (most states).',
+      'Passing scores vary by state: 233 (AL, AR), 240 (most states). Ohio uses test code 190, not 890.',
       'Check your state testing portal for registration — each state has its own site.',
       'Test code is 890. Same content as the NES 190 and OAE 190.',
       'Favor explicit, systematic, evidence-based answers. Most structured option wins.',

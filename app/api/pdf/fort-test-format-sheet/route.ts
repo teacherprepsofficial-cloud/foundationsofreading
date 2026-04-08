@@ -101,7 +101,7 @@ export async function GET() {
     y = tableRow(page, y, ['Total Questions', '100 multiple-choice + 2 written assignments'], structCols, false, false, regular)
     y = tableRow(page, y, ['Total Time', '4 hours (4h 15m at testing center, 4h 30m online proctored)'], structCols, false, true, regular)
     y = tableRow(page, y, ['Score Scale', '100-300'], structCols, false, false, regular)
-    y = tableRow(page, y, ['Passing Score', '220 (OH), 233 (AL, AR, MS, NC), 240 (most states)'], structCols, false, true, regular)
+    y = tableRow(page, y, ['Passing Score', '220 (OH via OAE 190), 233 (AL, AR, MS, NC), 240 (most states)'], structCols, false, true, regular)
     y = tableRow(page, y, ['Fee', '$139'], structCols, false, false, regular)
     y = tableRow(page, y, ['Retake Policy', '30-day minimum wait, no limit on attempts'], structCols, false, true, regular)
 

@@ -122,7 +122,7 @@ export async function GET() {
       ['Mississippi', '233', '190'],
       ['New Hampshire', '240', '190'],
       ['North Carolina', '233', '190'],
-      ['Ohio', '220', '890'],
+      ['Ohio', '220', 'OAE 190'],
       ['Rhode Island', '240', '190'],
       ['Utah', '240', '190'],
       ['Wisconsin', '240', '190'],
@@ -142,7 +142,7 @@ export async function GET() {
     const infoCols = [160, CONTENT_W - 160]
     y = tableRow(page, y, ['Detail', 'Information'], infoCols, true, false, regular)
     y = tableRow(page, y, ['NES 190', 'Registered through the standard NES portal. Used by most states.'], infoCols, false, false, regular)
-    y = tableRow(page, y, ['NES 890', 'Registered through the NES in [State] portal. Used by Alabama and Ohio.'], infoCols, false, true, regular)
+    y = tableRow(page, y, ['NES 890', 'Registered through the NES in [State] portal. Used by most states transitioning from 190.'], infoCols, false, true, regular)
     y = tableRow(page, y, ['Content', 'Identical — 100 MC + 2 written assignments, 4 hours, scored 100-300.'], infoCols, false, false, regular)
     y = tableRow(page, y, ['Fee', '$139 for both test codes.'], infoCols, false, true, regular)
 

@@ -87,7 +87,7 @@ export async function GET() {
       ['Format',        '100 multiple-choice questions + 2 open-response written assignments'],
       ['Total Time',    '4 hours  (4h 15m at testing center · 4h 30m with online proctoring)'],
       ['Fee',           '$139'],
-      ['Passing Score', '220 (OH) · 233 (AL, AR) · 240 (most states)'],
+      ['Passing Score', '233 (AL, AR) · 240 (most states)'],
       ['Score Scale',   '100–300'],
       ['Retake Policy', '30-day minimum wait · No limit on number of attempts'],
       ['Registration',  'NES in [Your State] portal — not the standard NES 190 page'],
@@ -194,7 +194,7 @@ export async function GET() {
 
     y2R = sectionBar(p2, y2R, 'Test Day Tips — FORT 890', COL_W, COL2_X)
     const tips = [
-      'Confirm your state passing score: 220 (OH), 233 (AL, AR), 240 (most states).',
+      'Confirm your state passing score: 233 (AL, AR), 240 (most states).',
       'Register through the NES in [State] page, not the standard NES 190 page.',
       'Test code is 890, not 190. Same content, different registration portal.',
       'Favor explicit, systematic, evidence-based answers. Most structured option wins.',
