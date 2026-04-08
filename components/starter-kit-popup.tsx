@@ -153,7 +153,7 @@ export function StarterKitPopup() {
                   </div>
                   <div className="flex items-start gap-2">
                     <span className="mt-0.5 text-[#7c1c2e] font-bold">✓</span>
-                    <span>20% Off Discount Code</span>
+                    <span>Get prepared smarter</span>
                   </div>
                 </div>
 
