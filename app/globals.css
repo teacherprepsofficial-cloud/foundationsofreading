@@ -210,6 +210,46 @@ body {
   line-height: 1.6;
 }
 
+/* ── Blog HTML sections ── */
+.blog-html p { margin-bottom: 12px; font-size: 15px; line-height: 1.7; }
+.blog-html h3 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 24px 0 10px;
+}
+.blog-html table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  margin: 12px 0 20px;
+  border: 1px solid #e8e0e2;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.blog-html th {
+  background: #7c1c2e;
+  color: white;
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+.blog-html td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #e8e0e2;
+  vertical-align: top;
+  color: #1a1a1a;
+  line-height: 1.6;
+}
+.blog-html tr:last-child td { border-bottom: none; }
+.blog-html tr:nth-child(even) td { background: #faf8f5; }
+.blog-html strong { color: #7c1c2e; }
+.blog-html a { color: #7c1c2e; font-weight: 600; text-decoration: underline; }
+.blog-html a:hover { text-decoration: none; }
+
 /* Global button hover grow */
 button:not([disabled]):hover,
 a[class*="bg-"]:hover {

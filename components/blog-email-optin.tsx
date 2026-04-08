@@ -28,6 +28,9 @@ export function BlogEmailOptin({ postSlug, pdfSlug, headline, subheadline, pdfLa
   }, [dismissed, success])
 
   useEffect(() => {
+    // Don't re-dismiss while showing the success confirmation
+    if (success) return
+
     if (localStorage.getItem(DISMISS_KEY) === '1') {
       setDismissed(true)
       return
@@ -47,7 +50,7 @@ export function BlogEmailOptin({ postSlug, pdfSlug, headline, subheadline, pdfLa
       clearTimeout(timer)
       window.removeEventListener('scroll', onScroll)
     }
-  }, [DISMISS_KEY, show])
+  }, [DISMISS_KEY, show, success])
 
   function handleDismiss() {
     localStorage.setItem(DISMISS_KEY, '1')
@@ -69,7 +72,11 @@ export function BlogEmailOptin({ postSlug, pdfSlug, headline, subheadline, pdfLa
       const data = await res.json()
       if (data.success) {
         setSuccess(true)
-        localStorage.setItem(DISMISS_KEY, '1')
+        // Show success message for 5 seconds, then dismiss
+        setTimeout(() => {
+          localStorage.setItem(DISMISS_KEY, '1')
+          setDismissed(true)
+        }, 5000)
       } else {
         setError('Something went wrong. Please try again.')
       }

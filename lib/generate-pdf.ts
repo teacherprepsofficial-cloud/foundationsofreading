@@ -1,24 +1,30 @@
-import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
+import { PDFDocument, PDFPage, rgb, StandardFonts } from 'pdf-lib'
 
-const BURGUNDY = rgb(0.486, 0.110, 0.180) // #7c1c2e
-const DARK = rgb(0.102, 0.102, 0.102)      // #1a1a1a
-const MID = rgb(0.420, 0.420, 0.420)       // #6b6b6b
-const WHITE = rgb(1, 1, 1)
+const BURGUNDY = rgb(0.486, 0.110, 0.180)
+const DARK     = rgb(0.102, 0.102, 0.102)
+const MID      = rgb(0.420, 0.420, 0.420)
+const WHITE    = rgb(1, 1, 1)
+const ROW_ODD  = rgb(0.965, 0.945, 0.948)
+const BORDER   = rgb(0.88,  0.82,  0.84)
 
-const PAGE_W = 612  // US Letter
-const PAGE_H = 792
-const MARGIN = 48
-const CONTENT_W = PAGE_W - MARGIN * 2
+const PAGE_W    = 612
+const PAGE_H    = 792
+const MARGIN    = 40
+const CONTENT_W = PAGE_W - MARGIN * 2   // 532
+const COL_W     = (CONTENT_W - 12) / 2  // 260
+const COL2_X    = MARGIN + COL_W + 12
 
-function wrapText(text: string, font: Awaited<ReturnType<PDFDocument['embedFont']>>, size: number, maxWidth: number): string[] {
-  const words = text.split(' ')
+function wrapText(
+  text: string,
+  font: Awaited<ReturnType<PDFDocument['embedFont']>>,
+  size: number,
+  maxWidth: number,
+): string[] {
   const lines: string[] = []
   let current = ''
-
-  for (const word of words) {
+  for (const word of text.split(' ')) {
     const test = current ? `${current} ${word}` : word
-    const w = font.widthOfTextAtSize(test, size)
-    if (w > maxWidth && current) {
+    if (font.widthOfTextAtSize(test, size) > maxWidth && current) {
       lines.push(current)
       current = word
     } else {
@@ -30,127 +36,243 @@ function wrapText(text: string, font: Awaited<ReturnType<PDFDocument['embedFont'
 }
 
 export async function generateNes190GuidePdf(): Promise<Uint8Array> {
-  const doc = await PDFDocument.create()
-  const bold = await doc.embedFont(StandardFonts.HelveticaBold)
+  const doc     = await PDFDocument.create()
+  const bold    = await doc.embedFont(StandardFonts.HelveticaBold)
   const regular = await doc.embedFont(StandardFonts.Helvetica)
+  const italic  = await doc.embedFont(StandardFonts.HelveticaOblique)
 
-  let page = doc.addPage([PAGE_W, PAGE_H])
-  let y = PAGE_H
+  // ── Helpers ──────────────────────────────────────────────────────────────────
 
-  // ── Header bar ─────────────────────────────────────────────────────────────
-  page.drawRectangle({ x: 0, y: PAGE_H - 80, width: PAGE_W, height: 80, color: BURGUNDY })
-  page.drawText('FOUNDATIONS OF READING', {
-    x: MARGIN, y: PAGE_H - 34, size: 9, font: bold, color: rgb(0.91, 0.706, 0.737),
-  })
-  page.drawText('NES 190 · Quick Reference Guide', {
-    x: MARGIN, y: PAGE_H - 56, size: 18, font: bold, color: WHITE,
-  })
-  page.drawText('foundationsofreading.com', {
-    x: PAGE_W - MARGIN - regular.widthOfTextAtSize('foundationsofreading.com', 9),
-    y: PAGE_H - 56, size: 9, font: regular, color: rgb(0.91, 0.706, 0.737),
-  })
-
-  y = PAGE_H - 100
-
-  // ── Helper: draw a section ──────────────────────────────────────────────────
-  function drawSection(title: string, lines: { label?: string; text: string }[]) {
-    // Section title bar
-    if (y < 120) { page = doc.addPage([PAGE_W, PAGE_H]); y = PAGE_H - MARGIN }
-    page.drawRectangle({ x: MARGIN, y: y - 20, width: CONTENT_W, height: 22, color: BURGUNDY })
-    page.drawText(title.toUpperCase(), { x: MARGIN + 8, y: y - 14, size: 9, font: bold, color: WHITE })
-    y -= 28
-
-    for (const line of lines) {
-      const labelText = line.label ? `${line.label}  ` : ''
-      const labelW = line.label ? bold.widthOfTextAtSize(labelText, 10) : 0
-      const bodyW = CONTENT_W - labelW
-
-      const wrapped = wrapText(line.text, regular, 10, bodyW)
-
-      for (let i = 0; i < wrapped.length; i++) {
-        if (y < 60) { page = doc.addPage([PAGE_W, PAGE_H]); y = PAGE_H - MARGIN }
-        if (i === 0 && line.label) {
-          page.drawText(labelText, { x: MARGIN, y, size: 10, font: bold, color: BURGUNDY })
-          page.drawText(wrapped[i], { x: MARGIN + labelW, y, size: 10, font: regular, color: DARK })
-        } else {
-          page.drawText(wrapped[i], { x: MARGIN + labelW, y, size: 10, font: regular, color: DARK })
-        }
-        y -= 15
-      }
-      y -= 4 // gap between items
-    }
-    y -= 10
+  function sectionBar(pg: PDFPage, yPos: number, title: string, width = CONTENT_W, xOff = MARGIN): number {
+    pg.drawRectangle({ x: xOff, y: yPos - 18, width, height: 20, color: BURGUNDY })
+    pg.drawText(title.toUpperCase(), { x: xOff + 7, y: yPos - 12, size: 7.5, font: bold, color: WHITE })
+    return yPos - 26
   }
 
-  // ── Test at a Glance ────────────────────────────────────────────────────────
-  drawSection('Test at a Glance', [
-    { label: 'Test Code:', text: '190 (NES Foundations of Reading)' },
-    { label: 'Format:', text: '100 multiple-choice questions + 2 open-response written assignments' },
-    { label: 'Total Time:', text: '4 hours (4 hrs 15 min total appointment at testing center; 4 hrs 30 min for online proctoring)' },
-    { label: 'Registration Fee:', text: '$139' },
-    { label: 'Passing Score:', text: '220 (Ohio); most other states require 240 — confirm with your state' },
-    { label: 'Score Scale:', text: '100–300' },
-    { label: 'Retake Policy:', text: 'Minimum 30-day wait between attempts; no limit on number of attempts' },
-  ])
+  // Term (bold burgundy) stacked above definition (regular dark), alternating row bg
+  function conceptRow(
+    pg: PDFPage, xOff: number, w: number, yPos: number,
+    term: string, def: string, isOdd: boolean,
+  ): number {
+    const termLines = wrapText(term, bold,    7.5, w - 14)
+    const defLines  = wrapText(def,  regular, 7.5, w - 14)
+    const rowH = termLines.length * 9 + defLines.length * 9 + 10
+    pg.drawRectangle({ x: xOff, y: yPos - rowH, width: w, height: rowH, color: isOdd ? ROW_ODD : WHITE })
+    let ty = yPos - 8
+    termLines.forEach((l, i) => pg.drawText(l, { x: xOff + 7, y: ty - i * 9, size: 7.5, font: bold,    color: BURGUNDY }))
+    ty -= termLines.length * 9 + 1
+    defLines.forEach( (l, i) => pg.drawText(l, { x: xOff + 7, y: ty - i * 9, size: 7.5, font: regular, color: DARK }))
+    pg.drawLine({ start: { x: xOff, y: yPos - rowH }, end: { x: xOff + w, y: yPos - rowH }, thickness: 0.5, color: BORDER })
+    return yPos - rowH
+  }
 
-  // ── Four Subareas ───────────────────────────────────────────────────────────
-  drawSection('The Four Subareas — Exam Weight Breakdown', [
-    { label: 'Subarea I (35%):', text: 'Foundations of Reading Development — approx. 43–45 multiple-choice items. Covers phonological and phonemic awareness, the alphabetic principle, phonics instruction, high-frequency word recognition, spelling patterns, word analysis and decoding strategies, and reading fluency development.' },
-    { label: 'Subarea II (27%):', text: 'Development of Reading Comprehension — approx. 33–35 multiple-choice items. Covers academic language development, vocabulary instruction strategies (including Tier 1/2/3 framework), literary text comprehension, and informational text analysis.' },
-    { label: 'Subarea III (18%):', text: 'Reading Assessment and Instruction — approx. 21–23 multiple-choice items. Covers assessment types (screening, diagnostic, progress monitoring, formative, summative), data-informed instruction, best instructional practices, and support for diverse learners including ELL students and students with disabilities.' },
-    { label: 'Subarea IV (20%):', text: 'Integration of Knowledge and Understanding — 2 open-response written assignments. You will analyze student reading performance data and apply knowledge of either foundational skills or reading comprehension. Each response demonstrates how you connect assessment evidence to instructional decisions.' },
-  ])
+  // ── PAGE 1 ───────────────────────────────────────────────────────────────────
+  // Layout: Header → Test at a Glance → Four Subareas → [Subarea I | Subarea II]
+  const p1 = doc.addPage([PAGE_W, PAGE_H])
 
-  // ── Key Concepts by Subarea ─────────────────────────────────────────────────
-  drawSection('Key Concepts to Know — Subarea I (Foundations)', [
-    { label: 'Phonological Awareness:', text: 'The broad ability to hear and manipulate sound structures in spoken language — words, syllables, onset-rime, and phonemes.' },
-    { label: 'Phonemic Awareness:', text: 'The specific ability to hear and manipulate individual phonemes (the smallest units of sound). Key tasks: isolation, identification, blending, segmentation, manipulation.' },
-    { label: 'Phonics:', text: 'The relationship between letters and sounds. Instruction should be systematic (taught in a logical sequence) and explicit (directly taught, not discovered). Covers CVC patterns, digraphs, blends, vowel teams, CVCe, and multi-syllabic words.' },
-    { label: 'Fluency:', text: 'Accurate, automatic reading at an appropriate rate with proper expression (prosody). Best developed through repeated reading, modeled reading, and wide reading practice.' },
-    { label: 'Word Analysis:', text: 'Using morphemes (prefixes, suffixes, roots) and syllable types to decode unfamiliar words. The six syllable types: closed, open, vowel team, vowel-consonant-e, r-controlled, consonant-le.' },
-  ])
-
-  drawSection('Key Concepts to Know — Subarea II (Comprehension)', [
-    { label: 'Three-Tier Vocabulary:', text: 'Tier 1 = everyday words (cat, run). Tier 2 = high-utility academic words (analyze, significant) — highest priority for instruction. Tier 3 = domain-specific words (photosynthesis).' },
-    { label: 'Literary Text:', text: 'Narrative elements (character, setting, plot, theme, point of view), literary devices (foreshadowing, symbolism, metaphor), and inferencing from text evidence.' },
-    { label: 'Informational Text:', text: 'Text structures (cause-effect, compare-contrast, problem-solution, sequence, description), text features (headings, captions, diagrams), and summarization strategies.' },
-    { label: 'Simple View of Reading:', text: 'Reading Comprehension = Decoding × Language Comprehension. Both components must be strong for skilled reading. Weak decoding or weak language comprehension both limit comprehension.' },
-  ])
-
-  drawSection('Key Concepts to Know — Subarea III (Assessment)', [
-    { label: 'Screening:', text: 'Brief, universal assessments given to all students to identify those at risk. Administered at the start of the year (e.g., DIBELS, AIMSweb).' },
-    { label: 'Diagnostic:', text: 'In-depth assessments to identify specific strengths and needs. Given after screening flags a concern (e.g., phonics inventories, running records).' },
-    { label: 'Progress Monitoring:', text: 'Frequent, brief assessments to track student response to instruction over time. Used to adjust teaching based on data.' },
-    { label: 'Running Records:', text: 'A method of recording oral reading accuracy. Errors (miscues) are coded by type: substitution, omission, insertion, self-correction. Used for both accuracy and comprehension follow-up.' },
-    { label: 'MTSS/RTI:', text: 'Multi-Tiered System of Supports. Tier 1 = high-quality core instruction for all. Tier 2 = small group intervention. Tier 3 = intensive individualized support.' },
-  ])
-
-  // ── Constructed Response Guide ──────────────────────────────────────────────
-  drawSection('Open-Response Strategy — Subarea IV', [
-    { text: 'Each written assignment is scored on a 4-point scale across: Purpose, Subject Matter Knowledge, Support, and Rationale.' },
-    { label: 'Step 1:', text: 'Identify one significant STRENGTH in the student\'s reading performance. Cite specific evidence from the provided materials (error patterns, accuracy rate, specific words, score data).' },
-    { label: 'Step 2:', text: 'Identify one significant NEED. Again, cite specific evidence — never make general claims without pointing to what you observed.' },
-    { label: 'Step 3:', text: 'Recommend one specific, named instructional strategy that directly addresses the identified need.' },
-    { label: 'Step 4:', text: 'Explain WHY this strategy will be effective for this particular student, connecting your reasoning to the evidence you cited.' },
-    { text: 'Use professional terminology throughout: phonemic awareness, miscue analysis, prosody, morphemic analysis, scaffolding, gradual release of responsibility.' },
-  ])
-
-  // ── Quick Tips ──────────────────────────────────────────────────────────────
-  drawSection('Test Day Quick Tips', [
-    { text: 'The exam consistently favors explicit, systematic, evidence-based instructional approaches. When in doubt, choose the most direct and structured option.' },
-    { text: 'Budget roughly 90 seconds per multiple-choice question. Flag uncertain items and return after completing the rest — never leave a question blank.' },
-    { text: 'Reserve at least 45–50 minutes per written assignment. Spend the first 5 minutes planning your response before writing.' },
-    { text: 'Answer choices with "always," "never," or "only" are usually wrong. The best answers tend to be specific, research-grounded, and student-centered.' },
-    { text: 'Online proctoring includes an optional 15-minute break between the multiple-choice and written sections — use it.' },
-  ])
-
-  // ── Footer on last page ─────────────────────────────────────────────────────
-  if (y < 80) { page = doc.addPage([PAGE_W, PAGE_H]); y = PAGE_H - MARGIN }
-  page.drawLine({ start: { x: MARGIN, y: 40 }, end: { x: PAGE_W - MARGIN, y: 40 }, thickness: 0.5, color: rgb(0.8, 0.8, 0.8) })
-  page.drawText('© Foundations of Reading Test Prep · foundationsofreading.com · For personal study use only', {
-    x: MARGIN, y: 26, size: 7, font: regular, color: MID,
+  // Header
+  p1.drawRectangle({ x: 0, y: PAGE_H - 68, width: PAGE_W, height: 68, color: BURGUNDY })
+  p1.drawText('FOUNDATIONS OF READING', { x: MARGIN, y: PAGE_H - 25, size: 8, font: bold, color: rgb(0.91, 0.71, 0.74) })
+  p1.drawText('NES 190 · Quick Reference Guide', { x: MARGIN, y: PAGE_H - 46, size: 17, font: bold, color: WHITE })
+  p1.drawText('foundationsofreading.com', {
+    x: PAGE_W - MARGIN - regular.widthOfTextAtSize('foundationsofreading.com', 8),
+    y: PAGE_H - 46, size: 8, font: regular, color: rgb(0.91, 0.71, 0.74),
   })
 
-  const pdfBytes = await doc.save()
-  return pdfBytes
+  let y = PAGE_H - 78
+
+  // ── Test at a Glance ─────────────────────────────────────────────────────────
+  y = sectionBar(p1, y, 'Test at a Glance')
+
+  const glanceCol1W = 96
+  const glanceRows: [string, string][] = [
+    ['Test Code',     '190 — NES Foundations of Reading'],
+    ['Format',        '100 multiple-choice questions + 2 open-response written assignments'],
+    ['Total Time',    '4 hours  (4h 15m at testing center · 4h 30m with online proctoring)'],
+    ['Fee',           '$139'],
+    ['Passing Score', '220 (Ohio) · Most other states require 240 — confirm with your state'],
+    ['Score Scale',   '100–300'],
+    ['Retake Policy', '30-day minimum wait · No limit on number of attempts'],
+  ]
+
+  const glanceTableTop = y
+  p1.drawLine({ start: { x: MARGIN, y }, end: { x: MARGIN + CONTENT_W, y }, thickness: 0.5, color: BORDER })
+
+  for (let i = 0; i < glanceRows.length; i++) {
+    const [label, value] = glanceRows[i]
+    const valLines = wrapText(value, regular, 8.5, CONTENT_W - glanceCol1W - 14)
+    const rowH = Math.max(18, valLines.length * 10 + 8)
+    p1.drawRectangle({ x: MARGIN, y: y - rowH, width: CONTENT_W, height: rowH, color: i % 2 === 1 ? ROW_ODD : WHITE })
+    p1.drawLine({ start: { x: MARGIN + glanceCol1W, y }, end: { x: MARGIN + glanceCol1W, y: y - rowH }, thickness: 0.5, color: BORDER })
+    p1.drawLine({ start: { x: MARGIN, y: y - rowH }, end: { x: MARGIN + CONTENT_W, y: y - rowH }, thickness: 0.5, color: BORDER })
+    // Both label and value share the same baseline — aligned to first line of value
+    const baselineY = y - Math.max(8, (rowH - valLines.length * 10) / 2) - 1
+    p1.drawText(label, { x: MARGIN + 7, y: baselineY, size: 8, font: bold, color: BURGUNDY })
+    valLines.forEach((l, li) => p1.drawText(l, { x: MARGIN + glanceCol1W + 8, y: baselineY - li * 10, size: 8.5, font: regular, color: DARK }))
+    y -= rowH
+  }
+  // Outer border — left and right sides
+  p1.drawRectangle({ x: MARGIN, y, width: CONTENT_W, height: glanceTableTop - y, borderColor: BORDER, borderWidth: 0.5 })
+
+  y -= 12
+
+  // ── Four Subareas ─────────────────────────────────────────────────────────────
+  y = sectionBar(p1, y, 'The Four Subareas — Exam Weight Breakdown')
+
+  const subC1 = 84
+  const subC2 = 110
+  const subC3 = CONTENT_W - subC1 - subC2
+
+  const subTableTop = y
+  p1.drawRectangle({ x: MARGIN, y: y - 16, width: CONTENT_W, height: 16, color: rgb(0.18, 0.18, 0.18) })
+  ;(['SUBAREA', 'WEIGHT', 'TOPICS COVERED'] as const).forEach((h, i) => {
+    const xOff = [7, subC1 + 7, subC1 + subC2 + 7][i]
+    p1.drawText(h, { x: MARGIN + xOff, y: y - 11, size: 7, font: bold, color: WHITE })
+  })
+  y -= 16
+  p1.drawLine({ start: { x: MARGIN, y }, end: { x: MARGIN + CONTENT_W, y }, thickness: 0.5, color: BORDER })
+
+  const subareas = [
+    { label: 'Subarea I',   pct: 35, items: '~43–45 MC', topics: 'Phonological & phonemic awareness, alphabetic principle, phonics, high-frequency words, spelling patterns, word analysis, reading fluency' },
+    { label: 'Subarea II',  pct: 27, items: '~33–35 MC', topics: 'Academic language, vocabulary (Tier 1/2/3 framework), literary text analysis, informational text structures, Simple View of Reading' },
+    { label: 'Subarea III', pct: 18, items: '~21–23 MC', topics: 'Screening, diagnostic, progress monitoring, formative & summative, MTSS/RTI, data-driven instruction, diverse learners (ELL, IEP)' },
+    { label: 'Subarea IV',  pct: 20, items: '2 written',  topics: 'Analyze student reading data, connect assessment evidence to instructional decisions for foundational skills or comprehension' },
+  ]
+
+  for (let i = 0; i < subareas.length; i++) {
+    const s = subareas[i]
+    const topicLines = wrapText(s.topics, regular, 8, subC3 - 12)
+    const rowH = Math.max(34, topicLines.length * 10 + 14)
+    p1.drawRectangle({ x: MARGIN, y: y - rowH, width: CONTENT_W, height: rowH, color: i % 2 === 1 ? ROW_ODD : WHITE })
+    p1.drawText(s.label, { x: MARGIN + 7,  y: y - 12,   size: 8,   font: bold,    color: BURGUNDY })
+    p1.drawText(s.items, { x: MARGIN + 7,  y: y - 22.5, size: 7.5, font: regular, color: MID })
+    const barX    = MARGIN + subC1 + 7
+    const barMaxW = 64
+    const barY    = y - rowH / 2 - 4
+    p1.drawRectangle({ x: barX, y: barY, width: barMaxW, height: 8, color: rgb(0.88, 0.82, 0.84) })
+    p1.drawRectangle({ x: barX, y: barY, width: Math.round((s.pct / 40) * barMaxW), height: 8, color: BURGUNDY })
+    p1.drawText(`${s.pct}%`, { x: barX + barMaxW + 5, y: barY + 1, size: 8.5, font: bold, color: BURGUNDY })
+    const topicStartY = y - (rowH - topicLines.length * 10) / 2 - 1
+    topicLines.forEach((l, li) => p1.drawText(l, { x: MARGIN + subC1 + subC2 + 7, y: topicStartY - li * 10, size: 8, font: regular, color: DARK }))
+    ;[subC1, subC1 + subC2].forEach(dx => p1.drawLine({ start: { x: MARGIN + dx, y }, end: { x: MARGIN + dx, y: y - rowH }, thickness: 0.5, color: BORDER }))
+    p1.drawLine({ start: { x: MARGIN, y: y - rowH }, end: { x: MARGIN + CONTENT_W, y: y - rowH }, thickness: 0.5, color: BORDER })
+    y -= rowH
+  }
+  // Outer border — left and right sides
+  p1.drawRectangle({ x: MARGIN, y, width: CONTENT_W, height: subTableTop - y, borderColor: BORDER, borderWidth: 0.5 })
+
+  y -= 12
+
+  // ── Two-column: Subarea I (left) | Subarea II (right) — on page 1 ─────────────
+  let yL = y
+  let yR = y
+
+  // Left: Subarea I
+  yL = sectionBar(p1, yL, 'Subarea I — Foundations of Reading', COL_W, MARGIN)
+  p1.drawLine({ start: { x: MARGIN, y: yL }, end: { x: MARGIN + COL_W, y: yL }, thickness: 0.5, color: BORDER })
+
+  const sub1: [string, string][] = [
+    ['Phonological Awareness', 'Hearing & manipulating sound structures in spoken language — words, syllables, onset-rime, phonemes.'],
+    ['Phonemic Awareness',     'Hearing & manipulating individual phonemes. Key tasks: isolation, identification, blending, segmentation, manipulation.'],
+    ['Phonics',                'Letter-sound relationships. Instruction must be systematic + explicit. Covers CVC, digraphs, blends, vowel teams, CVCe, multi-syllabic words.'],
+    ['Fluency',                'Accurate, automatic reading at appropriate rate with prosody. Built via repeated reading, modeled reading, wide reading.'],
+    ['Word Analysis',          'Morphemes (prefixes, suffixes, roots) + 6 syllable types: closed, open, vowel team, CVCe, r-controlled, consonant-le.'],
+  ]
+  sub1.forEach(([term, def], i) => { yL = conceptRow(p1, MARGIN, COL_W, yL, term, def, i % 2 === 1) })
+
+  // Right: Subarea II
+  yR = sectionBar(p1, yR, 'Subarea II — Reading Comprehension', COL_W, COL2_X)
+  p1.drawLine({ start: { x: COL2_X, y: yR }, end: { x: COL2_X + COL_W, y: yR }, thickness: 0.5, color: BORDER })
+
+  const sub2: [string, string][] = [
+    ['Three-Tier Vocabulary', 'Tier 1 = everyday (cat). Tier 2 = academic (analyze) — highest instruction priority. Tier 3 = domain-specific (photosynthesis).'],
+    ['Literary Text',         'Narrative elements (character, setting, plot, theme, POV), literary devices (foreshadowing, symbolism, metaphor), inferencing.'],
+    ['Informational Text',    'Text structures (cause-effect, compare-contrast, problem-solution, sequence, description), text features, summarization strategies.'],
+    ['Simple View of Reading','RC = Decoding × Language Comprehension. Both must be strong. Weakness in either limits overall comprehension.'],
+  ]
+  sub2.forEach(([term, def], i) => { yR = conceptRow(p1, COL2_X, COL_W, yR, term, def, i % 2 === 1) })
+
+  // ── PAGE 2 ───────────────────────────────────────────────────────────────────
+  // Layout: [Subarea III | Test Day Tips] → Open-Response Template → footer
+  const p2 = doc.addPage([PAGE_W, PAGE_H])
+  let y2L = PAGE_H - MARGIN
+  let y2R = PAGE_H - MARGIN
+
+  // Left: Subarea III
+  y2L = sectionBar(p2, y2L, 'Subarea III — Assessment & Instruction', COL_W, MARGIN)
+  p2.drawLine({ start: { x: MARGIN, y: y2L }, end: { x: MARGIN + COL_W, y: y2L }, thickness: 0.5, color: BORDER })
+
+  const sub3: [string, string][] = [
+    ['Screening',          'Brief, universal. Given to ALL students at year-start to flag those at risk. (e.g., DIBELS, AIMSweb)'],
+    ['Diagnostic',         'In-depth. Given AFTER screening flags a concern to find specific strengths/needs. (e.g., phonics inventory)'],
+    ['Progress Monitoring','Frequent + brief. Tracks student response to instruction over time. Informs teaching adjustments.'],
+    ['Running Records',    'Records oral reading accuracy. Codes miscues: substitution, omission, insertion, self-correction.'],
+    ['MTSS / RTI',         'Tier 1 = core instruction for all.  Tier 2 = small-group intervention.  Tier 3 = intensive individual support.'],
+  ]
+  sub3.forEach(([term, def], i) => { y2L = conceptRow(p2, MARGIN, COL_W, y2L, term, def, i % 2 === 1) })
+
+  // Right: Test Day Tips
+  y2R = sectionBar(p2, y2R, 'Test Day Tips', COL_W, COL2_X)
+
+  const tips = [
+    'Exam favors explicit, systematic, evidence-based instruction. When unsure, choose the most structured option.',
+    '~90 sec per MC question. Flag uncertain items and return — never leave a question blank.',
+    'Reserve 45–50 min per written assignment. Spend first 5 min planning before you write.',
+    'Choices with "always," "never," or "only" are usually wrong. Best answers are specific and student-centered.',
+    'Online proctoring: use the optional 15-min break between MC and written sections.',
+  ]
+
+  let tipsH = 8
+  for (const tip of tips) tipsH += wrapText(tip, regular, 7.5, COL_W - 22).length * 9 + 9
+
+  p2.drawRectangle({ x: COL2_X, y: y2R - tipsH, width: COL_W, height: tipsH, color: ROW_ODD })
+  p2.drawLine({ start: { x: COL2_X, y: y2R }, end: { x: COL2_X + COL_W, y: y2R }, thickness: 0.5, color: BORDER })
+
+  let tipY = y2R - 4
+  for (const tip of tips) {
+    const tipLines = wrapText(tip, regular, 7.5, COL_W - 22)
+    p2.drawText('·', { x: COL2_X + 6, y: tipY - 9, size: 10, font: bold, color: BURGUNDY })
+    tipLines.forEach((l, li) => p2.drawText(l, { x: COL2_X + 16, y: tipY - 9 - li * 9, size: 7.5, font: regular, color: DARK }))
+    tipY -= tipLines.length * 9 + 9
+  }
+  y2R -= tipsH
+
+  // ── Open-Response Template (full width) ───────────────────────────────────────
+  let yFull = Math.min(y2L, y2R) - 14
+  yFull = sectionBar(p2, yFull, 'Subarea IV — Open-Response Template  ·  Scored 1–4 on: Purpose · Knowledge · Support · Rationale')
+
+  const templateRows = [
+    { label: 'STRENGTH',     text: 'One significant strength I observed is __________________ as evidenced by __________________.' },
+    { label: 'NEED',         text: 'This student needs support with __________________ because the data shows __________________.' },
+    { label: 'STRATEGY',     text: 'I would recommend ________________________________ to directly address this identified need.' },
+    { label: 'RATIONALE',    text: 'This strategy will be effective for this student because ________________________________.' },
+    { label: 'TERMS TO USE', text: 'phonemic awareness · miscue analysis · prosody · morphemic analysis · scaffolding · gradual release of responsibility' },
+  ]
+
+  let templateH = 10
+  for (const row of templateRows) {
+    const prefixW = bold.widthOfTextAtSize(`${row.label}:  `, 8)
+    templateH += wrapText(row.text, italic, 8, CONTENT_W - prefixW - 20).length * 11 + 8
+  }
+
+  p2.drawRectangle({ x: MARGIN, y: yFull - templateH, width: CONTENT_W, height: templateH, color: ROW_ODD })
+  p2.drawRectangle({ x: MARGIN, y: yFull - templateH, width: CONTENT_W, height: templateH, borderColor: BORDER, borderWidth: 0.5 })
+
+  let ty = yFull - 12
+  for (const row of templateRows) {
+    const prefix  = `${row.label}:  `
+    const prefixW = bold.widthOfTextAtSize(prefix, 8)
+    const lines   = wrapText(row.text, italic, 8, CONTENT_W - prefixW - 20)
+    p2.drawText(prefix, { x: MARGIN + 10, y: ty, size: 8, font: bold,   color: BURGUNDY })
+    lines.forEach((l, li) => p2.drawText(l, { x: MARGIN + 10 + prefixW, y: ty - li * 11, size: 8, font: italic, color: DARK }))
+    ty -= lines.length * 11 + 8
+  }
+
+  // ── Footer ────────────────────────────────────────────────────────────────────
+  p2.drawLine({ start: { x: MARGIN, y: 36 }, end: { x: PAGE_W - MARGIN, y: 36 }, thickness: 0.5, color: BORDER })
+  p2.drawText('© Foundations of Reading Test Prep · foundationsofreading.com · For personal study use only', {
+    x: MARGIN, y: 22, size: 7, font: regular, color: MID,
+  })
+
+  return await doc.save()
 }

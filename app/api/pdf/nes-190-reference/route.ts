@@ -10,7 +10,7 @@ export async function GET() {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': 'attachment; filename="NES-190-Quick-Reference-Guide.pdf"',
-        'Cache-Control': 'public, max-age=86400',
+        'Cache-Control': 'no-store',
       },
     })
   } catch (err) {

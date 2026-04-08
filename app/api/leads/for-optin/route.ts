@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
     // PDF download URL
     const pdfUrl = pdfSlug
       ? `${BASE_URL}/api/pdf/${pdfSlug}`
-      : `${BASE_URL}/api/pdf/nes-190-guide`
+      : `${BASE_URL}/api/pdf/nes-190-reference`
 
     // Discount section
     const discountBlock = discountExpiresAt ? `
@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
     `
 
     await resend.emails.send({
-      from: 'Foundations of Reading <prep@foundationsofreading.com>',
+      from: 'Foundations of Reading <noreply@foundationsofreading.com>',
       to: email,
       subject: 'Your Free NES 190 Quick Reference Guide',
       html,

@@ -35,12 +35,16 @@ const nextConfig = {
       { source: '/dashboard/890', destination: '/dashboard', permanent: false },
       { source: '/dashboard/190/:path+', destination: '/dashboard/:path+', permanent: false },
       { source: '/dashboard/890/:path+', destination: '/dashboard/:path+', permanent: false },
+      // Retired product pages — redirect to homepage
+      { source: '/study-guide',    destination: '/', permanent: true },
+      { source: '/bundle',         destination: '/', permanent: true },
+      { source: '/practice-test',  destination: '/', permanent: true },
       // Old WordPress URL redirects (301 permanent)
-      { source: '/190-test', destination: '/study-guide', permanent: true },
-      { source: '/90-test', destination: '/study-guide', permanent: true },
-      { source: '/free-practice-test', destination: '/practice-test', permanent: true },
-      { source: '/faq', destination: '/#faq', permanent: true },
-      { source: '/shop', destination: '/bundle', permanent: true },
+      { source: '/190-test',           destination: '/', permanent: true },
+      { source: '/90-test',            destination: '/', permanent: true },
+      { source: '/free-practice-test', destination: '/', permanent: true },
+      { source: '/faq',  destination: '/#faq', permanent: true },
+      { source: '/shop', destination: '/',     permanent: true },
     ]
   },
 }
