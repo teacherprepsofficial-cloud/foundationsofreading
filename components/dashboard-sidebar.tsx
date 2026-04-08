@@ -26,120 +26,198 @@ export default function DashboardSidebar({ nav }: DashboardSidebarProps) {
   }
 
   return (
-    <aside style={{ width: 240, minWidth: 240, background: '#1a0a0e', display: 'flex', flexDirection: 'column', minHeight: '100vh', position: 'sticky', top: 0, height: '100vh', overflowY: 'auto' }}>
-
-      {/* Logo */}
-      <div style={{ padding: '20px 20px 16px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-        <Link href="/dashboard" style={{ textDecoration: 'none' }}>
-          <p style={{ fontFamily: 'var(--font-serif)', fontSize: 15, fontWeight: 700, color: '#e8b4bc', lineHeight: 1.2 }}>
+    <header
+      style={{
+        background: '#1a0a0e',
+        position: 'sticky',
+        top: 0,
+        zIndex: 40,
+        width: '100%',
+      }}
+    >
+      {/* Top row: logo + account */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '10px 24px',
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+        }}
+      >
+        <Link href="/dashboard" style={{ textDecoration: 'none', display: 'flex', alignItems: 'baseline', gap: 10 }}>
+          <span
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontSize: 15,
+              fontWeight: 700,
+              color: '#e8b4bc',
+            }}
+          >
             Foundations of Reading
-          </p>
-          <p style={{ fontFamily: 'var(--font-sans)', fontSize: 10, color: 'rgba(255,255,255,0.4)', marginTop: 2, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+          </span>
+          <span
+            style={{
+              fontFamily: 'var(--font-sans)',
+              fontSize: 10,
+              color: 'rgba(255,255,255,0.4)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em',
+            }}
+          >
             NES 190 &amp; 890 Prep
-          </p>
+          </span>
         </Link>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <Link
+            href="/account"
+            style={{
+              fontFamily: 'var(--font-sans)',
+              fontSize: 12,
+              color: 'rgba(255,255,255,0.4)',
+              textDecoration: 'none',
+            }}
+          >
+            My Account
+          </Link>
+          <button
+            onClick={handleLogout}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              fontFamily: 'var(--font-sans)',
+              fontSize: 12,
+              color: 'rgba(255,255,255,0.4)',
+              padding: 0,
+            }}
+          >
+            Log Out
+          </button>
+        </div>
       </div>
 
-      {/* Nav */}
-      <nav style={{ flex: 1, padding: '12px 0' }}>
+      {/* Nav row */}
+      <nav
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 0,
+          padding: '0 16px',
+          overflowX: 'auto',
+        }}
+      >
         {nav.map((item) => {
-          const isActive = pathname === item.href
+          const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))
           const isOverview = item.icon === '⊞'
 
-          return (
-            <div key={item.href}>
-              {item.locked ? (
-                <div
+          if (item.locked) {
+            return (
+              <div
+                key={item.href}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  padding: '10px 14px',
+                  opacity: 0.3,
+                  cursor: 'not-allowed',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                <span
                   style={{
-                    display: 'flex', alignItems: 'center', gap: 10,
-                    padding: '10px 20px',
-                    opacity: 0.35,
-                    cursor: 'not-allowed',
-                  }}
-                >
-                  <span style={{
-                    width: 24, height: 24, borderRadius: '50%',
+                    width: 20,
+                    height: 20,
+                    borderRadius: '50%',
                     background: 'rgba(255,255,255,0.08)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.5)',
-                    fontFamily: 'var(--font-sans)', flexShrink: 0,
-                  }}>
-                    🔒
-                  </span>
-                  <span style={{ fontFamily: 'var(--font-sans)', fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>
-                    {item.label}
-                  </span>
-                </div>
-              ) : (
-                <Link
-                  href={item.href}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: 10,
-                    padding: '10px 20px',
-                    textDecoration: 'none',
-                    background: isActive ? 'rgba(124,28,46,0.5)' : 'transparent',
-                    borderLeft: isActive ? '3px solid #e8b4bc' : '3px solid transparent',
-                    transition: 'background 0.15s',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 9,
+                    color: 'rgba(255,255,255,0.5)',
+                    fontFamily: 'var(--font-sans)',
+                    flexShrink: 0,
                   }}
                 >
-                  <span style={{
-                    width: 24, height: 24, borderRadius: '50%',
-                    background: isActive ? '#7c1c2e' : item.done ? '#166534' : 'rgba(255,255,255,0.08)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: isOverview ? 14 : 11, fontWeight: 700,
-                    color: isActive || item.done ? 'white' : 'rgba(255,255,255,0.5)',
-                    fontFamily: 'var(--font-sans)', flexShrink: 0,
-                  }}>
-                    {item.done && !isActive ? '✓' : item.icon}
-                  </span>
-                  <span style={{
-                    fontFamily: 'var(--font-sans)', fontSize: 13,
-                    color: isActive ? 'white' : 'rgba(255,255,255,0.7)',
-                    fontWeight: isActive ? 600 : 400,
-                    flex: 1,
-                  }}>
-                    {item.label}
-                  </span>
-                  {item.badge && (
-                    <span style={{
-                      background: '#7c1c2e', color: 'white',
-                      borderRadius: 10, padding: '1px 7px',
-                      fontSize: 10, fontWeight: 700, fontFamily: 'var(--font-sans)',
-                    }}>
-                      {item.badge}
-                    </span>
-                  )}
-                </Link>
+                  🔒
+                </span>
+                <span
+                  style={{
+                    fontFamily: 'var(--font-sans)',
+                    fontSize: 12,
+                    color: 'rgba(255,255,255,0.5)',
+                  }}
+                >
+                  {item.label}
+                </span>
+              </div>
+            )
+          }
+
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '10px 14px',
+                textDecoration: 'none',
+                borderBottom: isActive ? '2px solid #e8b4bc' : '2px solid transparent',
+                whiteSpace: 'nowrap',
+                transition: 'border-color 0.15s',
+              }}
+            >
+              <span
+                style={{
+                  width: 20,
+                  height: 20,
+                  borderRadius: '50%',
+                  background: isActive ? '#7c1c2e' : item.done ? '#166534' : 'rgba(255,255,255,0.08)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: isOverview ? 12 : 10,
+                  fontWeight: 700,
+                  color: isActive || item.done ? 'white' : 'rgba(255,255,255,0.5)',
+                  fontFamily: 'var(--font-sans)',
+                  flexShrink: 0,
+                }}
+              >
+                {item.done && !isActive ? '✓' : item.icon}
+              </span>
+              <span
+                style={{
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: 12,
+                  color: isActive ? 'white' : 'rgba(255,255,255,0.7)',
+                  fontWeight: isActive ? 600 : 400,
+                }}
+              >
+                {item.label}
+              </span>
+              {item.badge && (
+                <span
+                  style={{
+                    background: '#7c1c2e',
+                    color: 'white',
+                    borderRadius: 10,
+                    padding: '1px 6px',
+                    fontSize: 9,
+                    fontWeight: 700,
+                    fontFamily: 'var(--font-sans)',
+                  }}
+                >
+                  {item.badge}
+                </span>
               )}
-            </div>
+            </Link>
           )
         })}
       </nav>
-
-      {/* Footer */}
-      <div style={{ padding: '16px 20px', borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <Link
-          href="/account"
-          style={{
-            fontFamily: 'var(--font-sans)', fontSize: 13,
-            color: 'rgba(255,255,255,0.4)',
-            textDecoration: 'none',
-          }}
-        >
-          My Account
-        </Link>
-        <button
-          onClick={handleLogout}
-          style={{
-            background: 'none', border: 'none', cursor: 'pointer',
-            fontFamily: 'var(--font-sans)', fontSize: 13,
-            color: 'rgba(255,255,255,0.4)',
-            padding: 0, width: '100%', textAlign: 'left',
-          }}
-        >
-          Log Out
-        </button>
-      </div>
-    </aside>
+    </header>
   )
 }
