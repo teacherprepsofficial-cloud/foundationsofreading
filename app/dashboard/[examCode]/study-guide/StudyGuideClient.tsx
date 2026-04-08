@@ -56,58 +56,57 @@ export default function StudyGuideClient({
     <div className="min-h-screen" style={{ background: '#f8f9fa' }}>
 
       {/* ── Chapter Navigation ── */}
-      <div className="sticky top-0 z-20 bg-white border-b border-[#e5e7eb] shadow-sm">
-        <div className="px-6 py-4" style={{ fontFamily: 'var(--font-sans)' }}>
-          <div className="flex flex-wrap gap-2">
-            {guide.map((subarea) => {
+      <div className="bg-white border-b border-[#e5e7eb]">
+        <div className="px-8 pt-8 pb-6">
+          <h1 className="text-2xl font-bold text-[#111827] mb-1" style={{ fontFamily: 'var(--font-serif)' }}>
+            Study Guide
+          </h1>
+          <p className="text-sm text-[#9ca3af] mb-6" style={{ fontFamily: 'var(--font-sans)' }}>
+            4 chapters covering all 11 objectives on the exam
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {guide.map((subarea, i) => {
               const isActive = activeSection === subarea.id
               return (
                 <button
                   key={subarea.id}
                   onClick={() => setActiveSection(subarea.id as SectionId)}
-                  className="rounded-lg px-4 py-2.5 text-sm transition-all"
+                  className="group text-left rounded-xl border-2 px-5 py-4 transition-all"
                   style={{
-                    background: isActive ? '#7c1c2e' : '#f3f4f6',
-                    color: isActive ? 'white' : '#374151',
-                    fontWeight: isActive ? 700 : 500,
-                    boxShadow: isActive ? '0 2px 8px rgba(124,28,46,0.3)' : 'none',
+                    borderColor: isActive ? '#7c1c2e' : '#e5e7eb',
+                    background: isActive ? '#fdf2f4' : 'white',
                   }}
                 >
-                  Chapter {subarea.id}: {subarea.name}
-                  <span className="ml-1.5 opacity-60 text-xs">({subarea.weight})</span>
+                  <div className="flex items-center gap-3">
+                    <span
+                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold"
+                      style={{
+                        background: isActive ? '#7c1c2e' : '#f3f4f6',
+                        color: isActive ? 'white' : '#6b7280',
+                      }}
+                    >
+                      {i + 1}
+                    </span>
+                    <div className="min-w-0">
+                      <p
+                        className="text-sm font-semibold leading-tight"
+                        style={{
+                          color: isActive ? '#7c1c2e' : '#111827',
+                          fontFamily: 'var(--font-sans)',
+                        }}
+                      >
+                        {subarea.name}
+                      </p>
+                      <p className="mt-0.5 text-xs text-[#9ca3af]" style={{ fontFamily: 'var(--font-sans)' }}>
+                        {subarea.weight} of exam score
+                      </p>
+                    </div>
+                  </div>
                 </button>
               )
             })}
-
-            {/* Quiz button */}
-            {activeSection !== 'IV' && (
-              <button
-                onClick={() => {
-                  setPhase('quiz')
-                  setTimeout(() => {
-                    document.getElementById('quiz-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                  }, 50)
-                }}
-                className="ml-auto rounded-lg border-2 border-[#7c1c2e] px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-[#7c1c2e] hover:text-white"
-                style={{ color: '#7c1c2e' }}
-              >
-                Take Quiz
-              </button>
-            )}
           </div>
-        </div>
-
-        {/* Progress bar */}
-        <div className="flex h-1">
-          {SECTION_ORDER.map((id) => (
-            <button
-              key={id}
-              onClick={() => setActiveSection(id)}
-              className="flex-1 transition-colors"
-              style={{ background: id === activeSection ? '#7c1c2e' : '#e5e7eb' }}
-              title={`Chapter ${id}`}
-            />
-          ))}
         </div>
       </div>
 
@@ -117,26 +116,14 @@ export default function StudyGuideClient({
         className="min-h-screen"
         style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
       >
-        {/* Section header — clean white */}
-        <div className="bg-white border-b border-[#e5e7eb] px-8 py-6">
-          <div className="max-w-none">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#9ca3af]" style={{ fontFamily: 'var(--font-sans)' }}>
-                Subarea {activeSection}
-              </span>
-              <span className="text-[10px] text-[#d1d5db]">·</span>
-              <span className="text-[10px] font-semibold text-[#9ca3af]" style={{ fontFamily: 'var(--font-sans)' }}>
-                {currentSubarea.weight} of exam
-              </span>
-              <span className="text-[10px] text-[#d1d5db]">·</span>
-              <span className="text-[10px] font-semibold text-[#9ca3af]" style={{ fontFamily: 'var(--font-sans)' }}>
-                {currentSubarea.questions}
-              </span>
-            </div>
-            <h1 className="text-3xl font-bold text-[#111827]" style={{ fontFamily: 'var(--font-serif)' }}>
-              {currentSubarea.name}
-            </h1>
-          </div>
+        {/* Section header */}
+        <div className="px-8 pt-8 pb-2">
+          <h2 className="text-2xl font-bold text-[#111827]" style={{ fontFamily: 'var(--font-serif)' }}>
+            {currentSubarea.name}
+          </h2>
+          <p className="mt-1 text-sm text-[#9ca3af]" style={{ fontFamily: 'var(--font-sans)' }}>
+            {currentSubarea.weight} of exam · {currentSubarea.questions}
+          </p>
         </div>
 
         <div className="px-8 py-8">
