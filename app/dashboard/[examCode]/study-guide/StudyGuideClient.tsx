@@ -69,9 +69,9 @@ export default function StudyGuideClient({
   return (
     <div className="flex min-h-screen" style={{ background: '#f8f9fa' }}>
 
-      {/* ── Sticky Sidebar ── */}
+      {/* ── Fixed Sidebar ── */}
       <aside
-        className="sticky top-0 h-screen overflow-y-auto z-20 flex flex-col shrink-0"
+        className="fixed left-0 top-0 h-screen overflow-y-auto z-20 flex flex-col"
         style={{
           width: sidebarOpen ? SIDEBAR_W : 0,
           minWidth: sidebarOpen ? SIDEBAR_W : 0,
@@ -180,7 +180,7 @@ export default function StudyGuideClient({
       {/* Sidebar toggle */}
       <button
         onClick={() => setSidebarOpen((v) => !v)}
-        className="absolute top-4 z-30 bg-white border border-[#e5e7eb] rounded-r px-1.5 py-2 text-[#6b7280] hover:bg-[#f9fafb] transition-colors shadow-sm"
+        className="fixed top-4 z-30 bg-white border border-[#e5e7eb] rounded-r px-1.5 py-2 text-[#6b7280] hover:bg-[#f9fafb] transition-colors shadow-sm"
         style={{ left: sidebarOpen ? SIDEBAR_W : 0, transition: 'left 0.2s' }}
         title={sidebarOpen ? 'Hide sidebar' : 'Show sidebar'}
       >
@@ -196,7 +196,7 @@ export default function StudyGuideClient({
       <div
         ref={mainRef}
         className="flex-1 min-h-screen"
-        style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
+        style={{ marginLeft: sidebarOpen ? SIDEBAR_W : 0, transition: 'margin-left 0.2s', userSelect: 'none', WebkitUserSelect: 'none' }}
       >
         {/* Section header — clean white */}
         <div className="bg-white border-b border-[#e5e7eb] px-8 py-6">

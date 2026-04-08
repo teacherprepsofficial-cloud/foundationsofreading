@@ -76,7 +76,7 @@ export default async function ExamDashboardLayout({
   ]
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#faf8f5]">
+    <div className="flex min-h-screen bg-[#faf8f5]">
       <DashboardSidebar nav={NAV} />
       <div className="flex-1 min-h-screen overflow-auto">
         {children}
