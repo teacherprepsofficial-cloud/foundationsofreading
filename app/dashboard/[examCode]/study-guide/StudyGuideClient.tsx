@@ -35,17 +35,6 @@ export default function StudyGuideClient({
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [activeSection])
 
-  function handleObjClick(sectionId: SectionId, objId: string) {
-    if (sectionId !== activeSection) {
-      setActiveSection(sectionId)
-      setTimeout(() => {
-        document.getElementById(objId)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      }, 120)
-    } else {
-      document.getElementById(objId)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
-  }
-
   function handleAnswer(qId: string, choice: 'A' | 'B' | 'C' | 'D') {
     if (submitted) return
     setAnswers((prev) => ({ ...prev, [qId]: choice }))
@@ -66,58 +55,46 @@ export default function StudyGuideClient({
   return (
     <div className="min-h-screen" style={{ background: '#f8f9fa' }}>
 
-      {/* ── Horizontal Table of Contents ── */}
-      <div className="sticky top-0 z-20 bg-white border-b border-[#e5e7eb]">
-        {/* Subarea tabs */}
-        <div className="flex items-center gap-0 px-4 overflow-x-auto" style={{ fontFamily: 'var(--font-sans)' }}>
-          {guide.map((subarea) => {
-            const isActive = activeSection === subarea.id
-            return (
+      {/* ── Chapter Navigation ── */}
+      <div className="sticky top-0 z-20 bg-white border-b border-[#e5e7eb] shadow-sm">
+        <div className="px-6 py-4" style={{ fontFamily: 'var(--font-sans)' }}>
+          <div className="flex flex-wrap gap-2">
+            {guide.map((subarea) => {
+              const isActive = activeSection === subarea.id
+              return (
+                <button
+                  key={subarea.id}
+                  onClick={() => setActiveSection(subarea.id as SectionId)}
+                  className="rounded-lg px-4 py-2.5 text-sm transition-all"
+                  style={{
+                    background: isActive ? '#7c1c2e' : '#f3f4f6',
+                    color: isActive ? 'white' : '#374151',
+                    fontWeight: isActive ? 700 : 500,
+                    boxShadow: isActive ? '0 2px 8px rgba(124,28,46,0.3)' : 'none',
+                  }}
+                >
+                  Chapter {subarea.id}: {subarea.name}
+                  <span className="ml-1.5 opacity-60 text-xs">({subarea.weight})</span>
+                </button>
+              )
+            })}
+
+            {/* Quiz button */}
+            {activeSection !== 'IV' && (
               <button
-                key={subarea.id}
-                onClick={() => setActiveSection(subarea.id as SectionId)}
-                className="shrink-0 px-4 py-3 text-xs transition-colors"
-                style={{
-                  borderBottom: isActive ? '2px solid #7c1c2e' : '2px solid transparent',
-                  color: isActive ? '#7c1c2e' : '#6b7280',
-                  fontWeight: isActive ? 700 : 500,
+                onClick={() => {
+                  setPhase('quiz')
+                  setTimeout(() => {
+                    document.getElementById('quiz-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                  }, 50)
                 }}
+                className="ml-auto rounded-lg border-2 border-[#7c1c2e] px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-[#7c1c2e] hover:text-white"
+                style={{ color: '#7c1c2e' }}
               >
-                <span className="font-bold">{subarea.id}</span>
-                <span className="ml-1.5 hidden sm:inline">{subarea.name}</span>
-                <span className="ml-1 text-[10px] opacity-60">{subarea.weight}</span>
+                Take Quiz
               </button>
-            )
-          })}
-
-          {/* Quiz button */}
-          {activeSection !== 'IV' && (
-            <button
-              onClick={() => {
-                setPhase('quiz')
-                setTimeout(() => {
-                  document.getElementById('quiz-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                }, 50)
-              }}
-              className="shrink-0 ml-auto px-4 py-3 text-xs font-semibold transition-colors"
-              style={{ color: '#7c1c2e', fontFamily: 'var(--font-sans)' }}
-            >
-              Section Quiz
-            </button>
-          )}
-        </div>
-
-        {/* Objective jump links for active subarea */}
-        <div className="flex items-center gap-0 px-4 overflow-x-auto bg-[#fafafa] border-t border-[#f0f0f0]" style={{ fontFamily: 'var(--font-sans)' }}>
-          {currentSubarea.sections.map((sec) => (
-            <button
-              key={sec.id}
-              onClick={() => handleObjClick(activeSection, sec.id)}
-              className="shrink-0 px-3 py-2 text-[11px] text-[#6b7280] hover:text-[#111827] hover:bg-[#f3f4f6] rounded transition-colors whitespace-nowrap"
-            >
-              {currentSubarea.id !== 'IV' ? `Obj ${sec.objectiveNum}: ` : ''}{sec.title}
-            </button>
-          ))}
+            )}
+          </div>
         </div>
 
         {/* Progress bar */}
@@ -128,7 +105,7 @@ export default function StudyGuideClient({
               onClick={() => setActiveSection(id)}
               className="flex-1 transition-colors"
               style={{ background: id === activeSection ? '#7c1c2e' : '#e5e7eb' }}
-              title={`Subarea ${id}`}
+              title={`Chapter ${id}`}
             />
           ))}
         </div>
@@ -156,7 +133,7 @@ export default function StudyGuideClient({
                 {currentSubarea.questions}
               </span>
             </div>
-            <h1 className="text-2xl font-bold text-[#111827]" style={{ fontFamily: 'var(--font-serif)' }}>
+            <h1 className="text-3xl font-bold text-[#111827]" style={{ fontFamily: 'var(--font-serif)' }}>
               {currentSubarea.name}
             </h1>
           </div>
@@ -205,15 +182,15 @@ export default function StudyGuideClient({
                   >
                     {activeSection !== 'IV' ? `Objective ${sec.objectiveNum}` : `Open Response — 10% of Score`}
                   </p>
-                  <h2 className="text-lg font-bold text-[#111827]" style={{ fontFamily: 'var(--font-serif)' }}>
+                  <h2 className="text-xl font-bold text-[#111827]" style={{ fontFamily: 'var(--font-serif)' }}>
                     {sec.title}
                   </h2>
                 </div>
                 {/* Content */}
-                <div className="rounded-b-lg border border-[#e5e7eb] bg-white px-6 py-6 border-t border-[#f3f4f6]">
+                <div className="rounded-b-lg border border-[#e5e7eb] bg-white px-8 py-8 border-t border-[#f3f4f6]">
                   <div
-                    className="text-[#111827]"
-                    style={{ fontFamily: 'var(--font-sans)' }}
+                    className="text-[#111827] study-guide-prose"
+                    style={{ fontFamily: 'var(--font-sans)', fontSize: '16px', lineHeight: '1.8' }}
                     dangerouslySetInnerHTML={{ __html: sec.content }}
                   />
                 </div>
