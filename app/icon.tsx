@@ -7,15 +7,25 @@ export default function Icon() {
   return new ImageResponse(
     <div
       style={{
-        fontSize: 24,
         width: '100%',
         height: '100%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        borderRadius: '6px',
+        background: '#7c1c2e',
       }}
     >
-      📕
+      <span
+        style={{
+          fontSize: 15,
+          fontWeight: 800,
+          color: 'white',
+          letterSpacing: '-0.5px',
+        }}
+      >
+        FR
+      </span>
     </div>,
     { ...size }
   )
