@@ -173,7 +173,7 @@ export async function GET() {
       ['Three-Tier Vocabulary', 'Tier 1 = everyday. Tier 2 = academic (highest priority). Tier 3 = domain-specific.'],
       ['Literary Text',         'Character, setting, plot, theme, POV, literary devices, inferencing from evidence.'],
       ['Informational Text',    'Text structures (cause-effect, compare-contrast, problem-solution), features, summarization.'],
-      ['Simple View of Reading','RC = Decoding × Language Comprehension. Weakness in either limits comprehension.'],
+      ['Simple View of Reading','RC = Decoding x Language Comprehension. Weakness in either limits comprehension.'],
     ]
     sub2.forEach(([t, d], i) => { yR = conceptRow(p1, COL2_X, COL_W, yR, t, d, i % 2 === 1) })
 

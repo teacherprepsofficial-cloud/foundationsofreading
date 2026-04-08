@@ -161,7 +161,7 @@ export async function GET() {
     y = tableRow(page, y, ['Consonant Blends', 'Two or three consonants, each keeping its sound: bl, str, spr'], defCols, false, false, regular)
     y = tableRow(page, y, ['High-Frequency Words', 'Words taught for automatic recognition: the, was, said, because'], defCols, false, true, regular)
     y = tableRow(page, y, ['Inflectional Morphemes', 'Suffixes that do not change part of speech: -s, -ed, -ing, -er, -est'], defCols, false, false, regular)
-    y = tableRow(page, y, ['Encoding ↔ Decoding', 'Spelling reinforces phonics. Analyze spelling errors to assess phonics knowledge.'], defCols, false, true, regular)
+    y = tableRow(page, y, ['Encoding / Decoding', 'Spelling reinforces phonics. Analyze spelling errors to assess phonics knowledge.'], defCols, false, true, regular)
 
     y -= 14
 
@@ -170,7 +170,7 @@ export async function GET() {
     y = tableRow(page, y, ['Concept', 'Definition'], defCols, true, false, regular)
     y = tableRow(page, y, ['Morphemes', 'Smallest units of meaning: base words, roots, prefixes, suffixes'], defCols, false, false, regular)
     y = tableRow(page, y, ['Inflectional Suffix', 'Does not change part of speech: -s (plural), -ed (past), -ing'], defCols, false, true, regular)
-    y = tableRow(page, y, ['Derivational Suffix', 'Changes part of speech: -tion (verb→noun), -able (verb→adj)'], defCols, false, false, regular)
+    y = tableRow(page, y, ['Derivational Suffix', 'Changes part of speech: -tion (verb to noun), -able (verb to adj)'], defCols, false, false, regular)
     y = tableRow(page, y, ['6 Syllable Types', 'Closed, open, vowel team, CVCe, r-controlled, consonant-le'], defCols, false, true, regular)
     y = tableRow(page, y, ['Orthographic Rules', 'Spelling patterns: drop silent e before vowel suffix, double final consonant'], defCols, false, false, regular)
     y = tableRow(page, y, ['Cognate Awareness', 'For ELLs: connecting English words to similar words in home language'], defCols, false, true, regular)
