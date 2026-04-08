@@ -31,7 +31,7 @@ function formatExpiry(date: Date): string {
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, source, pdfSlug } = await request.json()
+    const { email, source, pdfSlug, pdfLabel, headline } = await request.json()
     if (!email || !source) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
@@ -95,13 +95,13 @@ export async function POST(request: NextRequest) {
     <!-- Header -->
     <div style="background:#7c1c2e;border-radius:8px 8px 0 0;padding:32px;text-align:center;">
       <p style="margin:0 0 6px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#e8b4bc;">Foundations of Reading</p>
-      <h1 style="margin:0;font-size:22px;color:white;font-family:Georgia,serif;line-height:1.3;">Your Free Quick Reference Guide<br>is Ready to Download</h1>
+      <h1 style="margin:0;font-size:22px;color:white;font-family:Georgia,serif;line-height:1.3;">${headline || 'Your Free Quick Reference Guide'}<br>is Ready to Download</h1>
     </div>
 
     <!-- Body -->
     <div style="background:white;padding:36px 32px;border-radius:0 0 8px 8px;">
       <p style="font-size:15px;line-height:1.7;color:#333;margin:0 0 20px;">
-        Here's your <strong>NES 190 Quick Reference Guide</strong> — a one-stop cheat sheet covering the exam format, all four subareas, key concepts, and open-response strategy.
+        Here's your <strong>${pdfLabel || 'NES 190 Quick Reference Guide'}</strong> — a one-stop cheat sheet covering the exam format, all subareas, key concepts, and open-response strategy.
       </p>
 
       <!-- PDF Download Button -->
@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
         <a href="${pdfUrl}" style="display:inline-block;background:#1a1a1a;color:white;padding:16px 40px;text-decoration:none;border-radius:4px;font-weight:700;font-size:16px;font-family:Arial,sans-serif;">
           ↓ Download Your PDF Guide
         </a>
-        <p style="margin:10px 0 0;color:#9ca3af;font-size:12px;">NES 190 · Quick Reference Guide · PDF</p>
+        <p style="margin:10px 0 0;color:#9ca3af;font-size:12px;">${pdfLabel || 'NES 190 · Quick Reference Guide · PDF'}</p>
       </div>
 
       <hr style="border:none;border-top:1px solid #e8e0e2;margin:28px 0;">
@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
     await resend.emails.send({
       from: 'Foundations of Reading <noreply@foundationsofreading.com>',
       to: email,
-      subject: 'Your Free NES 190 Quick Reference Guide',
+      subject: headline ? `Your ${headline}` : 'Your Free NES 190 Quick Reference Guide',
       html,
     })
 

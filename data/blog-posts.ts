@@ -279,10 +279,10 @@ export const BLOG_POSTS: BlogPost[] = [
     metaDescription: 'Complete guide to the OAE/NES 190 Foundations of Reading test in Ohio — passing score of 220, test format, subareas, and how to prepare.',
     publishedAt: '2026-04-07',
     optin: {
-      pdfSlug: 'nes-190-reference',
-      headline: 'Get the Free NES 190 Quick Reference Guide',
-      subheadline: 'A two-page cheat sheet covering the exam format, all four subareas, key concepts, and open-response strategy. Yours free.',
-      pdfLabel: 'NES 190 Quick Reference Guide (PDF)',
+      pdfSlug: 'fort-ohio-reference',
+      headline: 'Get the Free Ohio Foundations of Reading Reference Guide',
+      subheadline: 'Ohio passing score (220), test format, all four subareas, key concepts, and open-response strategy — printable PDF.',
+      pdfLabel: 'Ohio Foundations of Reading Reference Guide (PDF)',
     },
     sections: [
       {
@@ -374,6 +374,12 @@ export const BLOG_POSTS: BlogPost[] = [
     title: 'How to Pass the Foundations of Reading Test: A Complete Guide',
     metaDescription: 'Learn how to pass the Foundations of Reading Test (FORT 190/890) with proven study strategies, time management tips, and content area breakdowns.',
     publishedAt: '2026-02-11',
+    optin: {
+      pdfSlug: 'fort-passing-strategies',
+      headline: 'Get the Free FORT Passing Strategies Guide',
+      subheadline: 'Study priorities, time management tips, and content breakdowns for all four subareas — printable one-page PDF.',
+      pdfLabel: 'FORT Passing Strategies Guide (PDF)',
+    },
     sections: [
       {
         heading: 'Understanding the FORT Exam',
@@ -402,6 +408,12 @@ export const BLOG_POSTS: BlogPost[] = [
     title: 'Foundations of Reading Passing Score by State (2026)',
     metaDescription: 'Find the Foundations of Reading Test passing score for your state. Complete list of FORT 190/890 passing scores for all 13 states that require the exam.',
     publishedAt: '2026-02-11',
+    optin: {
+      pdfSlug: 'fort-passing-scores-by-state',
+      headline: 'Get the Free Passing Scores by State Sheet',
+      subheadline: 'All 13 states, their passing scores, and test codes on one printable reference sheet.',
+      pdfLabel: 'FORT Passing Scores by State (PDF)',
+    },
     sections: [
       {
         heading: 'Passing Scores Vary by State',
@@ -426,6 +438,12 @@ export const BLOG_POSTS: BlogPost[] = [
     title: 'Free Foundations of Reading Practice Test Questions (2026)',
     metaDescription: 'Try free Foundations of Reading practice test questions with detailed answer explanations. Prepare for the FORT 190/890 exam with sample questions from all 4 subareas.',
     publishedAt: '2026-02-11',
+    optin: {
+      pdfSlug: 'practice-questions',
+      headline: 'Get the Free Practice Test PDF',
+      subheadline: '25 practice questions with full answer key and detailed explanations — formatted for printing.',
+      pdfLabel: 'FORT Practice Test + Answer Key (PDF)',
+    },
     sections: [
       {
         heading: 'Why Practice Questions Matter',
@@ -454,6 +472,12 @@ export const BLOG_POSTS: BlogPost[] = [
     title: 'Foundations of Reading Test Format: Everything You Need to Know',
     metaDescription: 'Complete guide to the Foundations of Reading Test format. Learn about the FORT 190/890 exam structure, time limit, question types, and scoring.',
     publishedAt: '2026-02-11',
+    optin: {
+      pdfSlug: 'fort-test-format-sheet',
+      headline: 'Get the Free Test Format Reference Sheet',
+      subheadline: 'Exam structure, subarea weights, timing breakdown, and scoring — one printable page.',
+      pdfLabel: 'FORT Test Format Reference Sheet (PDF)',
+    },
     sections: [
       {
         heading: 'Exam Structure',
@@ -486,6 +510,12 @@ export const BLOG_POSTS: BlogPost[] = [
     title: 'FORT 190 vs 890: What Changed and What It Means for You',
     metaDescription: 'Understand the difference between FORT 190 and FORT 890. The test code changed on September 1, 2025 — here is what you need to know.',
     publishedAt: '2026-02-11',
+    optin: {
+      pdfSlug: 'fort-190-vs-890-comparison',
+      headline: 'Get the Free 190 vs 890 Comparison Sheet',
+      subheadline: 'Side-by-side comparison of test codes, registration portals, and what stayed the same — one printable page.',
+      pdfLabel: 'FORT 190 vs 890 Comparison Sheet (PDF)',
+    },
     sections: [
       {
         heading: 'The Code Changed, Not the Exam',
@@ -510,6 +540,12 @@ export const BLOG_POSTS: BlogPost[] = [
     title: 'Foundations of Reading Constructed Response: How to Score a 4',
     metaDescription: 'Learn how to write a high-scoring constructed response on the Foundations of Reading Test. Tips, structure, and sample responses for FORT 190/890 open-response items.',
     publishedAt: '2026-02-11',
+    optin: {
+      pdfSlug: 'fort-cr-template',
+      headline: 'Get the Free Constructed Response Template',
+      subheadline: 'The 4-step response structure, scoring rubric, and sample response — printable PDF you can use on test day prep.',
+      pdfLabel: 'FORT Constructed Response Template (PDF)',
+    },
     sections: [
       {
         heading: 'Why the Constructed Response Matters',
@@ -538,6 +574,12 @@ export const BLOG_POSTS: BlogPost[] = [
     title: 'How to Register for the Foundations of Reading Test (Step by Step)',
     metaDescription: 'Step-by-step guide to registering for the Foundations of Reading Test (FORT 190/890). How to create an account, schedule your exam, and choose testing options.',
     publishedAt: '2026-02-11',
+    optin: {
+      pdfSlug: 'fort-registration-checklist',
+      headline: 'Get the Free Registration Checklist',
+      subheadline: 'Step-by-step checklist with state portal links, ID requirements, and testing options — printable PDF.',
+      pdfLabel: 'FORT Registration Checklist (PDF)',
+    },
     sections: [
       {
         heading: 'Step 1: Find Your State\'s Testing Portal',
@@ -570,6 +612,12 @@ export const BLOG_POSTS: BlogPost[] = [
     title: 'The Science of Reading and the FORT: What You Need to Know',
     metaDescription: 'Understand how the science of reading connects to the Foundations of Reading Test. Key research, instructional frameworks, and what the FORT expects you to know.',
     publishedAt: '2026-02-11',
+    optin: {
+      pdfSlug: 'fort-science-of-reading-sheet',
+      headline: 'Get the Free Science of Reading Reference Sheet',
+      subheadline: 'Key frameworks, research models, and how they map to FORT subareas — one printable page.',
+      pdfLabel: 'Science of Reading for FORT Reference Sheet (PDF)',
+    },
     sections: [
       {
         heading: 'What Is the Science of Reading?',
@@ -594,6 +642,12 @@ export const BLOG_POSTS: BlogPost[] = [
     title: 'Foundations of Reading Study Guide: What to Study and How',
     metaDescription: 'A complete study guide overview for the Foundations of Reading Test (FORT 190/890). Learn what topics to study, how to organize your prep, and where to find resources.',
     publishedAt: '2026-02-11',
+    optin: {
+      pdfSlug: 'fort-study-guide-starter',
+      headline: 'Get the Free FORT Study Guide Starter',
+      subheadline: 'Covers Subarea I in full — phonological awareness, phonics, fluency, word analysis. The most tested 35% of the exam.',
+      pdfLabel: 'FORT Study Guide Starter (PDF)',
+    },
     sections: [
       {
         heading: 'What to Study',
@@ -622,6 +676,12 @@ export const BLOG_POSTS: BlogPost[] = [
     title: 'Foundations of Reading Test Prep: Your Complete Preparation Plan',
     metaDescription: 'Complete preparation plan for the Foundations of Reading Test (FORT 190/890). Study materials, practice tests, and strategies to pass on your first attempt.',
     publishedAt: '2026-02-11',
+    optin: {
+      pdfSlug: 'fort-4-week-study-plan',
+      headline: 'Get the Free 4-Week Study Plan',
+      subheadline: 'Week-by-week prep schedule with subarea priorities, practice test timing, and CR practice slots — printable PDF.',
+      pdfLabel: 'FORT 4-Week Study Plan (PDF)',
+    },
     sections: [
       {
         heading: 'Start With the Exam Framework',
@@ -1177,10 +1237,10 @@ export const BLOG_POSTS: BlogPost[] = [
     metaDescription: 'Foundations of Reading test Mississippi: passing score 233, format, subareas, license types, free practice test, and study PDF download.',
     publishedAt: '2026-04-08',
     optin: {
-      pdfSlug: 'fort-mississippi-guide',
-      headline: 'Get the Free Mississippi Foundations of Reading Study Guide',
-      subheadline: 'Printable guide with MS passing score, all five subareas, license requirements, and open-response templates.',
-      pdfLabel: 'Mississippi Foundations of Reading Study Guide (PDF)',
+      pdfSlug: 'fort-mississippi-test-guide',
+      headline: 'Get the Free Mississippi FORT Test Guide',
+      subheadline: 'MS passing score (233), test format, license types, all five subareas, and open-response framework — printable PDF.',
+      pdfLabel: 'Mississippi FORT Test Guide (PDF)',
     },
     sections: [
       {
@@ -1236,10 +1296,10 @@ export const BLOG_POSTS: BlogPost[] = [
     metaDescription: 'Foundations of Reading test Wisconsin (FORT): passing score 240, format, subareas, free practice test, and PDF study guide for WI candidates.',
     publishedAt: '2026-04-08',
     optin: {
-      pdfSlug: 'fort-wisconsin-study-guide',
-      headline: 'Get the Free Wisconsin FORT Study Guide',
-      subheadline: 'Printable guide with WI passing score, all five subareas, 11 objectives, key terms cheat sheet, and open-response templates.',
-      pdfLabel: 'Wisconsin Foundations of Reading Study Guide (PDF)',
+      pdfSlug: 'fort-wisconsin-exam-guide',
+      headline: 'Get the Free Wisconsin FORT Exam Guide',
+      subheadline: 'WI passing score (240), test format, 190 vs 890 transition, all five subareas, and open-response framework — printable PDF.',
+      pdfLabel: 'Wisconsin FORT Exam Guide (PDF)',
     },
     sections: [
       {

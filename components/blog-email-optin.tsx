@@ -67,7 +67,7 @@ export function BlogEmailOptin({ postSlug, pdfSlug, headline, subheadline, pdfLa
       const res = await fetch('/api/leads/for-optin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, source: `blog-${postSlug}`, pdfSlug }),
+        body: JSON.stringify({ email, source: `blog-${postSlug}`, pdfSlug, pdfLabel, headline }),
       })
       const data = await res.json()
       if (data.success) {
