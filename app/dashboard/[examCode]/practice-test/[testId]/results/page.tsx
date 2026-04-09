@@ -175,7 +175,7 @@ export default function ResultsPage() {
             {results.testName || 'Practice Test'} — Score Report
           </h1>
           <p className="mt-1 text-sm text-[#e8b4bc]" style={{ fontFamily: 'var(--font-sans)' }}>
-            NES Foundations of Reading {examCode} · Completed {formatDate(results.submittedAt)}
+            Foundations of Reading Exam Preparation · Completed {formatDate(results.submittedAt)}
           </p>
         </div>
       </div>

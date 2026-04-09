@@ -39,7 +39,7 @@ export default function ResultsDemoPage() {
           <div className="mt-8 overflow-hidden rounded-xl border border-[#e8e0e2] bg-white shadow-sm">
             {/* Header */}
             <div className="border-b border-[#e8e0e2] bg-[#7c1c2e] px-6 py-4">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[#e8b4bc]" style={{ fontFamily: 'var(--font-sans)' }}>NES Foundations of Reading (190)</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-[#e8b4bc]" style={{ fontFamily: 'var(--font-sans)' }}>Foundations of Reading Exam Preparation</p>
               <p className="mt-1 text-xl font-bold text-white" style={{ fontFamily: 'var(--font-serif)' }}>Practice Test 1 Results</p>
             </div>
 

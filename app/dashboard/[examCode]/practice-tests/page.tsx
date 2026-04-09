@@ -85,7 +85,7 @@ export default async function PracticeTestsPage({
             Practice Tests
           </h1>
           <p className="mt-1 text-sm text-[#e8b4bc]" style={{ fontFamily: 'var(--font-sans)' }}>
-            NES Foundations of Reading {examCode} — 100 questions · 4 hours · scored on the 100–300 NES scale
+            Foundations of Reading Exam Preparation — 100 questions · 4 hours · scored on the 100–300 NES scale
           </p>
         </div>
       </div>
