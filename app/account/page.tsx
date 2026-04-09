@@ -17,9 +17,14 @@ export default async function AccountPage() {
   const uid = new mongoose.Types.ObjectId(auth.userId)
 
   const [user, accesses] = await Promise.all([
-    User.findById(uid).select('name email createdAt'),
+    User.findById(uid).select('name email createdAt stripeCustomerId'),
     UserAccess.find({ userId: uid, isActive: true }).lean(),
   ])
+
+  // Check if user has an active Stripe subscription (not just manual access)
+  const hasStripeSubscription = accesses.some(
+    (a: any) => a.stripeSubscriptionId
+  )
 
   return (
     <div className="min-h-screen bg-[#faf8f5]">
@@ -94,13 +99,19 @@ export default async function AccountPage() {
         <div className="rounded-xl border border-[#e8e0e2] bg-white p-6">
           <p className="text-xs font-bold uppercase tracking-widest text-[#7c1c2e] mb-4" style={SF}>Account Actions</p>
           <div className="space-y-3">
-            <a
-              href="/api/stripe/portal"
-              className="block w-full rounded border border-[#e8e0e2] px-4 py-3 text-sm font-semibold text-[#1a1a1a] hover:bg-[#faf8f5] transition-colors text-center"
-              style={SF}
-            >
-              Cancel My Subscription
-            </a>
+            {hasStripeSubscription ? (
+              <a
+                href="/api/stripe/portal"
+                className="block w-full rounded border border-[#e8e0e2] px-4 py-3 text-sm font-semibold text-[#1a1a1a] hover:bg-[#faf8f5] transition-colors text-center"
+                style={SF}
+              >
+                Manage Subscription
+              </a>
+            ) : (
+              <p className="text-sm text-[#6b6b6b] text-center py-2" style={SF}>
+                Need help? Contact us at <a href="mailto:support@foundationsofreading.com" className="text-[#7c1c2e] underline">support@foundationsofreading.com</a>
+              </p>
+            )}
             <form action="/api/auth/logout" method="POST">
               <button
                 type="submit"

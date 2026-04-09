@@ -17,7 +17,7 @@ export async function GET() {
     await connectDB()
     const user = await User.findById(auth.userId)
     if (!user?.stripeCustomerId) {
-      return NextResponse.redirect(`${BASE_URL}/account`)
+      return NextResponse.redirect(`${BASE_URL}/account?error=no-subscription`)
     }
 
     // Find the active subscription to target for cancellation
