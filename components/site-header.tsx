@@ -30,8 +30,8 @@ export function SiteHeader() {
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex" style={{ fontFamily: 'var(--font-sans)' }}>
-          <a href="#what-you-get" className="text-sm text-[#6b6b6b] hover:text-[#1a1a1a]">What&apos;s Included</a>
-          <a href="#pricing" className="text-sm text-[#6b6b6b] hover:text-[#1a1a1a]">Pricing</a>
+          <a href="/#what-you-get" className="text-sm text-[#6b6b6b] hover:text-[#1a1a1a]">What&apos;s Included</a>
+          <a href="/#pricing" className="text-sm text-[#6b6b6b] hover:text-[#1a1a1a]">Pricing</a>
           <Link href="/blog" className="text-sm text-[#6b6b6b] hover:text-[#1a1a1a]">Blog</Link>
           {user ? (
             <Link href="/dashboard" className="rounded bg-[#7c1c2e] px-5 py-2 text-sm font-semibold text-white hover:bg-[#5a1220]">
@@ -40,7 +40,7 @@ export function SiteHeader() {
           ) : (
             <div className="flex items-center gap-3">
               <Link href="/login" className="text-sm font-semibold text-[#7c1c2e] hover:text-[#5a1220]">Log in</Link>
-              <a href="#pricing" className="rounded bg-[#7c1c2e] px-5 py-2 text-sm font-semibold text-white hover:bg-[#5a1220]">
+              <a href="/#pricing" className="rounded bg-[#7c1c2e] px-5 py-2 text-sm font-semibold text-white hover:bg-[#5a1220]">
                 Get Access
               </a>
             </div>
@@ -61,8 +61,8 @@ export function SiteHeader() {
 
       {mobileOpen && (
         <div className="border-t border-[#e8e0e2] bg-white px-6 pb-4 pt-3 md:hidden" style={{ fontFamily: 'var(--font-sans)' }}>
-          <a href="#what-you-get" className="block py-2.5 text-sm text-[#6b6b6b]" onClick={() => setMobileOpen(false)}>What&apos;s Included</a>
-          <a href="#pricing" className="block py-2.5 text-sm text-[#6b6b6b]" onClick={() => setMobileOpen(false)}>Pricing</a>
+          <a href="/#what-you-get" className="block py-2.5 text-sm text-[#6b6b6b]" onClick={() => setMobileOpen(false)}>What&apos;s Included</a>
+          <a href="/#pricing" className="block py-2.5 text-sm text-[#6b6b6b]" onClick={() => setMobileOpen(false)}>Pricing</a>
           <Link href="/blog" className="block py-2.5 text-sm text-[#6b6b6b]" onClick={() => setMobileOpen(false)}>Blog</Link>
           {user ? (
             <Link href="/dashboard" className="mt-2 block rounded bg-[#7c1c2e] px-5 py-2.5 text-center text-sm font-semibold text-white">My Prep</Link>
