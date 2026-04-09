@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 
 const SF = { fontFamily: 'var(--font-sans)' }
@@ -39,9 +39,21 @@ const CARDS = [
 ]
 
 export function PricingSection() {
-  const [loadingTier, setLoadingTier] = useState<'starter' | 'bundle' | null>(null)
+  return (
+    <Suspense fallback={<PricingSectionInner discountActive={false} />}>
+      <PricingSectionWithParams />
+    </Suspense>
+  )
+}
+
+function PricingSectionWithParams() {
   const searchParams = useSearchParams()
   const discountActive = searchParams.get('discount') === 'SAVE20'
+  return <PricingSectionInner discountActive={discountActive} />
+}
+
+function PricingSectionInner({ discountActive }: { discountActive: boolean }) {
+  const [loadingTier, setLoadingTier] = useState<'starter' | 'bundle' | null>(null)
 
   async function handleSelect(tier: 'starter' | 'bundle') {
     setLoadingTier(tier)
