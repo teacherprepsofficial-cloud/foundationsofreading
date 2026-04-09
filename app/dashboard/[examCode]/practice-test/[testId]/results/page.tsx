@@ -504,13 +504,15 @@ export default function ResultsPage() {
               >
                 Back to Dashboard
               </Link>
-              <Link
-                href={`/dashboard/${examCode}/practice-tests`}
-                className="rounded bg-[#7c1c2e] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#5a1220] transition-colors"
-                style={{ fontFamily: 'var(--font-sans)' }}
-              >
-                Back to Practice Tests
-              </Link>
+              {!results.isDiagnostic && (
+                <Link
+                  href={`/dashboard/${examCode}/practice-tests`}
+                  className="rounded bg-[#7c1c2e] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#5a1220] transition-colors"
+                  style={{ fontFamily: 'var(--font-sans)' }}
+                >
+                  Back to Practice Tests
+                </Link>
+              )}
             </div>
           </div>
         )}
