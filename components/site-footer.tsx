@@ -23,8 +23,7 @@ export function SiteFooter() {
             <p className="text-xs font-semibold uppercase tracking-wider text-[#6b6b6b]">Prep</p>
             <ul className="mt-4 space-y-2.5">
               {[
-                { href: '/#pricing', label: 'NES 190 Prep' },
-                { href: '/#pricing', label: 'NES 890 Prep' },
+                { href: '/#pricing', label: 'Pricing' },
                 { href: '/login', label: 'Log in' },
               ].map((l) => (
                 <li key={l.label}>
