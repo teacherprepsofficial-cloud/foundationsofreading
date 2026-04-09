@@ -94,7 +94,7 @@ Step 3 — Practice Tests
 Take 2 (or 4 with bundle) full-length timed tests. Each one is scored on the 100–300 NES scale with a full subarea breakdown.
 
 Step 4 — Written Response Practice
-Submit written responses to practice prompts. Get scored 0–2 with specific feedback on how to improve.
+Submit written responses to practice prompts. Get scored 1–4 with specific feedback on how to improve.
 
 Step 5 — Flashcards & Vocabulary
 Reinforce key terms and concepts. The vocab matching activity is a great way to self-test quickly.

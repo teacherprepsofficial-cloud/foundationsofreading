@@ -45,7 +45,7 @@ const FEATURES = [
   { img: '/features/diagnostic.jpg', title: 'Diagnostic Practice Test', desc: '25 MC + 1 written response across all 4 subareas. See exactly where you stand before you start studying.', href: '/free/diagnostic', cta: 'Try free sample →' },
   { img: '/features/study-guide.jpg', title: 'Complete Study Guide', desc: 'All 4 subareas, all 11 objectives covered in depth. Written specifically for this exam.', href: '/free/study-guide', cta: 'Read free preview →' },
   { img: '/features/practice-tests.jpg', title: '2–4 Full-Length Practice Tests', desc: '100 MC per test, timed, scored on the real 100–300 NES scale. Results mirror your actual score report.', href: '/free/practice-test', cta: 'Try 10-question sample →' },
-  { img: '/features/written-response.jpg', title: 'AI-Graded Written Responses', desc: 'Type your response. Get scored 0–2 with individualized feedback — same rubric as the real exam.', href: '/free/written-response', cta: 'Try one free →' },
+  { img: '/features/written-response.jpg', title: 'AI-Graded Written Responses', desc: 'Type your response. Get scored 1–4 with individualized feedback — same rubric as the real exam.', href: '/free/written-response', cta: 'Try one free →' },
   { img: '/features/flashcards.jpg', title: 'Flashcards + Vocab Matching', desc: '150+ terms across all objectives. Study with cards or the interactive matching game.', href: '/free/flashcards', cta: 'Try 10 sample cards →' },
   { img: '/features/exam-results.jpg', title: 'Real Exam Results Format', desc: 'Pass/Not Pass, scaled score, and subarea performance — identical to what you see on test day.', href: '/free/results-demo', cta: 'See example results →' },
 ]
