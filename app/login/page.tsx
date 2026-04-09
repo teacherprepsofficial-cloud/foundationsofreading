@@ -49,7 +49,7 @@ export default function LoginPage() {
             Log in
           </h1>
           <p className="mt-1 text-sm text-[#6b6b6b]" style={{ fontFamily: 'var(--font-sans)' }}>
-            Access your 30-day prep program.
+            Access to your Foundations of Reading Exam Preparation.
           </p>
 
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
