@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
     const setPasswordUrl = `${BASE_URL}/reset-password?token=${token}`
 
     await resend.emails.send({
-      from: 'Foundations of Reading <prep@foundationsofreading.com>',
+      from: 'Foundations of Reading <noreply@foundationsofreading.com>',
       to: customerEmail,
       subject: "You're enrolled — set your password to get started",
       html: `
@@ -152,7 +152,7 @@ export async function POST(request: NextRequest) {
       const user = await User.findById(access.userId)
       if (user?.email) {
         await resend.emails.send({
-          from: 'Foundations of Reading <prep@foundationsofreading.com>',
+          from: 'Foundations of Reading <noreply@foundationsofreading.com>',
           to: user.email,
           subject: 'Your subscription has been cancelled',
           html: `
@@ -198,7 +198,7 @@ export async function POST(request: NextRequest) {
 
       if (user?.email) {
         await resend.emails.send({
-          from: 'Foundations of Reading <prep@foundationsofreading.com>',
+          from: 'Foundations of Reading <noreply@foundationsofreading.com>',
           to: user.email,
           subject: 'Your cancellation is confirmed',
           html: `
@@ -230,7 +230,7 @@ export async function POST(request: NextRequest) {
     const email = typeof invoice.customer_email === 'string' ? invoice.customer_email : null
     if (email) {
       await resend.emails.send({
-        from: 'Foundations of Reading <prep@foundationsofreading.com>',
+        from: 'Foundations of Reading <noreply@foundationsofreading.com>',
         to: email,
         subject: 'Payment failed — update your billing info',
         html: `

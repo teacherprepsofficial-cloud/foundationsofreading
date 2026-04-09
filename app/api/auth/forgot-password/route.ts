@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     const resetUrl = `${BASE_URL}/reset-password?token=${token}`
 
     await resend.emails.send({
-      from: 'Foundations of Reading <prep@foundationsofreading.com>',
+      from: 'Foundations of Reading <noreply@foundationsofreading.com>',
       to: user.email,
       subject: 'Reset your password',
       html: `

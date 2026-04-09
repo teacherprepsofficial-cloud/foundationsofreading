@@ -47,7 +47,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-lg font-semibold text-gray-900">4. Account Registration</h2>
             <p className="mt-2">
-              After subscribing, you will receive an email with a link to set your password. You are responsible for keeping your login credentials confidential. Do not share your account with others — your subscription is for individual use only. If you believe your account has been compromised, contact us immediately at <a href="mailto:prep@foundationsofreading.com" className="text-[#7c1c2e] underline">prep@foundationsofreading.com</a>.
+              After subscribing, you will receive an email with a link to set your password. You are responsible for keeping your login credentials confidential. Do not share your account with others — your subscription is for individual use only. If you believe your account has been compromised, contact us immediately at <a href="mailto:noreply@foundationsofreading.com" className="text-[#7c1c2e] underline">noreply@foundationsofreading.com</a>.
             </p>
           </section>
 
@@ -115,7 +115,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-lg font-semibold text-gray-900">13. Contact</h2>
             <p className="mt-2">
-              Questions about these terms can be directed to: <a href="mailto:prep@foundationsofreading.com" className="text-[#7c1c2e] underline">prep@foundationsofreading.com</a>
+              Questions about these terms can be directed to: <a href="mailto:noreply@foundationsofreading.com" className="text-[#7c1c2e] underline">noreply@foundationsofreading.com</a>
             </p>
           </section>
 

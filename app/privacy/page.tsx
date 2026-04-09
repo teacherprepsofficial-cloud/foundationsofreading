@@ -23,7 +23,7 @@ export default function PrivacyPage() {
               Foundations of Reading Exam Preparation (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) operates the website at foundationsofreading.com. We provide an online subscription-based study program for the NES Foundations of Reading test (exam codes 190 and 890), including diagnostic tests, a full study guide, timed practice tests, AI-graded written responses, and flashcards.
             </p>
             <p className="mt-2">
-              Questions about this policy can be directed to: <a href="mailto:prep@foundationsofreading.com" className="text-[#7c1c2e] underline">prep@foundationsofreading.com</a>
+              Questions about this policy can be directed to: <a href="mailto:noreply@foundationsofreading.com" className="text-[#7c1c2e] underline">noreply@foundationsofreading.com</a>
             </p>
           </section>
 
@@ -81,7 +81,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-lg font-semibold text-gray-900">7. Data Retention</h2>
             <p className="mt-2">
-              We retain your account and progress data for as long as your account is active. If you cancel your subscription and wish to have your data deleted, contact us at <a href="mailto:prep@foundationsofreading.com" className="text-[#7c1c2e] underline">prep@foundationsofreading.com</a> and we will delete your account and associated data within 30 days.
+              We retain your account and progress data for as long as your account is active. If you cancel your subscription and wish to have your data deleted, contact us at <a href="mailto:noreply@foundationsofreading.com" className="text-[#7c1c2e] underline">noreply@foundationsofreading.com</a> and we will delete your account and associated data within 30 days.
             </p>
           </section>
 
@@ -101,7 +101,7 @@ export default function PrivacyPage() {
               <li>Request deletion of your account and data</li>
               <li>Unsubscribe from marketing emails at any time</li>
             </ul>
-            <p className="mt-2">To exercise any of these rights, email us at <a href="mailto:prep@foundationsofreading.com" className="text-[#7c1c2e] underline">prep@foundationsofreading.com</a>.</p>
+            <p className="mt-2">To exercise any of these rights, email us at <a href="mailto:noreply@foundationsofreading.com" className="text-[#7c1c2e] underline">noreply@foundationsofreading.com</a>.</p>
           </section>
 
           <section>
