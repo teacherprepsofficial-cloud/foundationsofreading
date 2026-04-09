@@ -41,7 +41,7 @@ SUBAREA III — Reading Assessment and Instruction (18% / 21–23 questions)
 Covers formal and informal assessment, data-based instruction, intervention strategies, and supporting diverse learners.
 
 SUBAREA IV — Integration of Knowledge and Understanding (20% / 2 written responses)
-This is the open-response section. You will respond in writing to two prompts — one focused on Foundational Reading Skills and one on Reading Comprehension. Responses are scored 0–2 based on a rubric.`,
+This is the open-response section. You will respond in writing to two prompts — one focused on Foundational Reading Skills and one on Reading Comprehension. Responses are scored 1–4 based on a rubric.`,
   },
   {
     id: 'scoring',
