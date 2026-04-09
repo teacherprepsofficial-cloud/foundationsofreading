@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 
 const SF = { fontFamily: 'var(--font-sans)' }
 const SE = { fontFamily: 'var(--font-serif)' }
@@ -39,7 +40,8 @@ const CARDS = [
 
 export function PricingSection() {
   const [loadingTier, setLoadingTier] = useState<'starter' | 'bundle' | null>(null)
-  const discountActive = true
+  const searchParams = useSearchParams()
+  const discountActive = searchParams.get('discount') === 'SAVE20'
 
   async function handleSelect(tier: 'starter' | 'bundle') {
     setLoadingTier(tier)

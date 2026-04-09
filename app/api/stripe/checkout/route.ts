@@ -25,7 +25,7 @@ async function stripePost(path: string, params: Record<string, string>): Promise
 
 export async function POST(request: NextRequest) {
   try {
-    const { tier } = await request.json()
+    const { tier, discounted } = await request.json()
 
     const PRICE_IDS: Record<string, string | undefined> = {
       starter: process.env.STRIPE_PRICE_STARTER?.trim(),
@@ -65,9 +65,9 @@ export async function POST(request: NextRequest) {
       allow_promotion_codes: 'true',
     }
 
-    // Auto-apply 20% promo if configured
+    // Auto-apply 20% promo only when user came from email discount link
     const promoCode = process.env.STRIPE_PROMO_20?.trim()
-    if (promoCode) {
+    if (promoCode && discounted) {
       params['discounts[0][promotion_code]'] = promoCode
       delete params.allow_promotion_codes // can't combine with discounts[]
     }

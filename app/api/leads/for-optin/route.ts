@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
         <p style="margin:0 0 6px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#7c1c2e;font-family:Arial,sans-serif;">Limited Time Offer</p>
         <h3 style="margin:0 0 10px;font-size:26px;color:#1a1a1a;font-weight:800;font-family:Georgia,serif;">20% Off — Claim Before It Expires</h3>
         <p style="margin:0 0 18px;color:#6b6b6b;font-size:14px;font-family:Arial,sans-serif;">Your discount expires at <strong style="color:#7c1c2e;">${formatExpiry(discountExpiresAt)}</strong></p>
-        <a href="${BASE_URL}/#pricing" style="display:inline-block;background:#7c1c2e;color:white;padding:14px 36px;text-decoration:none;border-radius:4px;font-weight:700;font-size:15px;font-family:Arial,sans-serif;">Claim 20% Off Now →</a>
+        <a href="${BASE_URL}/?discount=SAVE20#pricing" style="display:inline-block;background:#7c1c2e;color:white;padding:14px 36px;text-decoration:none;border-radius:4px;font-weight:700;font-size:15px;font-family:Arial,sans-serif;">Claim 20% Off Now →</a>
         <p style="margin:12px 0 0;color:#9ca3af;font-size:12px;font-family:Arial,sans-serif;">Discount applied automatically at checkout. No code needed.</p>
       </div>
     ` : `
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
         <p style="margin:0 0 6px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#7c1c2e;font-family:Arial,sans-serif;">Special Offer</p>
         <h3 style="margin:0 0 10px;font-size:26px;color:#1a1a1a;font-weight:800;font-family:Georgia,serif;">20% Off — Limited Time</h3>
         <p style="margin:0 0 18px;color:#6b6b6b;font-size:14px;font-family:Arial,sans-serif;">Start your full prep with 20% off today.</p>
-        <a href="${BASE_URL}/#pricing" style="display:inline-block;background:#7c1c2e;color:white;padding:14px 36px;text-decoration:none;border-radius:4px;font-weight:700;font-size:15px;font-family:Arial,sans-serif;">Claim 20% Off Now →</a>
+        <a href="${BASE_URL}/?discount=SAVE20#pricing" style="display:inline-block;background:#7c1c2e;color:white;padding:14px 36px;text-decoration:none;border-radius:4px;font-weight:700;font-size:15px;font-family:Arial,sans-serif;">Claim 20% Off Now →</a>
       </div>
     `
 
