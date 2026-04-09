@@ -129,6 +129,16 @@ export const studyGuide190: StudyGuideSubarea[] = [
   </ul>
 </div>
 
+<div class="sg-scenario">
+  <p class="sg-scenario-label">Classroom Scenario</p>
+  <p class="sg-text">A kindergarten teacher begins a small-group lesson by saying three words aloud: "cat, car, cup." She asks, "What sound do all three words start with?" Students respond "/k/." She then gives each student three Elkonin boxes and counters, says "map," and students push one counter per sound: /m/ /a/ /p/. A struggling student receives two-phoneme words first ("at," "up") before progressing to CVC. After segmenting, she has students write the matching letter in each box — bridging phonemic awareness into phonics.</p>
+</div>
+
+<div class="sg-exam-strategy">
+  <p class="sg-exam-strategy-label">How This Shows Up on the Exam</p>
+  <p class="sg-text">If the scenario describes students working with sounds WITHOUT seeing printed text, the answer involves phonological or phonemic awareness — not phonics. Phonics requires print. If a student is clapping syllables, that is phonological awareness. If a student is identifying the first sound in a spoken word, that is phonemic awareness. If a student is matching letters to sounds, that is phonics.</p>
+</div>
+
 <div class="sg-exam-tip">
   <p class="sg-exam-tip-label">Exam Watch</p>
   <p class="sg-text">The most common distractor: confusing phonological awareness with phonemic awareness. Any task involving syllables, rhymes, or onsets/rimes is phonological — not phonemic. Phonemic awareness is strictly about individual phonemes. A second frequent trap: any task involving letters or print is phonics, not phonemic awareness — the distinction is print vs. oral. On the exam, watch for EL-specific scenarios: the right answer will involve assessing oral language proficiency before assuming a phonics or phonemic awareness deficit.</p>
@@ -238,6 +248,16 @@ export const studyGuide190: StudyGuideSubarea[] = [
   </div>
 </div>
 
+<div class="sg-scenario">
+  <p class="sg-scenario-label">Classroom Scenario</p>
+  <p class="sg-text">A first-grade teacher introduces the CVCe pattern. She writes "cap" on the board and students read it. She adds a silent "e" to make "cape" and asks what changed. Students identify the vowel sound shifted from short to long. She then gives students a word sort: they categorize cards (hat/hate, kit/kite, hop/hope) into CVC and CVCe columns. After sorting, students read decodable sentences using both patterns: "The man had a red cap and a long cape."</p>
+</div>
+
+<div class="sg-exam-strategy">
+  <p class="sg-exam-strategy-label">How This Shows Up on the Exam</p>
+  <p class="sg-text">If a student spells "rane" for "rain," the error is a vowel team issue (ai), not a consonant problem — the student hears the long-a sound but uses the wrong spelling pattern. If a student reads "ship" as "sip," they are missing the digraph (sh = one sound). If a student reads "stop" as "sop," they are dropping a sound from a blend (st = two sounds). The error type tells you the intervention.</p>
+</div>
+
 <div class="sg-exam-tip">
   <p class="sg-exam-tip-label">Exam Watch</p>
   <p class="sg-text">Watch for questions that distinguish systematic explicit phonics from embedded or whole-language approaches — the exam will expect you to know systematic explicit is the evidence-based choice. Know the difference between digraphs (sh = one sound) and blends (str = three sounds). High-frequency word instruction is a separate but parallel track to phonics — don't confuse them. For homographs: the answer will always involve using context (semantic/syntactic clues) to confirm meaning and pronunciation.</p>
@@ -339,6 +359,16 @@ export const studyGuide190: StudyGuideSubarea[] = [
   </div>
 </div>
 
+<div class="sg-scenario">
+  <p class="sg-scenario-label">Classroom Scenario</p>
+  <p class="sg-text">A third-grade teacher writes "unbreakable" on the board and asks students to find the parts they recognize. Students identify "un-" (not), "break" (base word), and "-able" (can be). The teacher asks: "If 'break' means to separate into pieces, what does 'unbreakable' mean?" Students respond: "Something that cannot be broken." She then gives groups five unfamiliar words (predictable, uncomfortable, reusable) and students use the same prefix-root-suffix analysis to predict meanings before checking a dictionary.</p>
+</div>
+
+<div class="sg-exam-strategy">
+  <p class="sg-exam-strategy-label">How This Shows Up on the Exam</p>
+  <p class="sg-text">If the question asks about a student struggling with multisyllabic words, the answer involves syllable division — not phonics patterns. If the question mentions a Spanish-speaking student learning academic vocabulary, the answer is cognate awareness. If the question asks whether "-ed" changes a word's part of speech, the answer is no — it is inflectional. If "-tion" changes "act" to "action," that is derivational.</p>
+</div>
+
 <div class="sg-exam-tip">
   <p class="sg-exam-tip-label">Exam Watch</p>
   <p class="sg-text">Know all six syllable types by name and be able to identify them in unfamiliar words — the exam will present multisyllabic words and ask you to identify the syllable type or the appropriate instructional approach. Distinguish inflectional from derivational morphemes: inflectional morphemes don't change part of speech (-ed, -ing); derivational ones do (-ion, -ness). For EL students, cognate awareness is the right answer when the scenario involves vocabulary or word analysis with Spanish speakers or other Romance language backgrounds.</p>
@@ -419,6 +449,16 @@ export const studyGuide190: StudyGuideSubarea[] = [
     <p class="sg-strategy-name">Wide Independent Reading</p>
     <p class="sg-text">Reading large volumes of text at the independent reading level builds automaticity over time. Independent reading should be at a level where students read with 95%+ accuracy — reading frustration-level texts does not build fluency. Accountability structures (reading responses, discussions) prevent wide reading from becoming passive page-turning.</p>
   </div>
+</div>
+
+<div class="sg-scenario">
+  <p class="sg-scenario-label">Classroom Scenario</p>
+  <p class="sg-text">A second-grade teacher pairs students for repeated reading. Student A reads a passage aloud while Student B follows along and marks any errors. After the first read, they discuss tricky words. Student A reads it again, aiming to sound smoother and more expressive. The teacher circulates, listens to a struggling reader, and marks the text with slash marks at phrase boundaries (phrase-cued reading). She models reading the first paragraph with expression, then the student echoes her phrasing.</p>
+</div>
+
+<div class="sg-exam-strategy">
+  <p class="sg-exam-strategy-label">How This Shows Up on the Exam</p>
+  <p class="sg-text">If a student reads accurately but sounds robotic with no expression, the problem is prosody — not rate or accuracy. The intervention is modeling and phrase-cued reading. If a student reads slowly but accurately, the problem is rate/automaticity — the intervention is repeated reading at the instructional level. If a student misreads words frequently, that is NOT a fluency problem — go back to phonics.</p>
 </div>
 
 <div class="sg-exam-tip">
@@ -519,6 +559,16 @@ export const studyGuide190: StudyGuideSubarea[] = [
   <p class="sg-text">Research shows that most vocabulary is acquired incidentally through wide reading — students who read broadly across genres, topics, and difficulty levels encounter new words repeatedly in varied contexts, building durable word knowledge. Effective teachers promote wide reading by: providing access to a diverse classroom library, integrating content-area texts across the curriculum, using purposeful read-alouds with rich vocabulary, and creating time for sustained independent reading with accountability.</p>
 </div>
 
+<div class="sg-scenario">
+  <p class="sg-scenario-label">Classroom Scenario</p>
+  <p class="sg-text">Before reading a science text about habitats, a fourth-grade teacher selects three Tier 2 words: "adapt," "thrive," and "scarce." For each, she gives a student-friendly definition ("adapt means to change in order to survive"), shows it in two different contexts (animals adapting to cold; students adapting to a new school), and has students generate their own sentences. After reading, students revisit the words using a semantic map — connecting "adapt" to synonyms (adjust, change), antonyms (stay the same), and examples from the text.</p>
+</div>
+
+<div class="sg-exam-strategy">
+  <p class="sg-exam-strategy-label">How This Shows Up on the Exam</p>
+  <p class="sg-text">If the question asks which words a teacher should prioritize for direct instruction, the answer is always Tier 2 — high-frequency academic words used across subjects. "Photosynthesis" is Tier 3 (teach it in the science unit). "Dog" is Tier 1 (don't teach it). "Analyze" is Tier 2 (highest priority). If a student encounters "the arid, or extremely dry, desert," the context clue type is apposition — the definition is set off by commas right next to the word.</p>
+</div>
+
 <div class="sg-exam-tip">
   <p class="sg-exam-tip-label">Exam Watch</p>
   <p class="sg-text">Know the three tiers cold — the exam will describe a word and ask which tier it belongs to, or ask which words to prioritize for direct instruction. Tier 2 = high-frequency academic words across subjects = always the highest priority for direct instruction. Context clue types (apposition, contrast, definition) will appear in exam scenarios where you must identify which type is being used or which to teach. For ELs: cognate awareness (Objective 3) and idiomatic language instruction (this objective) are the most common correct answers for vocabulary differentiation scenarios.</p>
@@ -605,6 +655,16 @@ export const studyGuide190: StudyGuideSubarea[] = [
     <p class="sg-strategy-name">Graphic Organizers (Story Maps, Character Analysis Charts)</p>
     <p class="sg-text">Visual scaffolds that help students organize story grammar elements (character → setting → problem → events → resolution) or analyze characters (traits → evidence → motivation → change). Most effective when used as a thinking tool during or immediately after reading, not as a fill-in-the-blank worksheet completed from memory.</p>
   </div>
+</div>
+
+<div class="sg-scenario">
+  <p class="sg-scenario-label">Classroom Scenario</p>
+  <p class="sg-text">After reading a chapter of Charlotte's Web, a teacher leads a reciprocal teaching session. One student predicts what will happen next based on Wilbur's fear. Another generates a question: "Why does Charlotte decide to help Wilbur?" A third student clarifies the word "radiant" using context. A fourth summarizes: "Charlotte wrote 'Some Pig' in her web to save Wilbur from being slaughtered." The teacher then asks an evaluative question: "Is Charlotte being dishonest by writing words in her web? Why or why not?"</p>
+</div>
+
+<div class="sg-exam-strategy">
+  <p class="sg-exam-strategy-label">How This Shows Up on the Exam</p>
+  <p class="sg-text">"Where does the story take place?" is literal. "Why do you think the character lied?" is inferential. "Was the author's ending satisfying? Why?" is evaluative. If a struggling reader needs comprehension support, reciprocal teaching (predict, question, clarify, summarize) is the go-to evidence-based answer. If the question asks about a student's emotional response to a poem, that is aesthetic reading (Rosenblatt).</p>
 </div>
 
 <div class="sg-exam-tip">
@@ -698,6 +758,16 @@ export const studyGuide190: StudyGuideSubarea[] = [
   </div>
 </div>
 
+<div class="sg-scenario">
+  <p class="sg-scenario-label">Classroom Scenario</p>
+  <p class="sg-text">A third-grade teacher introduces cause-and-effect text structure using a passage about erosion. She highlights signal words ("because," "as a result," "leads to") and models filling in a cause-effect graphic organizer: "Rain falls on bare soil [cause] → soil washes into the river [effect]." Students then read a second passage about pollution independently, highlight signal words, and complete their own organizer. In discussion, one student confuses the problem-solution structure with cause-effect — the teacher clarifies that problem-solution includes a proposed fix, while cause-effect simply shows what happened and why.</p>
+</div>
+
+<div class="sg-exam-strategy">
+  <p class="sg-exam-strategy-label">How This Shows Up on the Exam</p>
+  <p class="sg-text">If a passage uses "however," "on the other hand," and "similarly," the structure is compare-contrast — use a Venn diagram. If it uses "because," "therefore," and "as a result," it is cause-effect — use a cause-effect map. If a student struggles with a science textbook, the answer is NOT "more independent reading" — it is explicit instruction in discipline-specific vocabulary and informational text features (diagrams, captions, bold terms).</p>
+</div>
+
 <div class="sg-exam-tip">
   <p class="sg-exam-tip-label">Exam Watch</p>
   <p class="sg-text">Know all five text structures and their signal words — the exam will present a passage or description and ask you to identify the structure or select the appropriate graphic organizer (cause-effect maps, Venn diagrams for compare-contrast, flow charts for sequence). Disciplinary literacy scenarios will describe students struggling with a science or social studies text — the right answer will involve addressing discipline-specific vocabulary, primary/secondary source distinctions, or content-specific reading strategies, not just generic comprehension strategies.</p>
@@ -785,6 +855,16 @@ export const studyGuide190: StudyGuideSubarea[] = [
     <li><strong>Students with disabilities:</strong> Provide testing accommodations (extended time, oral administration, reduced-distraction environment) that remove barriers unrelated to the reading skill being measured. The assessment should measure reading, not the disability's secondary effects. IEP-specified accommodations must be applied consistently.</li>
     <li><strong>Avoiding over-identification:</strong> Not every student who struggles with reading has a learning disability. Before referring for special education evaluation, document that the student received high-quality, explicit instruction (Tier 1) and evidence-based small-group intervention (Tier 2) with progress monitoring — and that growth was insufficient despite these supports.</li>
   </ul>
+</div>
+
+<div class="sg-scenario">
+  <p class="sg-scenario-label">Classroom Scenario</p>
+  <p class="sg-text">At the start of the school year, a second-grade teacher administers a universal screening (DIBELS) to all students. Three students score below benchmark on oral reading fluency. She gives those three a diagnostic phonics inventory and discovers two have gaps in vowel teams while one has strong phonics but low automaticity. She places the two phonics students in a Tier 2 small group for vowel team instruction and gives the third student repeated reading practice with instructional-level text. She progress-monitors all three biweekly with one-minute fluency probes to check if the interventions are working.</p>
+</div>
+
+<div class="sg-exam-strategy">
+  <p class="sg-exam-strategy-label">How This Shows Up on the Exam</p>
+  <p class="sg-text">If the question asks "which assessment should the teacher use FIRST," the answer is screening — it is always the starting point. If the question says a student scored below benchmark on a screener and asks what to do next, the answer is diagnostic assessment — to pinpoint the specific skill gap. If the question asks how to know if an intervention is working, the answer is progress monitoring (frequent, brief, same measure over time). Screening never equals diagnosis.</p>
 </div>
 
 <div class="sg-exam-tip">
@@ -906,6 +986,16 @@ export const studyGuide190: StudyGuideSubarea[] = [
     <p class="sg-strategy-name">Instructional Technologies for Reading Development</p>
     <p class="sg-text">Technology tools support reading instruction and engagement at all levels: text-to-speech software allows students with decoding difficulties to access grade-level content; digital decodable readers provide phonics practice with immediate feedback; e-books with highlighted text build fluency through repeated reading with a fluent model; vocabulary apps (e.g., Quizlet) support repeated, spaced exposure to new words; reading engagement platforms provide access to leveled texts with accountability structures. Instructional technology should support — not replace — explicit, systematic reading instruction.</p>
   </div>
+</div>
+
+<div class="sg-scenario">
+  <p class="sg-scenario-label">Classroom Scenario</p>
+  <p class="sg-text">A reading specialist reviews data for a fourth-grader who reads at 110 WCPM with 96% accuracy (at benchmark) but scores below grade level on comprehension assessments. Using the Simple View of Reading (RC = D x LC), she determines decoding is not the issue — language comprehension is. She assesses vocabulary and finds the student lacks Tier 2 academic words. She designs a Tier 2 intervention: three times a week in a small group, she pre-teaches vocabulary from upcoming texts, uses semantic mapping, and practices generating inferential questions. She progress-monitors comprehension biweekly using retelling rubrics.</p>
+</div>
+
+<div class="sg-exam-strategy">
+  <p class="sg-exam-strategy-label">How This Shows Up on the Exam</p>
+  <p class="sg-text">If a student decodes well but comprehends poorly, the Simple View tells you the problem is language comprehension — do NOT recommend more phonics. If the question asks about MTSS, Tier 1 = all students (core instruction), Tier 2 = small group (supplemental), Tier 3 = intensive (individual). If asked how to evaluate text complexity, a Lexile score alone is never sufficient — you need all three dimensions (quantitative, qualitative, reader-task). The answer on the exam is almost never "more independent reading" — look for explicit, systematic, evidence-based instruction.</p>
 </div>
 
 <div class="sg-exam-tip">

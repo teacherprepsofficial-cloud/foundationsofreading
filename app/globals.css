@@ -148,6 +148,46 @@ body {
   margin-bottom: 10px;
 }
 
+/* Classroom scenario callout */
+.sg-scenario {
+  background: #faf5ff;
+  border-left: 3px solid #7c3aed;
+  padding: 14px 18px;
+  border-radius: 0 6px 6px 0;
+  margin-bottom: 20px;
+  font-size: 13.5px;
+  line-height: 1.75;
+}
+.sg-scenario-label {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #5b21b6;
+  margin-bottom: 6px;
+}
+
+/* Exam strategy callout (distinct from exam-tip) */
+.sg-exam-strategy {
+  background: #fef2f2;
+  border-left: 3px solid #7c1c2e;
+  padding: 14px 18px;
+  border-radius: 0 6px 6px 0;
+  margin-bottom: 20px;
+  font-size: 13.5px;
+  line-height: 1.75;
+}
+.sg-exam-strategy-label {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #7c1c2e;
+  margin-bottom: 6px;
+}
+
 /* Sample CR prompt/response blocks */
 .sg-prompt-box {
   background: #f8fafc;
