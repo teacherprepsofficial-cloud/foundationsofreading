@@ -22,6 +22,11 @@ export const metadata: Metadata = {
   description:
     'The most complete online prep for the NES Foundations of Reading test (190 & 890). Diagnostic test, study guide, practice tests, flashcards, and AI-graded constructed responses. 30-day access.',
   metadataBase: new URL('https://foundationsofreading.com'),
+  icons: {
+    icon: '/icon',
+    shortcut: '/icon',
+    apple: '/icon',
+  },
   openGraph: {
     type: 'website',
     locale: 'en_US',
