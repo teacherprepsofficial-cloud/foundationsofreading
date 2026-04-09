@@ -504,7 +504,7 @@ export default function ResultsPage() {
               >
                 Back to Dashboard
               </Link>
-              {!results.isDiagnostic && (
+              {!results.isDiagnostic && !results.testName?.toLowerCase().includes('diagnostic') && (
                 <Link
                   href={`/dashboard/${examCode}/practice-tests`}
                   className="rounded bg-[#7c1c2e] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#5a1220] transition-colors"
