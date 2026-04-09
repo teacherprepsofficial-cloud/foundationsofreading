@@ -23,7 +23,7 @@ export default async function AccountPage() {
 
   // Check if user has an active Stripe subscription (not just manual access)
   const hasStripeSubscription = accesses.some(
-    (a: Record<string, unknown>) => a.stripeSubscriptionId
+    (a) => a.stripeSubscriptionId
   )
 
   return (
