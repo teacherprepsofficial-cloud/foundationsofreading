@@ -51,6 +51,7 @@ export function SiteFooter() {
             <p className="text-xs font-semibold uppercase tracking-wider text-[#6b6b6b]">Company</p>
             <ul className="mt-4 space-y-2.5">
               {[
+                { href: '/contact', label: 'Contact' },
                 { href: '/privacy', label: 'Privacy Policy' },
                 { href: '/terms', label: 'Terms of Use' },
               ].map((l) => (

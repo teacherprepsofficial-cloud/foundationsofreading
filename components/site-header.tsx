@@ -33,6 +33,7 @@ export function SiteHeader() {
           <a href="/#what-you-get" className="text-sm text-[#6b6b6b] hover:text-[#1a1a1a]">What&apos;s Included</a>
           <a href="/#pricing" className="text-sm text-[#6b6b6b] hover:text-[#1a1a1a]">Pricing</a>
           <Link href="/blog" className="text-sm text-[#6b6b6b] hover:text-[#1a1a1a]">Blog</Link>
+          <Link href="/contact" className="text-sm text-[#6b6b6b] hover:text-[#1a1a1a]">Contact</Link>
           {user ? (
             <Link href="/dashboard" className="rounded bg-[#7c1c2e] px-5 py-2 text-sm font-semibold text-white hover:bg-[#5a1220]">
               My Prep
@@ -64,6 +65,7 @@ export function SiteHeader() {
           <a href="/#what-you-get" className="block py-2.5 text-sm text-[#6b6b6b]" onClick={() => setMobileOpen(false)}>What&apos;s Included</a>
           <a href="/#pricing" className="block py-2.5 text-sm text-[#6b6b6b]" onClick={() => setMobileOpen(false)}>Pricing</a>
           <Link href="/blog" className="block py-2.5 text-sm text-[#6b6b6b]" onClick={() => setMobileOpen(false)}>Blog</Link>
+          <Link href="/contact" className="block py-2.5 text-sm text-[#6b6b6b]" onClick={() => setMobileOpen(false)}>Contact</Link>
           {user ? (
             <Link href="/dashboard" className="mt-2 block rounded bg-[#7c1c2e] px-5 py-2.5 text-center text-sm font-semibold text-white">My Prep</Link>
           ) : (
