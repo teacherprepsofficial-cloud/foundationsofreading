@@ -41,7 +41,28 @@ export default function ContactPage() {
         >
           Contact Us
         </h1>
-        <p className="mt-3 text-[#6b6b6b]">
+        <div className="mt-6 rounded-lg border border-[#e8e0e2] bg-[#faf8f5] p-5">
+          <p className="text-sm font-semibold text-[#1a1a1a]">Helpful Resources</p>
+          <ul className="mt-3 space-y-2">
+            <li>
+              <a href="/#pricing" className="text-sm text-[#7c1c2e] underline decoration-[#7c1c2e]/30 hover:text-[#5a1220]">
+                Get Foundations of Reading Prep
+              </a>
+            </li>
+            <li>
+              <a href="/login" className="text-sm text-[#7c1c2e] underline decoration-[#7c1c2e]/30 hover:text-[#5a1220]">
+                Access your prep and manage your subscription
+              </a>
+            </li>
+            <li>
+              <a href="/forgot-password" className="text-sm text-[#7c1c2e] underline decoration-[#7c1c2e]/30 hover:text-[#5a1220]">
+                Forgot password
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <p className="mt-6 text-[#6b6b6b]">
           Have a question about the Foundations of Reading test or your prep? Send us a message and we&apos;ll get back to you as soon as we can.
         </p>
 
