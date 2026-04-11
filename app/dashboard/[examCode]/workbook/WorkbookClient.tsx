@@ -27,64 +27,6 @@ const B = '#1d4ed8'
 const B_LIGHT = '#eff6ff'
 const B_BORDER = '#93c5fd'
 
-// ─── Shared chip/pill component ──────────────────────────────────────────────
-function Chip({
-  label,
-  selected,
-  correct,
-  incorrect,
-  empty,
-  onClick,
-  large,
-}: {
-  label?: string
-  selected?: boolean
-  correct?: boolean
-  incorrect?: boolean
-  empty?: boolean
-  onClick?: () => void
-  large?: boolean
-}) {
-  let bg = 'white'
-  let border = '#d1d5db'
-  let color = '#111827'
-  let cursor = onClick ? 'pointer' : 'default'
-
-  if (selected) { bg = B; border = B; color = 'white' }
-  if (correct) { bg = '#f0fdf4'; border = '#86efac'; color = '#14532d' }
-  if (incorrect) { bg = '#fef2f2'; border = '#fca5a5'; color = '#7f1d1d' }
-  if (empty) { bg = '#f9fafb'; border = '#e5e7eb'; color = '#9ca3af' }
-
-  return (
-    <button
-      onClick={onClick}
-      disabled={!onClick}
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: large ? '8px 14px' : '6px 12px',
-        borderRadius: 8,
-        border: `1.5px solid ${border}`,
-        background: bg,
-        color,
-        fontFamily: 'var(--font-sans)',
-        fontSize: large ? 13 : 12,
-        fontWeight: selected ? 600 : 500,
-        cursor,
-        transition: 'all 0.12s',
-        textAlign: 'center',
-        lineHeight: 1.35,
-        whiteSpace: 'pre-wrap',
-        wordBreak: 'break-word',
-        minHeight: 36,
-      }}
-    >
-      {label || (empty ? 'Click to place' : '')}
-    </button>
-  )
-}
-
 // ─── Exercise wrapper (handles reset via key) ─────────────────────────────────
 function ExerciseWrapper({ exercise }: { exercise: WorkbookExercise }) {
   const [resetKey, setResetKey] = useState(0)
