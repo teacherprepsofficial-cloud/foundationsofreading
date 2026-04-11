@@ -70,9 +70,10 @@ export default async function ExamDashboardLayout({
     { label: 'About This Test', href: '/dashboard/module-1', icon: '1', done: module1Done },
     { label: 'Diagnostic', href: '/dashboard/diagnostic', icon: '2', done: diagnosticDone, locked: !module1Done },
     { label: 'Study Guide', href: '/dashboard/study-guide', icon: '3', locked: !diagnosticDone },
-    { label: 'Practice Tests', href: '/dashboard/practice-tests', icon: '4', locked: !diagnosticDone, badge: practiceTestsCount > 0 ? `${practiceTestsCount}` : undefined },
-    { label: 'Flashcards', href: '/dashboard/flashcards', icon: '5', locked: !diagnosticDone },
-    { label: 'Written Response', href: '/dashboard/cr', icon: '6', locked: !diagnosticDone, badge: crCount > 0 ? `${crCount}` : undefined },
+    { label: 'Workbook', href: `/dashboard/${examCode}/workbook`, icon: '4', locked: !diagnosticDone },
+    { label: 'Practice Tests', href: '/dashboard/practice-tests', icon: '5', locked: !diagnosticDone, badge: practiceTestsCount > 0 ? `${practiceTestsCount}` : undefined },
+    { label: 'Flashcards', href: '/dashboard/flashcards', icon: '6', locked: !diagnosticDone },
+    { label: 'Written Response', href: '/dashboard/cr', icon: '7', locked: !diagnosticDone, badge: crCount > 0 ? `${crCount}` : undefined },
   ]
 
   return (
